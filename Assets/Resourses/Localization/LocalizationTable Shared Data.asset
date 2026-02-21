@@ -1,0 +1,276 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: LocalizationTable Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: LocalizationTable
+  m_TableCollectionNameGuidString: a19e2a41c4b7af740a6703b3ee1dff68
+  m_Entries:
+  - m_Id: 384683147264
+    m_Key: PlayButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 491067473920
+    m_Key: Mods
+    m_Metadata:
+      m_Items: []
+  - m_Id: 623112552448
+    m_Key: Settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 696533843968
+    m_Key: ExitGame
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1032585674752
+    m_Key: Start game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1038537392128
+    m_Key: Join
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1049941704704
+    m_Key: Back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1567531401216
+    m_Key: Continue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1694375542784
+    m_Key: LoadGame
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1774507720704
+    m_Key: NewGame
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1031447765254144
+    m_Key: 'Settings
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1031696760111104
+    m_Key: Camera settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1032547906027520
+    m_Key: Combat settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1032835526230016
+    m_Key: Interface settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1033167878684672
+    m_Key: Audio settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1033303564419072
+    m_Key: Graphics settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1033826254389248
+    m_Key: Horizontal sensivity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1033945343262720
+    m_Key: Vertical sensivity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1040222396022784
+    m_Key: DIscard changes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1040772172808192
+    m_Key: Yes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1040799964266496
+    m_Key: No
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1041979759067136
+    m_Key: Sensivity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1042164602044416
+    m_Key: Auto rotation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1042717885267968
+    m_Key: Auto correction enabled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1042986563993600
+    m_Key: Horizontal adj
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1043073218314240
+    m_Key: Vertical adj
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1043351900454912
+    m_Key: Save changes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1043431571259392
+    m_Key: Cancel changes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1046023646937088
+    m_Key: Master volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1046290840879104
+    m_Key: Music volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1046413733986304
+    m_Key: Sounds volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1046491722874880
+    m_Key: Voices volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1049423075803136
+    m_Key: Graphics level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1049514549379072
+    m_Key: Shadows
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1049668283203584
+    m_Key: FPS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1049722041597952
+    m_Key: Resolution
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4719826239422464
+    m_Key: Loading
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4727847527055360
+    m_Key: Save game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4727968654360576
+    m_Key: Load game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4728028238643200
+    m_Key: Main menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 67680704747995136
+    m_Key: Exit confirm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 163835247252144128
+    m_Key: Nickname
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210233586751045632
+    m_Key: Join by IP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210234809122226176
+    m_Key: Join by LAN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210236015030763520
+    m_Key: Skills
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210236308866924544
+    m_Key: Exit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210236430652735488
+    m_Key: Inventory
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210236611578232832
+    m_Key: Quests
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210236728574148608
+    m_Key: Modifications
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210236932937416704
+    m_Key: '
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210237614381793280
+    m_Key: Saves
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210237764026171392
+    m_Key: Taunts
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210238024123351040
+    m_Key: Multiplayer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210238453527805952
+    m_Key: Server visible
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210238758873137152
+    m_Key: Server settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210238957632815104
+    m_Key: Server password
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210239180786565120
+    m_Key: Max players
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210239444197244928
+    m_Key: PVP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210239756458983424
+    m_Key: Cancel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210239962130874368
+    m_Key: Confirm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210240252141830144
+    m_Key: Players on the server
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 890626873930809368
+  references:
+    version: 2
+    RefIds:
+    - rid: 890626873930809368
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1708433897501

@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 1e8dd8001a36b8f49b73e0456d35fdb5
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - dashReadySprite: {fileID: 21300000, guid: 84e84f16b16fcec49823eb8517f67426, type: 3}
+  - dashNotReadySprite: {fileID: 21300000, guid: c2dc6deaa59090d448619f9ca28ce8b8, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
