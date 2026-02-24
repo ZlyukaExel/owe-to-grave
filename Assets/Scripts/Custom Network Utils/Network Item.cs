@@ -1,6 +1,8 @@
 using Mirror;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(NetworkAudioSource))]
 public class NetworkItem : NetworkBehaviour
 {
     private NetworkAudioSource audioSource;
@@ -28,11 +30,12 @@ public class NetworkItem : NetworkBehaviour
         if (velocity > 0)
         {
             // Damage players
-            if (collision.gameObject.TryGetComponent(out NetworkHitpoints hp))
+            if (collision.collider.TryGetComponent(out HitPoint hp))
             {
                 if (Time.time - lastHitTime > hitCooldown)
                 {
-                    hp.Damage(velocity);
+                    DamageInfo damageInfo = new DamageInfo(velocity, 1, DamageType.Item, null);
+                    hp.Damage(damageInfo);
 
                     // Audio SFX
                     if (collision.relativeVelocity.magnitude > 3)
@@ -42,5 +45,17 @@ public class NetworkItem : NetworkBehaviour
                 }
             }
         }
+    }
+
+    [Command(requiresAuthority = false)]
+    public void SetVelocity(Vector3 velocity)
+    {
+        rb.linearVelocity = velocity;
+    }
+
+    [Command(requiresAuthority = false)]
+    public void AddForce(Vector3 velocity)
+    {
+        rb.AddForce(velocity);
     }
 }

@@ -1,12 +1,11 @@
 using System;
-using System.Collections.Generic;
 using Mirror;
 using TMPro;
 using UnityEngine;
 
 public class ChatManager : NetworkBehaviour
 {
-    private PlayerInfo playerInfo;
+    private Entity playerInfo;
 
     [HideInInspector]
     public TMP_Text chat;
@@ -17,7 +16,7 @@ public class ChatManager : NetworkBehaviour
 
     private void Start()
     {
-        playerInfo = GetComponent<PlayerInfo>();
+        playerInfo = GetComponent<Entity>();
 
         Transform chat = GetComponent<Links>().ui.Find("Chat Ui/Chat");
         this.chat = chat.Find("Scroll View/Viewport/Text").GetComponent<TMP_Text>();
@@ -26,23 +25,6 @@ public class ChatManager : NetworkBehaviour
         inputField.onEndEdit.AddListener(EditInput);
         OnMessage += AddLocalMessage;
         Application.logMessageReceived += HandleLog;
-    }
-
-    public void PrintWelcomeMessage(string nickname)
-    {
-        string welcomeMessage = $"Welcome to the server, {nickname}!";
-
-        List<string> nicknames = new();
-        foreach (var player in ServerInfo.Instance.players)
-        {
-            if (player && player != netIdentity)
-                nicknames.Add(player.name);
-        }
-        if (nicknames.Count > 0)
-            welcomeMessage += "\nPlayers online: " + string.Join(", ", nicknames);
-
-        Debug.Log(welcomeMessage);
-        Debug.Log("/aeo " + nickname + " has joined");
     }
 
     // On disconnecting
@@ -66,16 +48,17 @@ public class ChatManager : NetworkBehaviour
     private void HandleLog(string logString, string stackTrace, LogType type)
     {
         string color = GetLogTypeColor(type);
-        string prefix = $"<color={color}>[Server]: </color>";
+        string message = $"<align=center><color={color}><i>{logString}";
+        string postfix = "</color></i></align>";
 
         if (logString.StartsWith("/"))
-            HandleCommand(logString, prefix);
+            HandleCommand(logString, message + postfix);
         else
         {
             if (type == LogType.Error || type == LogType.Warning)
-                AddLocalMessage(prefix + logString + "/n" + stackTrace);
+                AddLocalMessage(message + "/n" + stackTrace + postfix);
             else
-                AddLocalMessage(prefix + logString);
+                AddLocalMessage(message + postfix);
         }
     }
 
@@ -85,11 +68,11 @@ public class ChatManager : NetworkBehaviour
         {
             LogType.Error => "red",
             LogType.Warning => "yellow",
-            _ => "blue",
+            _ => "grey",
         };
     }
 
-    private void HandleCommand(string command, string prefix)
+    private void HandleCommand(string command, string message)
     {
         if (command.Contains(" "))
         {
@@ -99,12 +82,12 @@ public class ChatManager : NetworkBehaviour
             {
                 case "/a":
                 {
-                    SendToEveryone(prefix + parts[1]);
+                    SendToEveryone(message);
                     break;
                 }
                 case "/aeo":
                 {
-                    CmdSendToEveryone(prefix + parts[1], false);
+                    CmdSendToEveryone(message, false);
                     break;
                 }
                 case "/ignore":
@@ -131,7 +114,7 @@ public class ChatManager : NetworkBehaviour
         if (string.IsNullOrWhiteSpace(message))
             return;
 
-        SendToEveryone($"<color=green>[{playerInfo.nickname}]: </color>" + message);
+        SendToEveryone($"<color=green>[{playerInfo.entityName}]: </color>" + message);
         inputField.text = string.Empty;
     }
 
@@ -162,7 +145,7 @@ public class ChatManager : NetworkBehaviour
     }
 
     [TargetRpc]
-    private void TargetServerMessage(string message)
+    public void AddMessage(string message)
     {
         Debug.Log(message);
     }

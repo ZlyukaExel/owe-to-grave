@@ -190,7 +190,7 @@ public class Combat : State
             dirWithoutSpread = aimRay.GetPoint(100) - l.weapon.bulletSpawnTransform.position;
 
         // Add spread
-        float currentSpread = l.weapon.spread;
+        float currentSpread = l.weapon.properties.spread;
         currentSpread *= 1 + l.movement.currentSpeed / 8;
         if (isCrouching)
             currentSpread /= 1.25f;
@@ -204,7 +204,7 @@ public class Combat : State
         l.networkCommands.RequestSpawnBullet(
             l.weapon.bulletSpawnTransform.position,
             dirWithSpread,
-            l.weapon.bulletSpeed
+            l.weapon.properties
         );
 
         //mFireCD = true;

@@ -6,23 +6,21 @@ public class NetworkCommands : NetworkBehaviour
     [SerializeField]
     private GameObject bulletPrefab;
 
-    public void RequestSpawnBullet(Vector3 position, Vector3 direction, float speed)
+    public void RequestSpawnBullet(Vector3 position, Vector3 direction, WeaponProperties properties)
     {
         if (!isLocalPlayer)
             return;
 
-        CmdSpawnBullet(position, direction, speed);
+        CmdSpawnBullet(position, direction, properties);
     }
 
     [Command]
-    private void CmdSpawnBullet(Vector3 position, Vector3 direction, float speed)
+    private void CmdSpawnBullet(Vector3 position, Vector3 direction, WeaponProperties properties)
     {
         // Spawning bullet on server
         GameObject bullet = Instantiate(bulletPrefab, position, Quaternion.LookRotation(direction));
         // Ignore shooter
-        bullet
-            .GetComponent<Bullet>()
-            .Initiate(speed, transform.GetComponentsInChildren<Collider>());
+        bullet.GetComponent<Bullet>().Initiate(properties, netId);
         NetworkServer.Spawn(bullet, connectionToClient);
     }
 

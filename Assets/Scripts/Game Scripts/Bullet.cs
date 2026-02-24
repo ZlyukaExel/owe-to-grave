@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Mirror;
 using UnityEngine;
 
@@ -12,12 +11,16 @@ public class Bullet : NetworkBehaviour
         lifeTime = 2,
         critMultiplier = 3;
 
+    [HideInInspector]
+    public int piercing = 0;
+
+    private readonly HashSet<uint> ignorePlayers = new();
+
     [SerializeField]
     private bool isKinematic = false;
 
     [SerializeField]
     private LayerMask obstaclesLayers;
-    private readonly List<Collider> ignoreColliders = new();
 
     [SerializeField]
     private GameObject bulletHole,
@@ -30,6 +33,10 @@ public class Bullet : NetworkBehaviour
             enabled = false;
             return;
         }
+
+        // If PVP enabled, handle Players layer too
+        if (ServerInfo.Instance.pvpEnabled)
+            obstaclesLayers |= 1 << LayerMask.NameToLayer("Player");
 
         StartCoroutine(DelayedDestroy(lifeTime));
     }
@@ -57,9 +64,6 @@ public class Bullet : NetworkBehaviour
             )
         )
         {
-            if (ignoreColliders.Contains(hit.collider))
-                continue;
-
             // If hit
             HandleHit(hit);
 
@@ -73,15 +77,12 @@ public class Bullet : NetworkBehaviour
             transform.position += transform.forward * step;
     }
 
-    public void Initiate(float speed, Collider[] ignoreColliders)
+    public void Initiate(WeaponProperties properties, uint ignorePlayer)
     {
-        this.speed = speed;
-        IgnoreColliders(ignoreColliders);
-    }
-
-    public void IgnoreColliders(Collider[] colliders)
-    {
-        ignoreColliders.AddRange(colliders);
+        damage = properties.damage;
+        critMultiplier = properties.critMultiplier;
+        speed = properties.bulletSpeed;
+        ignorePlayers.Add(ignorePlayer);
     }
 
     private void HandleHit(RaycastHit hit)
@@ -96,12 +97,34 @@ public class Bullet : NetworkBehaviour
             // Deal damage
             case "Player":
             {
-                NetworkHitpoints hp = hit.transform.GetComponent<NetworkHitpoints>();
+                HitPoint hp = hit.collider.GetComponent<HitPoint>();
+                if (hp.GetHp() == null)
+                    return;
 
-                if (hp.critPoints.Contains(hit.collider))
-                    hp.Damage(damage * critMultiplier);
+                // Single bullet can't hit twice
+                uint playerId = hp.GetHp().netId;
+                if (ignorePlayers.Contains(playerId))
+                    return;
+                ignorePlayers.Add(playerId);
+
+                DamageInfo damageInfo = new DamageInfo(
+                    damage,
+                    critMultiplier,
+                    DamageType.Bullet,
+                    null
+                );
+                hp.Damage(damageInfo);
+
+                // Destroying bullet
+                if (piercing <= 0)
+                {
+                    // This was made so cuz players should be able to hide behind teamates
+                    RpcDisable();
+                    StartCoroutine(DelayedDestroy(1));
+                }
+                // Reducing piercing
                 else
-                    hp.Damage(damage);
+                    piercing--;
 
                 break;
             }

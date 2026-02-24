@@ -1,6 +1,7 @@
 using Mirror;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class NetworkAudioSource : NetworkBehaviour
 {
     private AudioSource audioSource;

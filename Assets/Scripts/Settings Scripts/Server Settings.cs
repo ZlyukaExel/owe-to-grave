@@ -62,7 +62,7 @@ public class ServerSettings : MonoBehaviour
         serverVisibleToggle.isOn = NetworkDiscovery.Instance.serverVisible;
 
         // If pvp is off, bullet ignores Player
-        pvpToggle.isOn = ServerInfo.Instance.isPvpOn;
+        pvpToggle.isOn = ServerInfo.Instance.pvpEnabled;
 
         confirm.interactable = cancel.interactable = false;
     }
@@ -84,7 +84,7 @@ public class ServerSettings : MonoBehaviour
         }
 
         // If pvp is off, bullet ignores Player
-        ServerInfo.Instance.SetPvp(pvpToggle.isOn);
+        ServerInfo.Instance.SetPvpEnabled(pvpToggle.isOn);
 
         confirm.interactable = cancel.interactable = false;
     }

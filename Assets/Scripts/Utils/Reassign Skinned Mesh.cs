@@ -12,6 +12,6 @@ public class ReassignSkinnedMesh : MonoBehaviour
         shirtRenderer.bones = targetRenderer.bones;
         shirtRenderer.rootBone = targetRenderer.rootBone;
 
-        Destroy(this);
+        DestroyImmediate(this);
     }
 }

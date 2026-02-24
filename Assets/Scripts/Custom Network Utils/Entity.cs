@@ -4,18 +4,13 @@ using Mirror.Discovery;
 using TMPro;
 using UnityEngine;
 
-public class PlayerInfo : NetworkBehaviour
+public class Entity : NetworkBehaviour
 {
-    [SyncVar]
-    public int playerId = -1;
-
     [SyncVar(hook = nameof(OnNicknameChanged))]
-    public string nickname;
+    public string entityName;
 
     [SerializeField]
     private TMP_Text textTag;
-
-    private bool nicknameSet = false;
 
     // Register onStartLocalPlayer cuz PlayerPrefs needed
     public override void OnStartLocalPlayer()
@@ -25,14 +20,13 @@ public class PlayerInfo : NetworkBehaviour
 
     public override void OnStopServer()
     {
-        Debug.Log($"/a {nickname} has left");
+        Debug.Log($"/a {entityName} has left");
         ServerInfo.Instance.RemovePlayer(netIdentity);
     }
 
     [Command]
     private void RegisterPlayer(string nickname)
     {
-        playerId = connectionToClient.connectionId;
         ChangeNickname(nickname);
     }
 
@@ -65,25 +59,21 @@ public class PlayerInfo : NetworkBehaviour
         }
 
         // Changing nickname on sever
-        this.nickname = uniqueNickname;
+        this.entityName = uniqueNickname;
         connectionToClient.nickname = uniqueNickname;
     }
 
     private void OnNicknameChanged(string oldName, string newName)
     {
-        gameObject.name = textTag.text = newName;
+        gameObject.name = newName;
+        if (textTag)
+            textTag.text = newName;
 
-        // First nickname change prints welcomeMessage
-        if (isOwned && !nicknameSet)
-        {
-            GetComponent<ChatManager>().PrintWelcomeMessage(newName);
-            AddInServerInfo();
-            nicknameSet = true;
-        }
+        AddToServerInfo();
     }
 
     [Command]
-    private void AddInServerInfo()
+    private void AddToServerInfo()
     {
         ServerInfo.Instance.AddPlayer(netIdentity);
     }

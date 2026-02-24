@@ -621,9 +621,9 @@ MonoBehaviour:
   m_HandleRect: {fileID: 0}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 100
+  m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 100
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -10778,6 +10778,12 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     mobileOnly: 0
+  onMovement:
+    m_PersistentCalls:
+      m_Calls: []
+  onNoMovement:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!82 &5407465361813485319
 AudioSource:
   m_ObjectHideFlags: 0

@@ -5,7 +5,7 @@ using UnityEngine;
 public class ServerInfo : NetworkBehaviour
 {
     [SyncVar(hook = nameof(OnPvpChanged))]
-    public bool isPvpOn = false;
+    public bool pvpEnabled = false;
     public readonly SyncList<NetworkIdentity> players = new();
     public static ServerInfo Instance { get; private set; }
 
@@ -20,38 +20,28 @@ public class ServerInfo : NetworkBehaviour
         }
     }
 
-    void Start()
-    {
-        // If pvp is off, bullets ignore players
-        Physics.IgnoreLayerCollision(
-            LayerMask.NameToLayer("Projectiles"),
-            LayerMask.NameToLayer("Player"),
-            !isPvpOn
-        );
-        Physics.IgnoreLayerCollision(
-            LayerMask.NameToLayer("Projectiles"),
-            LayerMask.NameToLayer("Ignore Raycast"),
-            !isPvpOn
-        ); // Local player's layer
-
-        // Debug
-        // foreach (var spawnable in NetworkServer.spawned)
-        // {
-        //     print("Object netId: " + spawnable.Key + ", netIdentity: " + spawnable.Value);
-        // }
-    }
-
     [Server]
     public void AddPlayer(NetworkIdentity networkIdentity)
     {
-        if (networkIdentity == null)
+        if (networkIdentity == null || players.Contains(networkIdentity))
             return;
 
-        if (!players.Contains(networkIdentity))
+        // Greeting player
+        networkIdentity
+            .GetComponent<ChatManager>()
+            .AddMessage("Welcome to the server, " + networkIdentity.connectionToClient.nickname);
+
+        // Informing other players
+        foreach (var player in players)
         {
-            players.Add(networkIdentity);
-            RpcOnAdded(networkIdentity);
+            player
+                .GetComponent<ChatManager>()
+                .AddMessage(networkIdentity.connectionToClient.nickname + " has joined");
         }
+
+        // Add player
+        players.Add(networkIdentity);
+        RpcOnAdded(networkIdentity);
     }
 
     [ClientRpc]
@@ -77,25 +67,13 @@ public class ServerInfo : NetworkBehaviour
     }
 
     [Server]
-    public void SetPvp(bool value)
+    public void SetPvpEnabled(bool enabled)
     {
-        isPvpOn = value;
+        pvpEnabled = enabled;
     }
 
     private void OnPvpChanged(bool oldValue, bool newValue)
     {
-        // If pvp is off, bullets ignore players
-        Physics.IgnoreLayerCollision(
-            LayerMask.NameToLayer("Projectiles"),
-            LayerMask.NameToLayer("Player"),
-            !newValue
-        );
-        Physics.IgnoreLayerCollision(
-            LayerMask.NameToLayer("Projectiles"),
-            LayerMask.NameToLayer("Ignore Raycast"),
-            !newValue
-        ); // It's local player's layer
-
         if (newValue)
             Debug.Log("PVP enabled!");
         else
