@@ -8,7 +8,7 @@ public class NetworkHitpoints : NetworkBehaviour
 {
     [SerializeField]
     private float maxHp = 100;
-    public HitPoint[] hitPoints;
+    public HitPointsSet hitPoints;
 
     [SyncVar(hook = nameof(OnHpChanged))]
     public float currentHp;
@@ -35,17 +35,14 @@ public class NetworkHitpoints : NetworkBehaviour
         currentHp = Mathf.Max(0, currentHp - damage);
     }
 
-    public void SetHitPoints(HitPoint[] hitPoints)
+    public void ChangeHitPoints(HitPointsSet hitPoints)
     {
-        foreach (var hp in this.hitPoints)
-        {
-            hp.SetHp(null);
-        }
+        if (!isOwned)
+            return;
 
-        foreach (var hp in hitPoints)
-        {
-            hp.SetHp(this);
-        }
+        this.hitPoints?.SetHp(null);
+        this.hitPoints = hitPoints;
+        this.hitPoints.SetHp(netIdentity);
     }
 
     private void OnHpChanged(float oldVar, float newVar)
@@ -112,4 +109,5 @@ public enum DamageType
 {
     Bullet,
     Item,
+    Fall,
 }

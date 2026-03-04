@@ -51,10 +51,7 @@ public class Combat : State
             l.cameraController.positionOffset.x = 0.7f;
 
         l.animator.SetBool("inCombat", true);
-        l.animator.GetComponent<WeaponManager>().inCombat = true;
-
-        // Activate rifle in hand
-        l.weapon.swapObjects.ActivateFirst();
+        l.weapon.Activate(true);
 
         // Enable combat buttons
         crouchButtonObj.SetActive(true);
@@ -84,6 +81,7 @@ public class Combat : State
     public override void UpdateState()
     {
         l.movement.MovementUpdate();
+        l.carTrigger.CarTriggerUpdate();
 
         float target = isAiming ? 1f : 0f;
         aimingWeight = Mathf.MoveTowards(aimingWeight, target, 3 * Time.deltaTime);
@@ -131,7 +129,7 @@ public class Combat : State
 
     public override void ExitState()
     {
-        l.animator.GetComponent<WeaponManager>().ActivateHiddenWeapon();
+        l.weapon.Activate(false);
 
         InputManager.Instance.GetAction(KeyCode.Mouse0)?.onDown.RemoveListener(OnShootButtonDown);
         InputManager.Instance.GetAction(KeyCode.Mouse0)?.onUp.RemoveListener(OnShootButtonUp);
@@ -150,7 +148,7 @@ public class Combat : State
         }
 
         // Slow down when shooting
-        l.weapon.animator.SetBool("isShooting", aimingWeight >= 0.9 && shootButtonPressed);
+        l.weapon.SetShooting(aimingWeight >= 0.9f && shootButtonPressed);
 
         if (shootButtonPressed && !isShooting)
         {
@@ -171,11 +169,11 @@ public class Combat : State
             OnCrouchButtonDown();
 
         l.animator.SetBool("inCombat", false);
-        l.animator.GetComponent<WeaponManager>().inCombat = false;
+        l.weapon.Activate(false);
         l.humanoid.SetState(new Default(l));
     }
 
-    public void SpawnBullet()
+    public void SpawnBullet(Vector3 spawnerPosition)
     {
         // Vector to the target
         Vector3 dirWithoutSpread;
@@ -185,15 +183,17 @@ public class Combat : State
 
         // Get raycast hit
         if (Physics.Raycast(aimRay, out RaycastHit aimHit, Mathf.Infinity, l.humanoid.combatLayers))
-            dirWithoutSpread = aimHit.point - l.weapon.bulletSpawnTransform.position;
+            dirWithoutSpread = aimHit.point - spawnerPosition;
         else
-            dirWithoutSpread = aimRay.GetPoint(100) - l.weapon.bulletSpawnTransform.position;
+            dirWithoutSpread = aimRay.GetPoint(100) - spawnerPosition;
 
         // Add spread
         float currentSpread = l.weapon.properties.spread;
         currentSpread *= 1 + l.movement.currentSpeed / 8;
-        if (isCrouching)
-            currentSpread /= 1.25f;
+
+        // if (isCrouching)
+        //     currentSpread /= 1.25f;
+
         float xSpread = Random.Range(-currentSpread, currentSpread);
         float ySpread = Random.Range(-currentSpread, currentSpread);
         Vector3 dirWithSpread = (
@@ -201,14 +201,10 @@ public class Combat : State
         ).normalized;
 
         // Spawn bullet
-        l.networkCommands.RequestSpawnBullet(
-            l.weapon.bulletSpawnTransform.position,
-            dirWithSpread,
-            l.weapon.properties
-        );
+        l.networkCommands.RequestSpawnBullet(spawnerPosition, dirWithSpread, l.weapon.properties);
 
-        //mFireCD = true;
-        //StartCoroutine(FireRate());
+        // mFireCD = true;
+        // StartCoroutine(FireRate());
 
         // Not automatic l.weapon makes a single shot
         // if (!isAutomatic)
@@ -223,14 +219,7 @@ public class Combat : State
     private void OnShootButtonUp()
     {
         shootButtonPressed = false;
-
-        // Stop shooting
-        if (isShooting)
-        {
-            l.movement.speedModifier *= 1.2f;
-            l.weapon.animator.SetBool("isShooting", false);
-            isShooting = false;
-        }
+        StopShooting();
     }
 
     /*IEnumerator FireRate()
@@ -301,7 +290,7 @@ public class Combat : State
 
         l.cameraController.isAiming = true;
 
-        if (!l.cameraController.isFirstPerson && l.cameraController.positionOffset.z < -1.2f)
+        if (!l.cameraController.isFirstPerson)
         {
             zAxisSaver = l.cameraController.positionOffset.z;
             l.cameraController.positionOffset.z = -1.2f;
@@ -326,7 +315,8 @@ public class Combat : State
 
         l.cameraController.isAiming = l.cameraController.isAiming = false;
 
-        l.cameraController.positionOffset.z = zAxisSaver;
+        if (!l.cameraController.isFirstPerson)
+            l.cameraController.positionOffset.z = zAxisSaver;
 
         isAiming = isAimingOrShooting = false;
     }
@@ -338,7 +328,7 @@ public class Combat : State
 
         l.movement.speedModifier *= 1.2f;
 
-        l.weapon.animator.SetBool("isShooting", false);
+        l.weapon.SetShooting(false);
 
         isShooting = false;
     }

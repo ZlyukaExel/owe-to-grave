@@ -48,7 +48,7 @@ public class Links : NetworkBehaviour
 
     public Transform rifleInHand; // Must be accesable
 
-    public Weapon weapon;
+    public Weapon weapon; // TODO: get from inventory
 
     [SerializeField]
     private MonoBehaviour[] localScripts;
@@ -85,17 +85,17 @@ public class Links : NetworkBehaviour
         hitpoints = GetComponent<NetworkHitpoints>();
         networkCommands = GetComponent<NetworkCommands>();
 
+        hitpoints.ChangeHitPoints(GetComponent<HitPointsSet>());
+
         // Enable local scripts & components
         foreach (var script in localScripts)
         {
             script.enabled = true;
         }
 
-        // cameraController.firstPersonCameraPivot.gameObject.SetActive(true);
-        // cameraController.thirdPersonCameraPivot.gameObject.SetActive(true);
         rb.isKinematic = false;
 
-        GetComponent<NetworkHitpoints>().SetUi(ui);
+        hitpoints.SetUi(ui);
         minimap.PlayerMarker = ui.Find("Minimap/Player marker");
     }
 }

@@ -54,13 +54,15 @@ public class Seat : InteractiveObject
 
         CmdSetCharacter(character.GetComponent<NetworkIdentity>());
 
+        // Change config
+        dummy
+            .GetComponent<NetworkCharacterConfig>()
+            .CmdSetConfig(character.GetComponent<NetworkCharacterConfig>().config);
+
         Links l = character.GetComponent<Links>();
 
         input = InputManager.Instance;
         l.ui.Find("Ground Ui").gameObject.SetActive(false);
-
-        // Saving camera position
-        Vector3 cameraPositionSaver = l.playerCamera.position;
 
         // If it's a car seat
         if (attachedCarScript != null)
@@ -108,8 +110,7 @@ public class Seat : InteractiveObject
 
         input.GetAction(KeyCode.F).onUp.AddListener(Stand);
 
-        // Return camera to where it was
-        l.playerCamera.position = cameraPositionSaver;
+        l.hitpoints.ChangeHitPoints(dummy.GetComponent<HitPointsSet>());
 
         character.GetComponent<NetworkDisable>().SetEnabled(false);
     }
@@ -125,9 +126,6 @@ public class Seat : InteractiveObject
         input.joystick.gameObject.SetActive(true);
         input.GetAction(KeyCode.F).onUp.RemoveListener(Stand);
         InputManager.Instance.onMovement.RemoveListener(Stand);
-
-        // Saving camera position
-        Vector3 savedCameraPosition = l.playerCamera.position;
 
         if (attachedCarScript)
         {
@@ -187,8 +185,7 @@ public class Seat : InteractiveObject
             currentCharacter.transform.Find("First Person Camera Pivot")
         );
 
-        // Return camera to where it was
-        l.playerCamera.position = savedCameraPosition;
+        l.hitpoints.ChangeHitPoints(currentCharacter.GetComponent<HitPointsSet>());
 
         input = null;
         CmdSetCharacter(null);

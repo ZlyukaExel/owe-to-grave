@@ -4,12 +4,17 @@ using UnityEngine.UI;
 
 public class SelectButtonByArrows : MonoBehaviour
 {
-    [SerializeField] private Button button;
+    [SerializeField]
+    private Button button;
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) ||
-            Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
+        if (
+            Input.GetKeyDown(KeyCode.UpArrow)
+            || Input.GetKeyDown(KeyCode.DownArrow)
+            || Input.GetKeyDown(KeyCode.LeftArrow)
+            || Input.GetKeyDown(KeyCode.RightArrow)
+        )
         {
             if (button)
             {
@@ -19,9 +24,9 @@ public class SelectButtonByArrows : MonoBehaviour
             else
             {
                 Button button = GetComponentInChildren<Button>();
-                if (button) button.Select();
+                if (button)
+                    button.Select();
             }
-
         }
     }
 }

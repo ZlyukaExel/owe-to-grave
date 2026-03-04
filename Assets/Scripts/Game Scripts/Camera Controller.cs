@@ -1,4 +1,3 @@
-using System.Linq;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
@@ -19,12 +18,11 @@ public class CameraController : MonoBehaviour
     public LayerMask excudeLayers;
     private bool autoRotationEnabled,
         isRestoringCamera;
-    private Material[] playerMaterials;
+    private CharacterConfigManager characterConfig;
     private Transform target;
     private float horAdj = 0.3f,
         vertAdj = 0.5f,
-        timeWithoutCameraMovement,
-        initialDistance;
+        timeWithoutCameraMovement;
 
     [SerializeField]
     private float cameraSpeed = 2,
@@ -324,11 +322,7 @@ public class CameraController : MonoBehaviour
 
         UpdateCameraPivot();
 
-        // Getting new player materials
-        playerMaterials = firstPersonPivot
-            .parent.GetComponentsInChildren<SkinnedMeshRenderer>()
-            .SelectMany(r => r.materials)
-            .ToArray();
+        characterConfig = firstPersonCameraPivot.parent.GetComponent<CharacterConfigManager>();
     }
 
     public void ChangeCameraRange(float minDistance, float maxDistance)
@@ -376,6 +370,12 @@ public class CameraController : MonoBehaviour
                 isFirstPerson = true;
                 UpdateCameraPivot();
 
+                characterConfig
+                    .GetWeapon()
+                    .GetComponent<Weapon>()
+                    .GetFlash()
+                    .gameObject.SetActive(false);
+
                 if (cameraMode == CameraMode.Car)
                     angleY -= target.eulerAngles.y;
             }
@@ -385,6 +385,12 @@ public class CameraController : MonoBehaviour
         {
             isFirstPerson = false;
             UpdateCameraPivot();
+
+            characterConfig
+                .GetWeapon()
+                .GetComponent<Weapon>()
+                .GetFlash()
+                .gameObject.SetActive(true);
 
             if (cameraMode == CameraMode.Car)
                 angleY = cameraPivot.eulerAngles.y;
@@ -413,12 +419,40 @@ public class CameraController : MonoBehaviour
 
     private void SetMaterialsAlpha(float alpha)
     {
-        foreach (var material in playerMaterials)
+        SetGameobjectAlpha(characterConfig.GetHead(), alpha);
+        GameObject weapon = characterConfig.GetWeapon();
+        Weapon weaponComponent = weapon.GetComponent<Weapon>();
+        SetChildGameobjectAlpha(weapon, alpha);
+        SetChildGameobjectAlpha(weaponComponent.GetHidden(), alpha);
+        SetGameobjectAlpha(characterConfig.GetPants(), alpha);
+        SetGameobjectAlpha(characterConfig.GetTop(), alpha);
+        SetGameobjectAlpha(characterConfig.GetShoes(), alpha);
+        SetGameobjectAlpha(characterConfig.GetGloves(), alpha);
+        SetGameobjectAlpha(characterConfig.GetHat(), alpha);
+        SetGameobjectAlpha(characterConfig.GetHair(), alpha);
+        SetGameobjectAlpha(characterConfig.GetMask(), alpha);
+    }
+
+    private void SetGameobjectAlpha(GameObject obj, float alpha)
+    {
+        if (!obj)
+            return;
+
+        foreach (var material in obj.GetComponent<SkinnedMeshRenderer>().materials)
         {
             Color currentColor = material.GetColor("_Color");
             currentColor.a = alpha;
             material.SetColor("_Color", currentColor);
         }
+    }
+
+    private void SetChildGameobjectAlpha(GameObject obj, float alpha)
+    {
+        if (!obj)
+            return;
+
+        foreach (var renderer in obj.GetComponentsInChildren<SkinnedMeshRenderer>(false))
+            SetGameobjectAlpha(renderer.gameObject, alpha);
     }
 }
 

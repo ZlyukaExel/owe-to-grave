@@ -126,7 +126,7 @@ public class Ragdoll : MonoBehaviour
 
         if (mCameraHolder != null)
         {
-            ch.GetComponent<Humanoid>().Setter(positionOffset, mSetActive);
+            // ch.GetComponent<Humanoid>().Setter(positionOffset, mSetActive);
 
             Transform chCamHolder = ch.transform.Find("CamHolder");
             chCamHolder.position = chHead.position;
@@ -135,8 +135,8 @@ public class Ragdoll : MonoBehaviour
             chCamHolder.Find("Camera").position = mCamera.transform.position;
             Destroy(mCamera.gameObject);
         }
-        else
-            ch.GetComponent<Humanoid>().StartBonesRotationFront();
+        // else
+            // ch.GetComponent<Humanoid>().StartBonesRotationFront();
 
         Destroy(gameObject);
     }

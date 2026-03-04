@@ -52,7 +52,7 @@ public class ChatManager : NetworkBehaviour
         string postfix = "</color></i></align>";
 
         if (logString.StartsWith("/"))
-            HandleCommand(logString, message + postfix);
+            HandleCommand(logString, postfix);
         else
         {
             if (type == LogType.Error || type == LogType.Warning)
@@ -72,7 +72,7 @@ public class ChatManager : NetworkBehaviour
         };
     }
 
-    private void HandleCommand(string command, string message)
+    private void HandleCommand(string command, string postfix)
     {
         if (command.Contains(" "))
         {
@@ -82,12 +82,12 @@ public class ChatManager : NetworkBehaviour
             {
                 case "/a":
                 {
-                    SendToEveryone(message);
+                    SendToEveryone(parts[1] + postfix);
                     break;
                 }
                 case "/aeo":
                 {
-                    CmdSendToEveryone(message, false);
+                    CmdSendToEveryone(parts[1] + postfix, false);
                     break;
                 }
                 case "/ignore":

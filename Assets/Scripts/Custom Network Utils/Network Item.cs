@@ -21,8 +21,6 @@ public class NetworkItem : NetworkBehaviour
         if (!isOwned)
             return;
 
-        //audioSource.CmdPlay();
-
         float velocity =
             rb.linearVelocity.magnitude * 5 /* rb.mass / 100*/
             - 10;
@@ -34,7 +32,7 @@ public class NetworkItem : NetworkBehaviour
             {
                 if (Time.time - lastHitTime > hitCooldown)
                 {
-                    DamageInfo damageInfo = new DamageInfo(velocity, 1, DamageType.Item, null);
+                    DamageInfo damageInfo = new(velocity, 1, DamageType.Item, null);
                     hp.Damage(damageInfo);
 
                     // Audio SFX

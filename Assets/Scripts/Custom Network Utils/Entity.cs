@@ -4,6 +4,7 @@ using Mirror.Discovery;
 using TMPro;
 using UnityEngine;
 
+[RequireComponent(typeof(NetworkHitpoints))]
 public class Entity : NetworkBehaviour
 {
     [SyncVar(hook = nameof(OnNicknameChanged))]
@@ -12,9 +13,13 @@ public class Entity : NetworkBehaviour
     [SerializeField]
     private TMP_Text textTag;
 
+    [SerializeField]
+    private NetworkHitpoints hitpoints;
+
     // Register onStartLocalPlayer cuz PlayerPrefs needed
     public override void OnStartLocalPlayer()
     {
+        hitpoints = GetComponent<NetworkHitpoints>();
         RegisterPlayer(PlayerPrefs.GetString("Nickname"));
     }
 
@@ -59,7 +64,7 @@ public class Entity : NetworkBehaviour
         }
 
         // Changing nickname on sever
-        this.entityName = uniqueNickname;
+        entityName = uniqueNickname;
         connectionToClient.nickname = uniqueNickname;
     }
 
@@ -69,7 +74,8 @@ public class Entity : NetworkBehaviour
         if (textTag)
             textTag.text = newName;
 
-        AddToServerInfo();
+        if (isOwned)
+            AddToServerInfo();
     }
 
     [Command]

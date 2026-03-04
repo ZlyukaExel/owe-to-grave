@@ -3,23 +3,21 @@ using UnityEngine;
 public class HitPoint : MonoBehaviour
 {
     [SerializeField]
-    private NetworkHitpoints hp;
-
-    [SerializeField]
     private bool isCrit;
+    private HitPointsSet hpSet = null;
 
     public void Damage(DamageInfo damageInfo)
     {
-        hp?.Damage(isCrit ? damageInfo.damage * damageInfo.critMultiplier : damageInfo.damage);
-    }
-
-    public void SetHp(NetworkHitpoints hp)
-    {
-        this.hp = hp;
+        hpSet?.Damage(isCrit ? damageInfo.damage * damageInfo.critMultiplier : damageInfo.damage);
     }
 
     public NetworkHitpoints GetHp()
     {
-        return hp;
+        return hpSet.GetHp();
+    }
+
+    public void SetHpSet(HitPointsSet hpSet)
+    {
+        this.hpSet = hpSet;
     }
 }
