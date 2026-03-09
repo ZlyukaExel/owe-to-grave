@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class FaceCamera : MonoBehaviour
+public class FaceCamera : MonoBehaviour // TODO: fix on start
 {
     private Transform mainCamera;
 

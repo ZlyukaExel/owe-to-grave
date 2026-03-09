@@ -193,7 +193,7 @@ public class Car : NetworkBehaviour
 
             l = character.GetComponent<Links>();
 
-            l.networkCommands.CmdRequestOwnership(netIdentity);
+            CmdRequestOwnership(netIdentity);
 
             // Change UI (can't use UI cuz keyboard ignores it then, remove on PC)
             Transform carUi = l.ui.Find("Car Ui");
@@ -235,5 +235,15 @@ public class Car : NetworkBehaviour
                 return true;
         }
         return false;
+    }
+
+    [Command(requiresAuthority = false)]
+    private void CmdRequestOwnership(NetworkIdentity itemNetId)
+    {
+        if (itemNetId != null && itemNetId.connectionToClient != connectionToClient)
+        {
+            itemNetId.RemoveClientAuthority();
+            itemNetId.AssignClientAuthority(connectionToClient);
+        }
     }
 }

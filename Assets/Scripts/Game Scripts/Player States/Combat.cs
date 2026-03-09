@@ -1,12 +1,11 @@
+using Mirror;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
-public class Combat : State
+public class CombatState : State
 {
-    public bool isCrouching;
-
     [HideInInspector]
-    public bool isAiming,
+    public bool inCombat,
+        isAiming,
         isShooting,
         isAimingOrShooting;
     public int currentSet;
@@ -17,21 +16,43 @@ public class Combat : State
     public float aimingWeight = 0;
     private float zAxisSaver;
     private GameObject aimFiller,
-        aimFiller2,
-        crouchButtonObj,
-        dashButton;
-    protected Trigger canStandTrigger;
+        aimFiller2;
     private Animator crosshairAnimator;
     private float notInCombatTime = 0;
 
-    public Combat(Links links)
-        : base(links)
+    [SerializeField]
+    private LayerMask combatLayers;
+
+    [SerializeField]
+    private GameObject bulletPrefab;
+
+    public override void Start()
     {
-        SetUi();
+        base.Start();
 
         InputManager.Instance.GetAction(KeyCode.Mouse0)?.onDown.AddListener(OnShootButtonDown);
-        InputManager.Instance.GetAction(KeyCode.Mouse0)?.onUp.AddListener(OnShootButtonUp);
         InputManager.Instance.GetAction(KeyCode.Mouse1)?.onDown.AddListener(OnAimButtonDown);
+
+        Transform combatUi = l.ui.Find("Ground Ui");
+
+        aimFiller = combatUi.Find("Aim Button/Filler").gameObject;
+        aimFiller2 = combatUi.Find("Aim Button 2/Filler").gameObject;
+        crosshairAnimator = combatUi.Find("Crosshair").GetComponent<Animator>();
+
+        // canStandTrigger = l
+        //     .transform.Find("Armature/Point Of Scaling/Can Stand Trigger")
+        //     .GetComponent<Trigger>();
+        //
+        // crouchButtonObj
+        //     .GetComponent<EventTrigger>()
+        //     .AddPointerUpAndDownListeners(OnCrouchButtonDown, OnCrouchButtonUp);
+    }
+
+    public override void EnterState()
+    {
+        inCombat = true;
+
+        InputManager.Instance.GetAction(KeyCode.Mouse0)?.onUp.AddListener(OnShootButtonUp);
         InputManager.Instance.GetAction(KeyCode.Mouse1)?.onUp.AddListener(OnAimButtonUp);
 
         if (InputManager.Instance.GetKey(KeyCode.Mouse0))
@@ -44,38 +65,13 @@ public class Combat : State
             OnAimButtonDown();
         }
 
-        // Enter combat state
-        // Take a l.weapon
-
         if (!l.cameraController.isFirstPerson)
             l.cameraController.positionOffset.x = 0.7f;
 
         l.animator.SetBool("inCombat", true);
         l.weapon.Activate(true);
 
-        // Enable combat buttons
-        crouchButtonObj.SetActive(true);
-
         currentSet = 1;
-    }
-
-    public void SetUi()
-    {
-        Transform combatUi = l.ui.Find("Ground Ui");
-
-        crouchButtonObj = combatUi.Find("Crouch Button").gameObject;
-        aimFiller = combatUi.Find("Aim Button/Filler").gameObject;
-        aimFiller2 = combatUi.Find("Aim Button 2/Filler").gameObject;
-        crosshairAnimator = combatUi.Find("Crosshair").GetComponent<Animator>();
-        dashButton = combatUi.Find("Run Button").gameObject;
-
-        canStandTrigger = l
-            .transform.Find("Armature/Point Of Scaling/Can Stand Trigger")
-            .GetComponent<Trigger>();
-
-        crouchButtonObj
-            .GetComponent<EventTrigger>()
-            .AddPointerUpAndDownListeners(OnCrouchButtonDown, OnCrouchButtonUp);
     }
 
     public override void UpdateState()
@@ -92,13 +88,7 @@ public class Combat : State
         Debug.DrawRay(origin, direction, Color.red);
         isAimingOrShooting =
             (shootButtonPressed || aimButtonClicked || aimButtonPressed)
-            && !Physics.Raycast(
-                origin,
-                direction,
-                out RaycastHit _,
-                0.75f,
-                l.humanoid.combatLayers
-            );
+            && !Physics.Raycast(origin, direction, out RaycastHit _, 0.75f, combatLayers);
 
         if (aimButtonPressed)
             aimButtonPressedTime += Time.deltaTime;
@@ -131,10 +121,10 @@ public class Combat : State
     {
         l.weapon.Activate(false);
 
-        InputManager.Instance.GetAction(KeyCode.Mouse0)?.onDown.RemoveListener(OnShootButtonDown);
         InputManager.Instance.GetAction(KeyCode.Mouse0)?.onUp.RemoveListener(OnShootButtonUp);
-        InputManager.Instance.GetAction(KeyCode.Mouse1)?.onDown.RemoveListener(OnAimButtonDown);
         InputManager.Instance.GetAction(KeyCode.Mouse1)?.onUp.RemoveListener(OnAimButtonUp);
+
+        inCombat = false;
     }
 
     private void AimingAndShotingUpdate()
@@ -159,22 +149,24 @@ public class Combat : State
 
     private void ExitCombat()
     {
-        // Remove current l.weapon
         l.cameraController.positionOffset.x = 0;
 
         aimButtonClicked = aimButtonPressed = false;
         StopAim();
 
-        if (isCrouching)
-            OnCrouchButtonDown();
+        // if (isCrouching)
+        //     OnCrouchButtonDown();
 
         l.animator.SetBool("inCombat", false);
         l.weapon.Activate(false);
-        l.humanoid.SetState(new Default(l));
+        l.stateManager.SetState(EnumState.Default);
     }
 
     public void SpawnBullet(Vector3 spawnerPosition)
     {
+        if (!isOwned)
+            return;
+
         // Vector to the target
         Vector3 dirWithoutSpread;
 
@@ -182,7 +174,7 @@ public class Combat : State
         Ray aimRay = new(l.playerCamera.position, l.playerCamera.forward);
 
         // Get raycast hit
-        if (Physics.Raycast(aimRay, out RaycastHit aimHit, Mathf.Infinity, l.humanoid.combatLayers))
+        if (Physics.Raycast(aimRay, out RaycastHit aimHit, Mathf.Infinity, combatLayers))
             dirWithoutSpread = aimHit.point - spawnerPosition;
         else
             dirWithoutSpread = aimRay.GetPoint(100) - spawnerPosition;
@@ -201,7 +193,7 @@ public class Combat : State
         ).normalized;
 
         // Spawn bullet
-        l.networkCommands.RequestSpawnBullet(spawnerPosition, dirWithSpread, l.weapon.properties);
+        CmdSpawnBullet(spawnerPosition, dirWithSpread, l.weapon.properties);
 
         // mFireCD = true;
         // StartCoroutine(FireRate());
@@ -211,8 +203,25 @@ public class Combat : State
         //     weaponAnim.SetBool("isShooting", false);
     }
 
+    [Command]
+    private void CmdSpawnBullet(Vector3 position, Vector3 direction, WeaponProperties properties)
+    {
+        // Spawning bullet on server
+        GameObject bullet = Instantiate(bulletPrefab, position, Quaternion.LookRotation(direction));
+
+        // Ignore shooter
+        bullet.GetComponent<Bullet>().Initiate(properties, netIdentity);
+        NetworkServer.Spawn(bullet, connectionToClient);
+    }
+
     private void OnShootButtonDown()
     {
+        if (!inCombat)
+        {
+            l.stateManager.SetState(EnumState.Combat);
+            return;
+        }
+
         shootButtonPressed = true;
     }
 
@@ -230,6 +239,12 @@ public class Combat : State
 
     private void OnAimButtonDown()
     {
+        if (!inCombat)
+        {
+            l.stateManager.SetState(EnumState.Combat);
+            return;
+        }
+
         if (aimButtonClicked) // Stop aim
         {
             if (isAiming)
@@ -333,44 +348,44 @@ public class Combat : State
         isShooting = false;
     }
 
-    private void OnCrouchButtonDown()
-    {
-        if (!isCrouching)
-        {
-            //characterCollider.height = 1.5f;
-            //characterCollider.center = new Vector3(0, -0.31f, 0);
+    // private void OnCrouchButtonDown()
+    // {
+    //     if (!isCrouching)
+    //     {
+    //         //characterCollider.height = 1.5f;
+    //         //characterCollider.center = new Vector3(0, -0.31f, 0);
 
-            isCrouching = true;
+    //         isCrouching = true;
 
-            l.animator.SetBool("inCover", true);
-            l.movement.StartSlide();
-            l.cameraController.positionOffset.y = -0.5f;
+    //         l.animator.SetBool("inCover", true);
+    //         l.movement.StartSlide();
+    //         l.cameraController.positionOffset.y = -0.5f;
 
-            dashButton.SetActive(false);
-        }
-        else
-        {
-            if (!canStandTrigger.isTriggered())
-            {
-                //characterCollider.height = 2.12f;
-                //characterCollider.center = Vector3.zero;
+    //         dashButton.SetActive(false);
+    //     }
+    //     else
+    //     {
+    //         if (!canStandTrigger.isTriggered())
+    //         {
+    //             //characterCollider.height = 2.12f;
+    //             //characterCollider.center = Vector3.zero;
 
-                isCrouching = false;
-                l.movement.isSliding = false;
+    //             isCrouching = false;
+    //             l.movement.isSliding = false;
 
-                l.animator.SetBool("inCover", false);
-                l.animator.SetBool("isSliding", false);
-                l.cameraController.positionOffset.y = 0;
+    //             l.animator.SetBool("inCover", false);
+    //             l.animator.SetBool("isSliding", false);
+    //             l.cameraController.positionOffset.y = 0;
 
-                if (l.cameraController.isFirstPerson)
-                    l.cameraController.positionOffset = Vector3.zero;
-                else
-                    l.cameraController.positionOffset.x = 0.7f;
+    //             if (l.cameraController.isFirstPerson)
+    //                 l.cameraController.positionOffset = Vector3.zero;
+    //             else
+    //                 l.cameraController.positionOffset.x = 0.7f;
 
-                dashButton.SetActive(true);
-            }
-        }
-    }
+    //             dashButton.SetActive(true);
+    //         }
+    //     }
+    // }
 
-    private void OnCrouchButtonUp() { }
+    // private void OnCrouchButtonUp() { }
 }

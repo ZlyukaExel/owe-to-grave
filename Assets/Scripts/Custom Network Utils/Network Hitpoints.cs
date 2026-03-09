@@ -8,7 +8,7 @@ public class NetworkHitpoints : NetworkBehaviour
 {
     [SerializeField]
     private float maxHp = 100;
-    public HitPointsSet hitPoints;
+    private HitPointsSet hitPoints;
 
     [SyncVar(hook = nameof(OnHpChanged))]
     public float currentHp;
@@ -16,9 +16,15 @@ public class NetworkHitpoints : NetworkBehaviour
     private bool isVulnerable = true;
     private Slider hpSlider;
     private TMP_Text deathsCounterText;
+    private Player player;
 
-    void Start()
+    private void Start()
     {
+        player = GetComponent<Player>();
+
+        if (GetComponent<HitPointsSet>() is HitPointsSet hpSet)
+            ChangeHitPoints(hpSet);
+
         if (isServer)
             currentHp = maxHp;
     }
@@ -37,7 +43,7 @@ public class NetworkHitpoints : NetworkBehaviour
 
     public void ChangeHitPoints(HitPointsSet hitPoints)
     {
-        if (!isOwned)
+        if (!(netIdentity.connectionToClient == null && isServer || isOwned))
             return;
 
         this.hitPoints?.SetHp(null);
@@ -72,12 +78,16 @@ public class NetworkHitpoints : NetworkBehaviour
 
     private void Die()
     {
-        if (isOwned)
+        if (player)
         {
-            CmdSetHp(maxHp);
-            deathsCounter++;
-            deathsCounterText.text = $"Deaths: {deathsCounter}";
-            Debug.Log($"/a {gameObject.name} died");
+            Debug.Log($"{player.entityName} died");
+
+            if (isOwned)
+            {
+                CmdSetHp(maxHp);
+                deathsCounter++;
+                deathsCounterText.text = $"Deaths: {deathsCounter}";
+            }
         }
     }
 
@@ -94,9 +104,9 @@ public class DamageInfo
     public float damage = 20;
     public float critMultiplier = 1;
     public DamageType type;
-    public string source;
+    public NetworkIdentity source;
 
-    public DamageInfo(float damage, float critMultiplier, DamageType type, string source)
+    public DamageInfo(float damage, float critMultiplier, DamageType type, NetworkIdentity source)
     {
         this.damage = damage;
         this.critMultiplier = critMultiplier;

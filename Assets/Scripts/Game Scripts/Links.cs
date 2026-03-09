@@ -1,6 +1,14 @@
 using Mirror;
 using UnityEngine;
 
+[RequireComponent(typeof(StateManager))]
+[RequireComponent(typeof(Movement))]
+[RequireComponent(typeof(NetworkHitpoints))]
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(HitPointsSet))]
+[RequireComponent(typeof(CharacterConfigManager))]
+[RequireComponent(typeof(CarTrigger))]
+[RequireComponent(typeof(ItemGrabber))]
 public class Links : NetworkBehaviour
 {
     [HideInInspector]
@@ -10,23 +18,19 @@ public class Links : NetworkBehaviour
     public Minimap minimap { get; private set; }
 
     [HideInInspector]
-    public Transform playerCamera;
-    public GameObject cameraPrefab;
+    public CameraController cameraController { get; private set; }
+
+    [HideInInspector]
+    public Transform playerCamera => cameraController.transform;
 
     [HideInInspector]
     public Transform cameraPivot => playerCamera.parent;
 
     [HideInInspector]
-    public CameraController cameraController { get; private set; }
-
-    [HideInInspector]
-    public Humanoid humanoid { get; private set; }
+    public StateManager stateManager { get; private set; }
 
     [HideInInspector]
     public Movement movement { get; private set; }
-
-    [HideInInspector]
-    public Dash dash { get; private set; }
 
     [HideInInspector]
     public ItemGrabber itemGrabber { get; private set; }
@@ -43,18 +47,15 @@ public class Links : NetworkBehaviour
     [HideInInspector]
     public NetworkHitpoints hitpoints { get; private set; }
 
-    [HideInInspector]
-    public NetworkCommands networkCommands { get; private set; }
-
-    public Transform rifleInHand; // Must be accesable
-
-    public Weapon weapon; // TODO: get from inventory
+    public Weapon weapon => config.GetWeapon().GetComponent<Weapon>();
+    private CharacterConfigManager config;
 
     [SerializeField]
     private MonoBehaviour[] localScripts;
 
     [SerializeField]
-    private GameObject uiPrefab,
+    private GameObject cameraPrefab,
+        uiPrefab,
         minimapPrefab;
 
     public override void OnStartLocalPlayer()
@@ -62,10 +63,10 @@ public class Links : NetworkBehaviour
         ui = Instantiate(uiPrefab).transform.Find("Game Ui");
         minimap = Instantiate(minimapPrefab).GetComponent<Minimap>();
         cameraController = Instantiate(cameraPrefab).GetComponentInChildren<CameraController>();
-        playerCamera = cameraController.transform;
-        minimap.SetTarget(transform);
+        minimap.SetTarget(transform); // TODO: change in movement
 
-        // Getting all of the components
+        // Camera init
+        cameraController.Initialize(transform);
         Transform firstPersonCameraPivot = transform.Find("First Person Camera Pivot");
         Transform thirdPersonCameraPivot = transform.Find("Third Person Camera Pivot");
         cameraController.ChangeTarget(
@@ -75,17 +76,14 @@ public class Links : NetworkBehaviour
             thirdPersonCameraPivot
         );
 
-        humanoid = GetComponent<Humanoid>();
-        movement = new Movement(this);
-        dash = GetComponent<Dash>();
-        itemGrabber = new ItemGrabber(this);
+        stateManager = GetComponent<StateManager>();
+        movement = GetComponent<Movement>();
+        itemGrabber = GetComponent<ItemGrabber>();
         rb = GetComponent<Rigidbody>();
         animator = transform.Find("Armature").GetComponent<Animator>();
-        carTrigger = new CarTrigger(this);
+        carTrigger = GetComponent<CarTrigger>();
         hitpoints = GetComponent<NetworkHitpoints>();
-        networkCommands = GetComponent<NetworkCommands>();
-
-        hitpoints.ChangeHitPoints(GetComponent<HitPointsSet>());
+        config = GetComponent<CharacterConfigManager>();
 
         // Enable local scripts & components
         foreach (var script in localScripts)
@@ -94,6 +92,8 @@ public class Links : NetworkBehaviour
         }
 
         rb.isKinematic = false;
+
+        weapon.onShot.AddListener(stateManager.combatState.SpawnBullet);
 
         hitpoints.SetUi(ui);
         minimap.PlayerMarker = ui.Find("Minimap/Player marker");

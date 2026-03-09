@@ -1,7 +1,14 @@
 using UnityEngine;
 
-public class Movement
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(CombatState))]
+[RequireComponent(typeof(Links))]
+public class Movement : MonoBehaviour
 {
+    public MovementController controller = MovementController.Player;
+    public bool canMove = true;
+    public float defaultSpeed = 3,
+        jumpForce = 4;
     public bool isRunning,
         runButtonPressed;
     public bool isMoving { get; private set; }
@@ -10,32 +17,38 @@ public class Movement
     private float inputMagnitude;
     private float runButtonPressedTime;
     private float holdButtonTime = 0.15f;
+    private float noInputTimer;
 
-    [Header("Slide")]
-    public bool isSliding;
-    public float minSlideSpeed;
-    private float slidingTime;
-    private float fixedSpeed;
-    private readonly Links l;
-    private readonly Jump jump;
+    [Header("Ground ray")]
+    public bool isGrounded;
+    public Vector3 groundRayOffset = new(0, 0.25f, 0);
+    public float groundRayLength = 0.25f;
+    public LayerMask groundTriggerLayers;
 
-    public Movement(Links links)
+    private Animator animator;
+    private Rigidbody rb;
+    private CombatState combat;
+    private CameraController cameraController;
+
+    private void Start()
     {
-        l = links;
-        jump = new Jump(l);
         InputManager.Instance.GetAction(KeyCode.LeftShift).onDown.AddListener(OnRunButtonDown);
         InputManager.Instance.GetAction(KeyCode.LeftShift).onUp.AddListener(OnRunButtonUp);
-    }
 
-    private float noInputTimer;
+        Links l = GetComponent<Links>();
+        rb = GetComponent<Rigidbody>();
+        combat = GetComponent<CombatState>();
+        animator = l.animator;
+        cameraController = l.cameraController;
+    }
 
     public void MovementUpdate()
     {
-        l.humanoid.isGrounded = Physics.Raycast(
-            l.transform.position + l.humanoid.groundRayOffset,
-            -l.transform.up,
-            l.humanoid.groundRayLength,
-            l.humanoid.groundTriggerLayers.value
+        isGrounded = Physics.Raycast(
+            transform.position + groundRayOffset,
+            -transform.up,
+            groundRayLength,
+            groundTriggerLayers.value
         );
 
         if (isRunning)
@@ -52,34 +65,41 @@ public class Movement
                 noInputTimer = 0;
         }
 
-        l.animator.SetBool("isJumping", !l.humanoid.isGrounded);
+        animator.SetBool("isJumping", !isGrounded);
     }
 
     public void MovementFixedUpdate()
     {
-        l.rb.linearVelocity = new(0, l.rb.linearVelocity.y, 0);
+        rb.linearVelocity = new(0, rb.linearVelocity.y, 0);
 
-        currentSpeed = Mathf.Round(l.rb.linearVelocity.magnitude);
-
-        jump.JumpFixedUpdate();
+        currentSpeed = Mathf.Round(rb.linearVelocity.magnitude);
 
         // Slide or move
-        if (l.humanoid.canMove)
+        if (canMove)
         {
-            if (isSliding)
-            {
-                Slide();
-            }
-            else
-            {
-                ActualMovement();
-            }
+            // if (isSliding)
+            // {
+            //     Slide();
+            // }
+            // else
+            // {
+            JumpFixedUpdate();
+            ActualMovement();
+            // }
+        }
+    }
+
+    private void JumpFixedUpdate()
+    {
+        if (InputManager.Instance.GetKey(KeyCode.Space) && isGrounded)
+        {
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
         }
     }
 
     private void ActualMovement()
     {
-        Combat combat = l.humanoid.state as Combat;
         bool isAiming = combat != null && combat.isAimingOrShooting;
 
         Vector3 direction = new(
@@ -87,7 +107,7 @@ public class Movement
             0,
             InputManager.Instance.Vertical
         );
-        Vector3 joystickWorldMovement = l.playerCamera.TransformDirection(direction);
+        Vector3 joystickWorldMovement = cameraController.transform.TransformDirection(direction);
         joystickWorldMovement.y = 0;
 
         inputMagnitude = direction.magnitude;
@@ -105,9 +125,9 @@ public class Movement
 
             // Move character
             if (currentSpeed < 10)
-                l.rb.AddForce(
+                rb.AddForce(
                     inputMagnitude
-                        * l.humanoid.defaultSpeed
+                        * defaultSpeed
                         * speedModifier
                         * joystickWorldMovement.normalized,
                     ForceMode.VelocityChange
@@ -120,17 +140,17 @@ public class Movement
         if (isAiming)
         {
             // Rotate character towards camera direction
-            Vector3 targetRotation = new(0, l.cameraController.angleY, 0);
-            l.transform.rotation = Quaternion.Lerp(
-                l.transform.rotation,
+            Vector3 targetRotation = new(0, cameraController.angleY, 0);
+            transform.rotation = Quaternion.Lerp(
+                transform.rotation,
                 Quaternion.Euler(targetRotation),
                 combat.aimingWeight
             );
 
-            if (l.animator != null)
+            if (animator != null)
             {
-                l.animator.SetFloat("VelZ", InputManager.Instance.SmoothedVertical);
-                l.animator.SetFloat("VelX", InputManager.Instance.SmoothedHorizontal);
+                animator.SetFloat("VelZ", InputManager.Instance.SmoothedVertical);
+                animator.SetFloat("VelX", InputManager.Instance.SmoothedHorizontal);
             }
         }
         // Default state
@@ -140,17 +160,17 @@ public class Movement
             if (inputMagnitude > 0)
             {
                 Quaternion targetRotation = Quaternion.LookRotation(joystickWorldMovement);
-                l.transform.rotation = Quaternion.Slerp(
-                    l.transform.rotation,
+                transform.rotation = Quaternion.Slerp(
+                    transform.rotation,
                     targetRotation,
                     7 * Time.fixedDeltaTime
                 );
             }
 
-            if (l.animator != null)
+            if (animator != null)
             {
-                l.animator.SetFloat("VelZ", inputMagnitude); // Not smooth change cuz you'll have to handle walking state
-                l.animator.SetFloat("VelX", 0);
+                animator.SetFloat("VelZ", inputMagnitude); // Not smooth change cuz you'll have to handle walking state
+                animator.SetFloat("VelX", 0);
             }
         }
     }
@@ -168,43 +188,49 @@ public class Movement
         runButtonPressed = false;
     }
 
-    public void StartSlide()
-    {
-        if (currentSpeed > 5 && !isSliding && l.humanoid.isGrounded)
-        {
-            isSliding = true;
-            fixedSpeed = currentSpeed *= 1.2f;
-            slidingTime = 0;
-            l.cameraController.maxPitch = 10;
-            l.animator.SetBool("isSliding", true);
-        }
-    }
+    // public void StartSlide()
+    // {
+    //     if (currentSpeed > 5 && !isSliding && isGrounded)
+    //     {
+    //         isSliding = true;
+    //         fixedSpeed = currentSpeed *= 1.2f;
+    //         slidingTime = 0;
+    //         l.cameraController.maxPitch = 10;
+    //         animator.SetBool("isSliding", true);
+    //     }
+    // }
 
-    private void Slide()
-    {
-        if (currentSpeed > minSlideSpeed)
-        {
-            slidingTime += 5 * Time.fixedDeltaTime;
+    // private void Slide()
+    // {
+    //     if (currentSpeed > minSlideSpeed)
+    //     {
+    //         slidingTime += 5 * Time.fixedDeltaTime;
 
-            // Fixed time slide
-            /*float targetSlidingSpeed = Mathf.Lerp(10, minSlideSpeed, slidingTime / slideTime);
-            if (currentSpeed < targetSlidingSpeed)
-                rb.AddForce(transform.forward * runSpeed * targetSlidingSpeed / 10, ForceMode.VelocityChange);*/
+    //         // Fixed time slide
+    //         /*float targetSlidingSpeed = Mathf.Lerp(10, minSlideSpeed, slidingTime / slideTime);
+    //         if (currentSpeed < targetSlidingSpeed)
+    //             rb.AddForce(transform.forward * runSpeed * targetSlidingSpeed / 10, ForceMode.VelocityChange);*/
 
-            // Slow down player
-            float targetSlidingSpeed = fixedSpeed - slidingTime;
-            l.rb.AddForce(
-                l.transform.forward * l.humanoid.defaultSpeed * targetSlidingSpeed / 10,
-                ForceMode.VelocityChange
-            );
-        }
-        else
-        {
-            isSliding = false;
-            l.cameraController.maxPitch = 45;
-            //if (!crouchButtonPressed)
-            //    OnCrouchButtonDown();
-            l.animator.SetBool("isSliding", false);
-        }
-    }
+    //         // Slow down player
+    //         float targetSlidingSpeed = fixedSpeed - slidingTime;
+    //         rb.AddForce(
+    //             defaultSpeed * targetSlidingSpeed * transform.forward / 10,
+    //             ForceMode.VelocityChange
+    //         );
+    //     }
+    //     else
+    //     {
+    //         isSliding = false;
+    //         l.cameraController.maxPitch = 45;
+    //         //if (!crouchButtonPressed)
+    //         //    OnCrouchButtonDown();
+    //         animator.SetBool("isSliding", false);
+    //     }
+    // }
+}
+
+public enum MovementController
+{
+    Player,
+    Ai,
 }

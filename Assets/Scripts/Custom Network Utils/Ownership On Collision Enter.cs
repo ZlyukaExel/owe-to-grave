@@ -12,11 +12,14 @@ public class OwnershipOnCollisionEnter : NetworkBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!isLocalPlayer) return;
+        if (!isLocalPlayer)
+            return;
 
         // Change item owner so he calculates physics now
-        if (collision.gameObject.layer == itemsLayerId
-        && collision.transform.TryGetComponent(out NetworkIdentity networkIdentity))
+        if (
+            collision.gameObject.layer == itemsLayerId
+            && collision.transform.TryGetComponent(out NetworkIdentity networkIdentity)
+        )
             CmdRequestOwnership(networkIdentity);
     }
 

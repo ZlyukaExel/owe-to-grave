@@ -25,7 +25,7 @@ public class Deform : NetworkBehaviour
     {
         if (
             !(
-                collision.transform.TryGetComponent(out Humanoid _)
+                collision.transform.TryGetComponent(out StateManager _)
                 || collision.transform.TryGetComponent(out Bullet _)
             )
         )

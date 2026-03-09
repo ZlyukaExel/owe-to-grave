@@ -1,14 +1,17 @@
 using UnityEngine;
 
-public class CarTrigger
+[RequireComponent(typeof(Links))]
+public class CarTrigger : MonoBehaviour
 {
-    private readonly GameObject getInTheCarButton;
+    private GameObject getInTheCarButton;
 
-    private readonly Links l;
+    public float carTriggerRadius = 1;
+    public Vector3 carTriggerOffset = new(0, 1, 0);
+    public LayerMask carTriggerLayers;
 
-    public CarTrigger(Links links)
+    private void Start()
     {
-        l = links;
+        Links l = GetComponent<Links>();
         getInTheCarButton = l.ui.Find("Car Button").gameObject;
         InputManager.Instance.GetAction(KeyCode.F).onUp.AddListener(GetInTheCar);
     }
@@ -20,9 +23,9 @@ public class CarTrigger
 
         foreach (
             Collider col in Physics.OverlapSphere(
-                l.transform.position + l.humanoid.carTriggerOffset,
-                l.humanoid.carTriggerRadius,
-                l.humanoid.carTriggerLayers.value
+                transform.position + carTriggerOffset,
+                carTriggerRadius,
+                carTriggerLayers.value
             )
         )
         {
@@ -43,17 +46,17 @@ public class CarTrigger
 
         foreach (
             Collider col in Physics.OverlapSphere(
-                l.transform.position + l.humanoid.carTriggerOffset,
-                l.humanoid.carTriggerRadius,
-                l.humanoid.carTriggerLayers.value
+                transform.position + carTriggerOffset,
+                carTriggerRadius,
+                carTriggerLayers.value
             )
         )
         {
             if (col.transform.root.TryGetComponent(out Car car) && car.HasSeat())
             {
-                Vector3 closestPoint = col.ClosestPoint(l.transform.position);
+                Vector3 closestPoint = col.ClosestPoint(transform.position);
 
-                float distance = Vector3.Distance(closestPoint, l.transform.position);
+                float distance = Vector3.Distance(closestPoint, transform.position);
 
                 if (distance < minDistance)
                 {
@@ -64,6 +67,6 @@ public class CarTrigger
         }
 
         if (closestCar != null)
-            closestCar.EnterCar(l.transform);
+            closestCar.EnterCar(transform);
     }
 }

@@ -13,7 +13,7 @@ public class FallDamage : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (!l.humanoid.isGrounded)
+        if (!l.movement.isGrounded)
             return;
     }
 }

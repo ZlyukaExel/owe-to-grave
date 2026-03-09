@@ -42,6 +42,15 @@ public class CameraController : MonoBehaviour
         InputManager.Instance.OnZoom += Zoom;
     }
 
+    public void Initialize(Transform character)
+    {
+        int ignoreRaycastLayer = LayerMask.NameToLayer("Ignore Raycast");
+        foreach (var collider in character.GetComponentsInChildren<Collider>())
+        {
+            collider.gameObject.layer = ignoreRaycastLayer;
+        }
+    }
+
     public void ChangeTarget(
         Transform target,
         Links links,
@@ -131,7 +140,7 @@ public class CameraController : MonoBehaviour
         {
             if (
                 l.movement.isMoving
-                && !(l.humanoid.state is Combat combat && combat.isAimingOrShooting)
+                && !(l.stateManager.state is CombatState combat && combat.isAimingOrShooting)
             )
             {
                 if (timeWithoutCameraMovement > 5)
@@ -395,7 +404,7 @@ public class CameraController : MonoBehaviour
             if (cameraMode == CameraMode.Car)
                 angleY = cameraPivot.eulerAngles.y;
 
-            if (l.humanoid.state is Combat)
+            if (l.stateManager.state is CombatState)
                 positionOffset.x = 0.7f;
         }
 

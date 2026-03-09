@@ -18,7 +18,7 @@ public class Footsteps : MonoBehaviour
 
     void Update()
     {
-        if (speed == 0 || !l.humanoid.isGrounded)
+        if (speed == 0 || !l.movement.isGrounded)
         {
             timer = 0;
             return;

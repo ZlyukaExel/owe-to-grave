@@ -2,12 +2,12 @@ using System;
 using Mirror;
 using UnityEngine;
 
-public class ServerInfo : NetworkBehaviour
+public class ServerManager : NetworkBehaviour
 {
     [SyncVar(hook = nameof(OnPvpChanged))]
     public bool pvpEnabled = false;
     public readonly SyncList<NetworkIdentity> players = new();
-    public static ServerInfo Instance { get; private set; }
+    public static ServerManager Instance { get; private set; }
 
     public event Action<NetworkIdentity> OnPlayerAdded;
     public event Action<NetworkIdentity> OnPlayerRemoved;

@@ -91,7 +91,7 @@ public class Dash : MonoBehaviour
         joystickWorldMovement.y = 0;
         joystickWorldMovement.Normalize();
 
-        if (l.humanoid.isGrounded)
+        if (l.movement.isGrounded)
             l.rb.linearVelocity += joystickWorldMovement * dashForce;
         else
             l.rb.linearVelocity += joystickWorldMovement * dashForce / 10;

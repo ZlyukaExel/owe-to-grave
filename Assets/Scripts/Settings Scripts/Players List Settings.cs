@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class PlayersListSettings : MonoBehaviour
 {
-    private ServerInfo serverInfo;
+    private ServerManager serverInfo;
     public Transform listContainer;
     public GameObject playerElement;
 
     void Awake()
     {
-        serverInfo = ServerInfo.Instance;
+        serverInfo = ServerManager.Instance;
     }
 
     void OnEnable()

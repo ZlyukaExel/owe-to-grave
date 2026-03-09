@@ -1,56 +1,27 @@
 using Mirror;
 using UnityEngine;
 
-public class Humanoid : NetworkBehaviour
+[RequireComponent(typeof(CombatState))]
+[RequireComponent(typeof(DefaultState))]
+[RequireComponent(typeof(FreezedState))]
+[RequireComponent(typeof(Links))]
+public class StateManager : NetworkBehaviour
 {
     [Header("Main")]
     public State state { get; private set; }
+    public DefaultState defaultState { get; private set; }
+    public CombatState combatState { get; private set; }
+    public FreezedState freezedState { get; private set; }
 
-    [Header("Movement")]
-    public bool canMove = true;
-    public float defaultSpeed = 3;
-
-    [Header("Ground ray")]
-    public bool isGrounded;
-    public Vector3 groundRayOffset = new(0, 0.25f, 0);
-    public float groundRayLength = 0.25f;
-    public LayerMask groundTriggerLayers;
-
-    [Header("Item Grabber")]
-    public float itemGrabberLength = 3;
-    public float itemThrowingForce = 20;
-    public LayerMask itemGrabberLayers;
-
-    [Header("Combat")]
-    public LayerMask combatLayers;
-
-    [Header("Car Trigger")]
-    public float carTriggerRadius = 1;
-    public Vector3 carTriggerOffset = new(0, 1, 0);
-    public LayerMask carTriggerLayers;
-    private Links l;
-
-    private void Start()
+    private void Awake()
     {
-        l = GetComponent<Links>();
-
-        state = new Default(l);
-
-        int ignoreRaycastLayer = LayerMask.NameToLayer("Ignore Raycast");
-        foreach (var collider in GetComponentsInChildren<Collider>())
-        {
-            collider.gameObject.layer = ignoreRaycastLayer;
-        }
-
-        InputManager.Instance.GetAction(KeyCode.Mouse0).onDown.AddListener(SwitchToCombat);
-        InputManager.Instance.GetAction(KeyCode.Mouse1).onDown.AddListener(SwitchToCombat);
+        state = defaultState = GetComponent<DefaultState>();
+        combatState = GetComponent<CombatState>();
+        freezedState = GetComponent<FreezedState>();
     }
 
     private void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.LeftControl))
-        //    OnCrouchButtonDown();
-
         state.UpdateState();
     }
 
@@ -65,19 +36,27 @@ public class Humanoid : NetworkBehaviour
         state.FixedUpdateState();
     }
 
-    public void SetState(State state)
+    public void SetState(EnumState enumState)
+    {
+        SetState(
+            enumState switch
+            {
+                EnumState.Default => defaultState,
+                EnumState.Combat => combatState,
+                EnumState.Freezed => freezedState,
+                _ => throw new System.NotImplementedException(),
+            }
+        );
+    }
+
+    private void SetState(State state)
     {
         if (this.state.GetType() == state.GetType())
             return;
 
         this.state.ExitState();
         this.state = state;
-    }
-
-    public void SwitchToCombat()
-    {
-        if (state is not Combat)
-            SetState(new Combat(l));
+        this.state.EnterState();
     }
 
     // public void TransitionToRagdoll()
@@ -321,4 +300,11 @@ public class Humanoid : NetworkBehaviour
     //             );
     //     }
     // }
+}
+
+public enum EnumState
+{
+    Default,
+    Combat,
+    Freezed,
 }

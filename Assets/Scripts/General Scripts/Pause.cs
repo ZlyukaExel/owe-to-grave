@@ -4,7 +4,7 @@ public class Pause : MonoBehaviour
 {
     void Update()
     {
-        if (ServerInfo.Instance.players.Count <= 1)
+        if (ServerManager.Instance.players.Count <= 1)
             Time.timeScale = 0;
         else
             Time.timeScale = 1;

@@ -1,8 +1,5 @@
-public class Default : State
+public class DefaultState : State
 {
-    public Default(Links links)
-        : base(links) { }
-
     public override void UpdateState()
     {
         l.movement.MovementUpdate();

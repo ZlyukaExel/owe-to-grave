@@ -2,27 +2,30 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ItemGrabber
+[RequireComponent(typeof(Links))]
+public class ItemGrabber : NetworkBehaviour
 {
+    public float itemGrabberLength = 3;
+    public float itemThrowingForce = 20;
+    public LayerMask itemGrabberLayers;
     public bool takeButtonPressed;
-    private readonly GameObject takeButtonObj,
+    private GameObject takeButtonObj,
         rotateItemButton,
         aimButton,
         attackButton;
-    private readonly AnyDirectionSlider rotateField;
-    private readonly Image takeButtonFiller;
+    private AnyDirectionSlider rotateField;
+    private Image takeButtonFiller;
     private bool isDragging;
-    private readonly int itemsLayerId;
+    private int itemsLayerId;
     private Transform itemTransform;
     private Rigidbody itemRigidbody;
-    private const float distanceToGrabbedObj = 4;
     private float takeButtonPressedTime;
     private float holdButtonTime = 0.15f;
-    private readonly Links l;
+    private Links l;
 
-    public ItemGrabber(Links links)
+    public void Start()
     {
-        l = links;
+        l = GetComponent<Links>();
 
         itemsLayerId = LayerMask.NameToLayer("Items");
         takeButtonObj = l.ui.Find("Ground Ui/Interact Button").gameObject;
@@ -63,8 +66,7 @@ public class ItemGrabber
         Ray grabRay = new(l.playerCamera.position, l.playerCamera.forward);
         Debug.DrawRay(
             l.playerCamera.position,
-            l.playerCamera.forward
-                * (l.humanoid.itemGrabberLength - l.cameraController.positionOffset.z),
+            l.playerCamera.forward * (itemGrabberLength - l.cameraController.positionOffset.z),
             Color.yellow
         );
 
@@ -73,8 +75,8 @@ public class ItemGrabber
             Physics.Raycast(
                 grabRay,
                 out RaycastHit hit,
-                l.humanoid.itemGrabberLength - l.cameraController.positionOffset.z,
-                l.humanoid.itemGrabberLayers
+                itemGrabberLength - l.cameraController.positionOffset.z,
+                itemGrabberLayers
             )
         )
         {
@@ -113,11 +115,8 @@ public class ItemGrabber
             {
                 NetworkIdentity itemNetId =
                     itemRigidbody.gameObject.GetComponent<NetworkIdentity>();
-                l.networkCommands.CmdRequestOwnership(itemNetId);
-                l.networkCommands.CmdRequestChangeLayer(
-                    itemNetId,
-                    LayerMask.NameToLayer("Projectiles")
-                );
+                CmdRequestOwnership(itemNetId);
+                CmdRequestChangeLayer(itemNetId, LayerMask.NameToLayer("Projectiles"));
                 if (!l.cameraController.isFirstPerson)
                     l.cameraController.positionOffset.x = 1;
             }
@@ -126,7 +125,7 @@ public class ItemGrabber
             {
                 Vector3 dragDirection =
                     l.cameraPivot.position
-                    + l.cameraPivot.forward * distanceToGrabbedObj
+                    + l.cameraPivot.forward * itemGrabberLength
                     - itemRigidbody.worldCenterOfMass;
 
                 // Drag the item
@@ -180,7 +179,7 @@ public class ItemGrabber
         if (itemRigidbody == null)
         {
             if (itemTransform.TryGetComponent(out InteractiveObject interactiveObject))
-                interactiveObject.Interact(l.transform);
+                interactiveObject.Interact(transform);
         }
         else
         {
@@ -193,9 +192,7 @@ public class ItemGrabber
 
                 if (takeButtonPressedTime > holdButtonTime)
                     itemRigidbody.linearVelocity =
-                        takeButtonPressedTime
-                        * l.humanoid.itemThrowingForce
-                        * l.cameraPivot.forward;
+                        takeButtonPressedTime * itemThrowingForce * l.cameraPivot.forward;
 
                 StopDragging();
             }
@@ -210,7 +207,7 @@ public class ItemGrabber
                     //#endif
 
                     // Move item to inventory
-                    l.networkCommands.CmdDestroy(itemRigidbody.gameObject);
+                    CmdDestroy(itemRigidbody.GetComponent<NetworkIdentity>());
                     l.cameraController.positionOffset.x = 0;
                     itemRigidbody = null;
                 }
@@ -220,6 +217,12 @@ public class ItemGrabber
 
             takeButtonPressedTime = takeButtonFiller.fillAmount = 0;
         }
+    }
+
+    [Command]
+    private void CmdDestroy(NetworkIdentity target)
+    {
+        NetworkServer.Destroy(target.gameObject);
     }
 
     public void StopDragging()
@@ -238,12 +241,35 @@ public class ItemGrabber
         // Set layer back
         if (itemRigidbody != null)
         {
-            l.networkCommands.CmdRequestChangeLayer(
+            CmdRequestChangeLayer(
                 itemRigidbody.transform.GetComponent<NetworkIdentity>(),
                 itemsLayerId
             );
             l.cameraController.positionOffset.x = 0;
             itemRigidbody = null;
         }
+    }
+
+    [Command]
+    private void CmdRequestOwnership(NetworkIdentity itemNetId)
+    {
+        if (itemNetId != null && itemNetId.connectionToClient != connectionToClient)
+        {
+            itemNetId.RemoveClientAuthority();
+            itemNetId.AssignClientAuthority(connectionToClient);
+        }
+    }
+
+    [Command]
+    private void CmdRequestChangeLayer(NetworkIdentity itemNetId, int layer)
+    {
+        itemNetId.ServerChangeLayer(layer);
+        RpcChangeLayer(itemNetId, layer);
+    }
+
+    [ClientRpc]
+    private void RpcChangeLayer(NetworkIdentity targetObject, int newLayer)
+    {
+        targetObject.gameObject.layer = newLayer;
     }
 }

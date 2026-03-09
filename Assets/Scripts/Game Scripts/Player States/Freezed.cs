@@ -1,5 +1,1 @@
-public class Freezed : State
-{
-    public Freezed(Links links)
-        : base(links) { }
-}
+public class FreezedState : State { }

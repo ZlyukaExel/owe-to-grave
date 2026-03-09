@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class Bullet : NetworkBehaviour
 {
+    private WeaponProperties weapon;
+    private NetworkIdentity shooter;
+
     [HideInInspector]
-    public float damage = 20,
-        speed = 1,
-        lifeTime = 2,
-        critMultiplier = 3;
+    public float lifeTime = 2;
 
     [HideInInspector]
     public int piercing = 0;
@@ -35,7 +35,7 @@ public class Bullet : NetworkBehaviour
         }
 
         // If PVP enabled, handle Players layer too
-        if (ServerInfo.Instance.pvpEnabled)
+        if (ServerManager.Instance.pvpEnabled)
             obstaclesLayers |= 1 << LayerMask.NameToLayer("Player");
 
         StartCoroutine(DelayedDestroy(lifeTime));
@@ -54,7 +54,7 @@ public class Bullet : NetworkBehaviour
 
     private void MoveBullet()
     {
-        float step = speed * Time.deltaTime;
+        float step = weapon.bulletSpeed * Time.deltaTime;
         foreach (
             var hit in Physics.RaycastAll(
                 transform.position,
@@ -77,12 +77,10 @@ public class Bullet : NetworkBehaviour
             transform.position += transform.forward * step;
     }
 
-    public void Initiate(WeaponProperties properties, uint ignorePlayer)
+    public void Initiate(WeaponProperties properties, NetworkIdentity shooter)
     {
-        damage = properties.damage;
-        critMultiplier = properties.critMultiplier;
-        speed = properties.bulletSpeed;
-        ignorePlayers.Add(ignorePlayer);
+        weapon = properties;
+        ignorePlayers.Add(shooter.netId);
     }
 
     private void HandleHit(RaycastHit hit)
@@ -107,11 +105,11 @@ public class Bullet : NetworkBehaviour
                     return;
                 ignorePlayers.Add(playerId);
 
-                DamageInfo damageInfo = new DamageInfo(
-                    damage,
-                    critMultiplier,
+                DamageInfo damageInfo = new(
+                    weapon.damage,
+                    weapon.critMultiplier,
                     DamageType.Bullet,
-                    null
+                    shooter
                 );
                 hp.Damage(damageInfo);
 
@@ -212,7 +210,11 @@ public class Bullet : NetworkBehaviour
     {
         target
             .GetComponent<Rigidbody>()
-            .AddForceAtPosition(5 * damage * direction, transform.position, ForceMode.Impulse);
+            .AddForceAtPosition(
+                5 * weapon.damage * direction,
+                transform.position,
+                ForceMode.Impulse
+            );
     }
 
     private IEnumerator DelayedDestroy(float delay)

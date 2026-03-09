@@ -5,6 +5,7 @@ public class Trigger : MonoBehaviour
 {
     //The list of colliders inside the trigger
     public List<Collider> triggerList = new();
+
     public bool isTriggered() => triggerList.Count > 0;
 
     private void Update()
