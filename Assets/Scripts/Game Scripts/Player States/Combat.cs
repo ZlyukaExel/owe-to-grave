@@ -13,7 +13,8 @@ public class CombatState : State
         aimButtonPressed,
         aimButtonClicked;
     private float aimButtonPressedTime;
-    public float aimingWeight = 0;
+    public float aimingWeight = 0,
+        aimingWeightSpeedModifier = 3;
     private float zAxisSaver;
     private GameObject aimFiller,
         aimFiller2;
@@ -26,10 +27,8 @@ public class CombatState : State
     [SerializeField]
     private GameObject bulletPrefab;
 
-    public override void Start()
+    public void Start()
     {
-        base.Start();
-
         InputManager.Instance.GetAction(KeyCode.Mouse0)?.onDown.AddListener(OnShootButtonDown);
         InputManager.Instance.GetAction(KeyCode.Mouse1)?.onDown.AddListener(OnAimButtonDown);
 
@@ -69,7 +68,11 @@ public class CombatState : State
             l.cameraController.positionOffset.x = 0.7f;
 
         l.animator.SetBool("inCombat", true);
-        l.weapon.Activate(true);
+
+        CharacterConfig config = new(l.netConfig.config) { inCombat = true };
+        l.netConfig.CmdSetConfig(config);
+
+        l.weapon.onShot.AddListener(SpawnBullet);
 
         currentSet = 1;
     }
@@ -80,7 +83,11 @@ public class CombatState : State
         l.carTrigger.CarTriggerUpdate();
 
         float target = isAiming ? 1f : 0f;
-        aimingWeight = Mathf.MoveTowards(aimingWeight, target, 3 * Time.deltaTime);
+        aimingWeight = Mathf.MoveTowards(
+            aimingWeight,
+            target,
+            aimingWeightSpeedModifier * Time.deltaTime
+        );
 
         // Aiming ray checks there's no obstacle in the way
         Vector3 origin = l.transform.position + new Vector3(0.2f, 1.25f, 0);
@@ -107,7 +114,7 @@ public class CombatState : State
             notInCombatTime += Time.deltaTime;
             if (notInCombatTime > 5)
             {
-                ExitCombat();
+                l.stateManager.SetState(EnumState.Default);
             }
         }
     }
@@ -119,7 +126,19 @@ public class CombatState : State
 
     public override void ExitState()
     {
-        l.weapon.Activate(false);
+        l.cameraController.positionOffset.x = 0;
+
+        aimButtonClicked = aimButtonPressed = false;
+        StopAim();
+
+        // if (isCrouching)
+        //     OnCrouchButtonDown();
+
+        l.animator.SetBool("inCombat", false);
+
+        CharacterConfig config = new(l.netConfig.config) { inCombat = false };
+        l.netConfig.CmdSetConfig(config);
+        l.weapon.onShot.RemoveListener(SpawnBullet);
 
         InputManager.Instance.GetAction(KeyCode.Mouse0)?.onUp.RemoveListener(OnShootButtonUp);
         InputManager.Instance.GetAction(KeyCode.Mouse1)?.onUp.RemoveListener(OnAimButtonUp);
@@ -145,21 +164,6 @@ public class CombatState : State
             l.movement.speedModifier /= 1.2f;
             isShooting = true;
         }
-    }
-
-    private void ExitCombat()
-    {
-        l.cameraController.positionOffset.x = 0;
-
-        aimButtonClicked = aimButtonPressed = false;
-        StopAim();
-
-        // if (isCrouching)
-        //     OnCrouchButtonDown();
-
-        l.animator.SetBool("inCombat", false);
-        l.weapon.Activate(false);
-        l.stateManager.SetState(EnumState.Default);
     }
 
     public void SpawnBullet(Vector3 spawnerPosition)
@@ -251,11 +255,6 @@ public class CombatState : State
                 StopAim();
 
             aimButtonClicked = false;
-
-            //#if UNITY_ANDROID
-            aimFiller.SetActive(false);
-            aimFiller2.SetActive(false);
-            //#endif
         }
         else // Start aim
         {
@@ -278,11 +277,6 @@ public class CombatState : State
             {
                 if (isAiming)
                     StopAim();
-
-                //#if UNITY_ANDROID
-                aimFiller.SetActive(false);
-                aimFiller2.SetActive(false);
-                //#endif
             }
             else
                 aimButtonClicked = true;
@@ -294,6 +288,8 @@ public class CombatState : State
 
     private void StartAim()
     {
+        l.movement.ActualMovement();
+
         l.movement.speedModifier /= 1.4f;
 
         crosshairAnimator.SetFloat("AnimSpeed", 1);
@@ -334,6 +330,12 @@ public class CombatState : State
             l.cameraController.positionOffset.z = zAxisSaver;
 
         isAiming = isAimingOrShooting = false;
+        l.movement.ActualMovement();
+
+        //#if UNITY_ANDROID
+        aimFiller.SetActive(false);
+        aimFiller2.SetActive(false);
+        //#endif
     }
 
     private void StopShooting()

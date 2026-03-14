@@ -3,9 +3,11 @@ using Mirror;
 using TMPro;
 using UnityEngine;
 
+[RequireComponent(typeof(Player))]
+[RequireComponent(typeof(Links))]
 public class ChatManager : NetworkBehaviour
 {
-    private Entity playerInfo;
+    private Player player;
 
     [HideInInspector]
     public TMP_Text chat;
@@ -16,7 +18,7 @@ public class ChatManager : NetworkBehaviour
 
     private void Start()
     {
-        playerInfo = GetComponent<Entity>();
+        player = GetComponent<Player>();
 
         Transform chat = GetComponent<Links>().ui.Find("Chat Ui/Chat");
         this.chat = chat.Find("Scroll View/Viewport/Text").GetComponent<TMP_Text>();
@@ -48,17 +50,17 @@ public class ChatManager : NetworkBehaviour
     private void HandleLog(string logString, string stackTrace, LogType type)
     {
         string color = GetLogTypeColor(type);
-        string message = $"<align=center><color={color}><i>{logString}";
+        string prefix = $"<align=center><color={color}><i>";
         string postfix = "</color></i></align>";
 
         if (logString.StartsWith("/"))
-            HandleCommand(logString, postfix);
+            HandleCommand(prefix, logString, postfix);
         else
         {
             if (type == LogType.Error || type == LogType.Warning)
-                AddLocalMessage(message + "/n" + stackTrace + postfix);
+                AddLocalMessage(prefix + logString + "/n" + stackTrace + postfix);
             else
-                AddLocalMessage(message + postfix);
+                AddLocalMessage(prefix + logString + postfix);
         }
     }
 
@@ -72,7 +74,7 @@ public class ChatManager : NetworkBehaviour
         };
     }
 
-    private void HandleCommand(string command, string postfix)
+    private void HandleCommand(string prefix, string command, string postfix)
     {
         if (command.Contains(" "))
         {
@@ -82,12 +84,12 @@ public class ChatManager : NetworkBehaviour
             {
                 case "/a":
                 {
-                    SendToEveryone(parts[1] + postfix);
+                    SendToEveryone(prefix + parts[1] + postfix);
                     break;
                 }
                 case "/aeo":
                 {
-                    CmdSendToEveryone(parts[1] + postfix, false);
+                    CmdSendToEveryone(prefix + parts[1] + postfix, false);
                     break;
                 }
                 case "/ignore":
@@ -114,7 +116,7 @@ public class ChatManager : NetworkBehaviour
         if (string.IsNullOrWhiteSpace(message))
             return;
 
-        SendToEveryone($"<color=green>[{playerInfo.entityName}]: </color>" + message);
+        SendToEveryone($"<color=green>[{player.entityName}]: </color>" + message);
         inputField.text = string.Empty;
     }
 

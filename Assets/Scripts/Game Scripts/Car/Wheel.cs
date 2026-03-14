@@ -1,6 +1,7 @@
 using Mirror;
 using UnityEngine;
 
+[RequireComponent(typeof(WheelCollider))]
 public class Wheel : NetworkBehaviour
 {
     private Transform wheelModel;
@@ -12,7 +13,7 @@ public class Wheel : NetworkBehaviour
     private Vector3 position;
     private Quaternion rotation;
 
-    private void Start()
+    private void Awake()
     {
         isBackWheel = transform.localPosition.z < 0;
         wheelCollider = GetComponent<WheelCollider>();

@@ -5,7 +5,7 @@ public abstract class State : NetworkBehaviour
 {
     protected Links l;
 
-    public virtual void Start()
+    public virtual void Awake()
     {
         l = GetComponent<Links>();
     }

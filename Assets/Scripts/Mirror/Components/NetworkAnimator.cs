@@ -19,7 +19,9 @@ namespace Mirror
     public class NetworkAnimator : NetworkBehaviour
     {
         [Header("Authority")]
-        [Tooltip("Set to true if animations come from owner client,  set to false if animations always come from server")]
+        [Tooltip(
+            "Set to true if animations come from owner client,  set to false if animations always come from server"
+        )]
         public bool clientAuthority;
 
         /// <summary>
@@ -76,9 +78,10 @@ namespace Mirror
         {
             // store the animator parameters in a variable - the "Animator.parameters" getter allocates
             // a new parameter array every time it is accessed so we should avoid doing it in a loop
-            parameters = animator.parameters
-                .Where(par => !animator.IsParameterControlledByCurve(par.nameHash))
+            parameters = animator
+                .parameters.Where(par => !animator.IsParameterControlledByCurve(par.nameHash))
                 .ToArray();
+
             lastIntParameters = new int[parameters.Length];
             lastFloatParameters = new float[parameters.Length];
             lastBoolParameters = new bool[parameters.Length];
@@ -92,6 +95,7 @@ namespace Mirror
         // both Awake and Enable need to initialize arrays.
         // in case users call SetActive(false) -> SetActive(true).
         void Awake() => Initialize();
+
         void OnEnable() => Initialize();
 
         public virtual void Reset()
@@ -121,7 +125,13 @@ namespace Mirror
                 using (NetworkWriterPooled writer = NetworkWriterPool.Get())
                 {
                     WriteParameters(writer);
-                    SendAnimationMessage(stateHash, normalizedTime, i, layerWeight[i], writer.ToArray());
+                    SendAnimationMessage(
+                        stateHash,
+                        normalizedTime,
+                        i,
+                        layerWeight[i],
+                        writer.ToArray()
+                    );
                 }
             }
 
@@ -213,7 +223,13 @@ namespace Mirror
             }
         }
 
-        void SendAnimationMessage(int stateHash, float normalizedTime, int layerId, float weight, byte[] parameters)
+        void SendAnimationMessage(
+            int stateHash,
+            float normalizedTime,
+            int layerId,
+            float weight,
+            byte[] parameters
+        )
         {
             if (isServer)
             {
@@ -237,7 +253,13 @@ namespace Mirror
             }
         }
 
-        void HandleAnimMsg(int stateHash, float normalizedTime, int layerId, float weight, NetworkReader reader)
+        void HandleAnimMsg(
+            int stateHash,
+            float normalizedTime,
+            int layerId,
+            float weight,
+            NetworkReader reader
+        )
         {
             if (isOwned && clientAuthority)
                 return;
@@ -314,6 +336,11 @@ namespace Mirror
 
         bool WriteParameters(NetworkWriter writer, bool forceAll = false)
         {
+            if (parameters == null)
+            {
+                Initialize();
+            }
+
             // fix: https://github.com/MirrorNetworking/Mirror/issues/2852
             // serialize parameterCount to be 100% sure we deserialize correct amount of bytes.
             // (255 parameters should be enough for everyone, write it as byte)
@@ -358,7 +385,10 @@ namespace Mirror
             byte parameterCount = reader.ReadByte();
             if (parameterCount != parameters.Length)
             {
-                Debug.LogError($"NetworkAnimator: serialized parameter count={parameterCount} does not match expected parameter count={parameters.Length}. Are you changing animators at runtime?", gameObject);
+                Debug.LogError(
+                    $"NetworkAnimator: serialized parameter count={parameterCount} does not match expected parameter count={parameters.Length}. Are you changing animators at runtime?",
+                    gameObject
+                );
                 return;
             }
 
@@ -397,6 +427,11 @@ namespace Mirror
             base.OnSerialize(writer, initialState);
             if (initialState)
             {
+                if (parameters == null)
+                {
+                    Initialize();
+                }
+
                 // fix: https://github.com/MirrorNetworking/Mirror/issues/2852
                 // serialize layerCount to be 100% sure we deserialize correct amount of bytes.
                 // (255 layers should be enough for everyone, write it as byte)
@@ -429,7 +464,10 @@ namespace Mirror
                 byte layerCount = reader.ReadByte();
                 if (layerCount != animator.layerCount)
                 {
-                    Debug.LogError($"NetworkAnimator: serialized layer count={layerCount} does not match expected layer count={animator.layerCount}. Are you changing animators at runtime?", gameObject);
+                    Debug.LogError(
+                        $"NetworkAnimator: serialized layer count={layerCount} does not match expected layer count={animator.layerCount}. Are you changing animators at runtime?",
+                        gameObject
+                    );
                     return;
                 }
 
@@ -467,13 +505,19 @@ namespace Mirror
             {
                 if (!isClient)
                 {
-                    Debug.LogWarning("Tried to set animation in the server for a client-controlled animator", gameObject);
+                    Debug.LogWarning(
+                        "Tried to set animation in the server for a client-controlled animator",
+                        gameObject
+                    );
                     return;
                 }
 
                 if (!isOwned)
                 {
-                    Debug.LogWarning("Only the client with authority can set animations", gameObject);
+                    Debug.LogWarning(
+                        "Only the client with authority can set animations",
+                        gameObject
+                    );
                     return;
                 }
 
@@ -487,7 +531,10 @@ namespace Mirror
             {
                 if (!isServer)
                 {
-                    Debug.LogWarning("Tried to set animation in the client for a server-controlled animator", gameObject);
+                    Debug.LogWarning(
+                        "Tried to set animation in the client for a server-controlled animator",
+                        gameObject
+                    );
                     return;
                 }
 
@@ -514,13 +561,19 @@ namespace Mirror
             {
                 if (!isClient)
                 {
-                    Debug.LogWarning("Tried to reset animation in the server for a client-controlled animator", gameObject);
+                    Debug.LogWarning(
+                        "Tried to reset animation in the server for a client-controlled animator",
+                        gameObject
+                    );
                     return;
                 }
 
                 if (!isOwned)
                 {
-                    Debug.LogWarning("Only the client with authority can reset animations", gameObject);
+                    Debug.LogWarning(
+                        "Only the client with authority can reset animations",
+                        gameObject
+                    );
                     return;
                 }
 
@@ -534,7 +587,10 @@ namespace Mirror
             {
                 if (!isServer)
                 {
-                    Debug.LogWarning("Tried to reset animation in the client for a server-controlled animator", gameObject);
+                    Debug.LogWarning(
+                        "Tried to reset animation in the client for a server-controlled animator",
+                        gameObject
+                    );
                     return;
                 }
 
@@ -546,7 +602,13 @@ namespace Mirror
         #region server message handlers
 
         [Command]
-        void CmdOnAnimationServerMessage(int stateHash, float normalizedTime, int layerId, float weight, byte[] parameters)
+        void CmdOnAnimationServerMessage(
+            int stateHash,
+            float normalizedTime,
+            int layerId,
+            float weight,
+            byte[] parameters
+        )
         {
             // Ignore messages from client if not in client authority mode
             if (!clientAuthority)
@@ -626,7 +688,13 @@ namespace Mirror
         #region client message handlers
 
         [ClientRpc]
-        void RpcOnAnimationClientMessage(int stateHash, float normalizedTime, int layerId, float weight, byte[] parameters)
+        void RpcOnAnimationClientMessage(
+            int stateHash,
+            float normalizedTime,
+            int layerId,
+            float weight,
+            byte[] parameters
+        )
         {
             using (NetworkReaderPooled networkReader = NetworkReaderPool.Get(parameters))
                 HandleAnimMsg(stateHash, normalizedTime, layerId, weight, networkReader);

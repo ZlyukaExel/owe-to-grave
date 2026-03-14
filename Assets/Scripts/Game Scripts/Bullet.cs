@@ -90,99 +90,86 @@ public class Bullet : NetworkBehaviour
 
         //print(hit.collider);
 
-        switch (hit.collider.tag)
+        // Deal damage
+        if (hit.collider.GetComponent<HitPoint>() is HitPoint hp)
         {
-            // Deal damage
-            case "Player":
+            if (hp.GetHp() == null)
+                return;
+
+            // Single bullet can't hit twice
+            uint playerId = hp.GetHp().netId;
+            if (ignorePlayers.Contains(playerId))
+                return;
+            ignorePlayers.Add(playerId);
+
+            DamageInfo damageInfo = new(
+                weapon.damage,
+                weapon.critMultiplier,
+                DamageType.Bullet,
+                shooter
+            );
+            hp.Damage(damageInfo);
+
+            // Destroying bullet
+            if (piercing <= 0)
             {
-                HitPoint hp = hit.collider.GetComponent<HitPoint>();
-                if (hp.GetHp() == null)
-                    return;
-
-                // Single bullet can't hit twice
-                uint playerId = hp.GetHp().netId;
-                if (ignorePlayers.Contains(playerId))
-                    return;
-                ignorePlayers.Add(playerId);
-
-                DamageInfo damageInfo = new(
-                    weapon.damage,
-                    weapon.critMultiplier,
-                    DamageType.Bullet,
-                    shooter
-                );
-                hp.Damage(damageInfo);
-
-                // Destroying bullet
-                if (piercing <= 0)
-                {
-                    // This was made so cuz players should be able to hide behind teamates
-                    RpcDisable();
-                    StartCoroutine(DelayedDestroy(1));
-                }
-                // Reducing piercing
-                else
-                    piercing--;
-
-                break;
-            }
-            // Destroy destroyable
-            case "Destroyable":
-            {
-                if (hit.collider.TryGetComponent(out NetworkActive destroyable))
-                    destroyable.SetActive(false);
-                break;
-            }
-            // Create particles and destroy bullet
-            default:
-            {
-                // Destroy destroyables around the contact point
-                foreach (Collider colliderHit in Physics.OverlapSphere(hit.point, 0.1f))
-                {
-                    if (
-                        colliderHit.CompareTag("Destroyable")
-                        && colliderHit.TryGetComponent(out NetworkActive destroyable)
-                    )
-                        destroyable.SetActive(false);
-                }
-
-                // Apply force to rigidbody
-                if (
-                    hit.collider.attachedRigidbody is Rigidbody rigidbody // Has rigidbody
-                    && hit.transform.gameObject.layer == LayerMask.NameToLayer("Items") // Is item
-                    && rigidbody.TryGetComponent(out NetworkIdentity networkIdentity) // Is network object
-                )
-                {
-                    // Give autority if hasn't already
-                    if (networkIdentity.connectionToClient != connectionToClient)
-                    {
-                        networkIdentity.RemoveClientAuthority();
-                        networkIdentity.AssignClientAuthority(connectionToClient);
-                    }
-
-                    // Use TargetRpc cuz only owner can apply force
-                    Vector3 forceDirection = -hit.normal;
-                    forceDirection.y = 0;
-                    RpcApplyForce(networkIdentity, forceDirection);
-                }
-                // Non-items create bullet holes
-                else
-                {
-                    SpawnBulletHoleRpc(hit.point, Quaternion.LookRotation(hit.normal));
-                }
-
-                // Creating particle
-                SpawnParticleRpc(
-                    hit.point + hit.normal * 0.01f,
-                    Quaternion.LookRotation(hit.normal)
-                );
-
-                // Waiting for particles to be created and then destroying bullet
+                // This was made so cuz players should be able to hide behind teamates
                 RpcDisable();
                 StartCoroutine(DelayedDestroy(1));
-
-                break;
             }
+            // Reducing piercing
+            else
+                piercing--;
+        }
+        // Destroy destroyable
+        else if (hit.collider.GetComponent<NetworkActive>() is NetworkActive destroyable)
+        {
+            destroyable.SetActive(false);
+        }
+        // Create particles and destroy bullet
+        else
+        {
+            // Destroy destroyables around the contact point
+            foreach (Collider colliderHit in Physics.OverlapSphere(hit.point, 0.1f))
+            {
+                if (
+                    colliderHit.CompareTag("Destroyable")
+                    && colliderHit.TryGetComponent(out destroyable)
+                )
+                    destroyable.SetActive(false);
+            }
+
+            // Apply force to rigidbody
+            if (
+                hit.collider.attachedRigidbody is Rigidbody rigidbody // Has rigidbody
+                && hit.transform.gameObject.layer == LayerMask.NameToLayer("Items") // Is item
+                && rigidbody.TryGetComponent(out NetworkIdentity networkIdentity) // Is network object
+            )
+            {
+                // Give autority if hasn't already
+                if (networkIdentity.connectionToClient != connectionToClient)
+                {
+                    networkIdentity.RemoveClientAuthority();
+                    networkIdentity.AssignClientAuthority(connectionToClient);
+                }
+
+                // Use TargetRpc cuz only owner can apply force
+                Vector3 forceDirection = -hit.normal;
+                forceDirection.y = 0;
+                RpcApplyForce(networkIdentity, forceDirection);
+            }
+            // Non-items create bullet holes
+            else
+            {
+                SpawnBulletHoleRpc(hit.point, Quaternion.LookRotation(hit.normal));
+            }
+
+            // Creating particle
+            SpawnParticleRpc(hit.point + hit.normal * 0.01f, Quaternion.LookRotation(hit.normal));
+
+            // Waiting for particles to be created and then destroying bullet
+            RpcDisable();
+            StartCoroutine(DelayedDestroy(1));
         }
     }
 

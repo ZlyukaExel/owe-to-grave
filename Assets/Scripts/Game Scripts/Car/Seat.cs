@@ -1,6 +1,7 @@
 using System.Collections;
 using Mirror;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Seat : InteractiveObject
 {
@@ -55,14 +56,22 @@ public class Seat : InteractiveObject
         CmdSetCharacter(character.GetComponent<NetworkIdentity>());
 
         // Change config
-        dummy
-            .GetComponent<NetworkCharacterConfig>()
-            .CmdSetConfig(character.GetComponent<NetworkCharacterConfig>().config);
+        CharacterConfig dummyCfg = new(character.GetComponent<NetworkCharacterConfig>().config)
+        {
+            inCombat = false,
+        };
+        dummy.GetComponent<NetworkCharacterConfig>().CmdSetConfig(dummyCfg);
 
         Links l = character.GetComponent<Links>();
 
+        l.stateManager.SetState(EnumState.Freezed);
+
         input = InputManager.Instance;
         l.ui.Find("Ground Ui").gameObject.SetActive(false);
+        Image crosshair = l.ui.Find("Ground Ui/Crosshair").GetComponent<Image>();
+        Color newColor = crosshair.color;
+        newColor.a = 0;
+        crosshair.color = newColor;
 
         // If it's a car seat
         if (attachedCarScript != null)
@@ -126,6 +135,8 @@ public class Seat : InteractiveObject
         input.joystick.gameObject.SetActive(true);
         input.GetAction(KeyCode.F).onUp.RemoveListener(Stand);
         InputManager.Instance.onMovement.RemoveListener(Stand);
+
+        l.stateManager.SetState(EnumState.Default);
 
         if (attachedCarScript)
         {

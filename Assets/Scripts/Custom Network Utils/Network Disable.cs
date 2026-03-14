@@ -40,17 +40,11 @@ public class NetworkDisable : NetworkBehaviour
             renderer.enabled = isEnabled;
         }
 
-        // Reliable rigidbody
         if (TryGetComponent(out NetworkRigidbodyReliable reliableRigidbody))
-        {
             reliableRigidbody.isKinematic = !isEnabled;
-        }
 
-        // Unreliable rigidbody
         if (TryGetComponent(out NetworkRigidbodyUnreliable unreliableRigidbody))
-        {
             unreliableRigidbody.isKinematic = !isEnabled;
-        }
 
         // Other components
         if (isOwned)
@@ -64,11 +58,11 @@ public class NetworkDisable : NetworkBehaviour
         // If enabling, reset all child ones
         if (isEnabled)
         {
-            foreach (var disabler in GetComponentsInChildren<NetworkDisable>())
+            foreach (var disabler in GetComponentsInChildren<ObjectDisable>())
             {
                 if (disabler == this)
                     continue;
-                disabler.ResetDisabler();
+                disabler.UpdateState();
             }
         }
     }

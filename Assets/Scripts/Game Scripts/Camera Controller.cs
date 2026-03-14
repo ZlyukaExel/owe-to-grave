@@ -65,7 +65,7 @@ public class CameraController : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (!cameraPivot)
+        if (!cameraPivot || !currentPivot)
             return;
 
         cameraPivot.position = currentPivot.position;

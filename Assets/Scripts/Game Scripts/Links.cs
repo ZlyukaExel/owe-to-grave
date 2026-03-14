@@ -2,13 +2,14 @@ using Mirror;
 using UnityEngine;
 
 [RequireComponent(typeof(StateManager))]
-[RequireComponent(typeof(Movement))]
+[RequireComponent(typeof(MovementManager))]
 [RequireComponent(typeof(NetworkHitpoints))]
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(HitPointsSet))]
 [RequireComponent(typeof(CharacterConfigManager))]
 [RequireComponent(typeof(CarTrigger))]
 [RequireComponent(typeof(ItemGrabber))]
+[RequireComponent(typeof(NetworkCharacterConfig))]
 public class Links : NetworkBehaviour
 {
     [HideInInspector]
@@ -30,7 +31,7 @@ public class Links : NetworkBehaviour
     public StateManager stateManager { get; private set; }
 
     [HideInInspector]
-    public Movement movement { get; private set; }
+    public MovementManager movement { get; private set; }
 
     [HideInInspector]
     public ItemGrabber itemGrabber { get; private set; }
@@ -47,8 +48,8 @@ public class Links : NetworkBehaviour
     [HideInInspector]
     public NetworkHitpoints hitpoints { get; private set; }
 
-    public Weapon weapon => config.GetWeapon().GetComponent<Weapon>();
-    private CharacterConfigManager config;
+    public Weapon weapon => netConfig.configManager.GetWeapon().GetComponent<Weapon>();
+    public NetworkCharacterConfig netConfig { get; private set; }
 
     [SerializeField]
     private MonoBehaviour[] localScripts;
@@ -58,8 +59,11 @@ public class Links : NetworkBehaviour
         uiPrefab,
         minimapPrefab;
 
-    public override void OnStartLocalPlayer()
+    private void Start()
     {
+        if (!isOwned)
+            return;
+
         ui = Instantiate(uiPrefab).transform.Find("Game Ui");
         minimap = Instantiate(minimapPrefab).GetComponent<Minimap>();
         cameraController = Instantiate(cameraPrefab).GetComponentInChildren<CameraController>();
@@ -77,13 +81,13 @@ public class Links : NetworkBehaviour
         );
 
         stateManager = GetComponent<StateManager>();
-        movement = GetComponent<Movement>();
+        movement = GetComponent<MovementManager>();
         itemGrabber = GetComponent<ItemGrabber>();
         rb = GetComponent<Rigidbody>();
         animator = transform.Find("Armature").GetComponent<Animator>();
         carTrigger = GetComponent<CarTrigger>();
         hitpoints = GetComponent<NetworkHitpoints>();
-        config = GetComponent<CharacterConfigManager>();
+        netConfig = GetComponent<NetworkCharacterConfig>();
 
         // Enable local scripts & components
         foreach (var script in localScripts)
@@ -92,8 +96,6 @@ public class Links : NetworkBehaviour
         }
 
         rb.isKinematic = false;
-
-        weapon.onShot.AddListener(stateManager.combatState.SpawnBullet);
 
         hitpoints.SetUi(ui);
         minimap.PlayerMarker = ui.Find("Minimap/Player marker");

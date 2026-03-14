@@ -10,4 +10,19 @@ public class CharacterConfig
     public int hairId = 0;
     public int maskId = 0;
     public bool inCombat = false;
+
+    public CharacterConfig() { }
+
+    public CharacterConfig(CharacterConfig other)
+    {
+        weaponId = other.weaponId;
+        pantsId = other.pantsId;
+        topId = other.topId;
+        shoesId = other.shoesId;
+        glovesId = other.glovesId;
+        hatId = other.hatId;
+        hairId = other.hairId;
+        maskId = other.maskId;
+        inCombat = other.inCombat;
+    }
 }

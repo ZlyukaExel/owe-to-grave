@@ -7,21 +7,13 @@ public class NetworkCharacterConfig : NetworkBehaviour
     [HideInInspector]
     [SyncVar(hook = nameof(OnConfigChanged))]
     public CharacterConfig config;
-    private CharacterConfigManager configManager;
+    public CharacterConfigManager configManager { get; private set; }
 
-    public override void OnStartServer()
+    public void Start()
     {
-        base.OnStartServer();
         configManager = GetComponent<CharacterConfigManager>();
-        SetConfig(configManager.GetConfig());
-    }
-
-    private void SetConfig(CharacterConfig config)
-    {
-        if (!isOwned)
-            return;
-
-        CmdSetConfig(config);
+        base.OnStartServer();
+        CmdSetConfig(configManager.GetConfig());
     }
 
     [Command(requiresAuthority = false)]
@@ -32,6 +24,8 @@ public class NetworkCharacterConfig : NetworkBehaviour
 
     private void OnConfigChanged(CharacterConfig oldVal, CharacterConfig newVal)
     {
+        if (!configManager)
+            configManager = GetComponent<CharacterConfigManager>();
         configManager.SetConfig(newVal);
     }
 }

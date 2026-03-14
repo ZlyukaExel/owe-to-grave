@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CombatState))]
 [RequireComponent(typeof(Links))]
-public class Movement : MonoBehaviour
+public class MovementManager : MonoBehaviour
 {
     public MovementController controller = MovementController.Player;
     public bool canMove = true;
@@ -14,7 +14,6 @@ public class Movement : MonoBehaviour
     public bool isMoving { get; private set; }
     public float speedModifier = 1;
     public float currentSpeed { get; private set; }
-    private float inputMagnitude;
     private float runButtonPressedTime;
     private float holdButtonTime = 0.15f;
     private float noInputTimer;
@@ -29,6 +28,7 @@ public class Movement : MonoBehaviour
     private Rigidbody rb;
     private CombatState combat;
     private CameraController cameraController;
+    private AiController aiController;
 
     private void Start()
     {
@@ -40,6 +40,7 @@ public class Movement : MonoBehaviour
         combat = GetComponent<CombatState>();
         animator = l.animator;
         cameraController = l.cameraController;
+        aiController = GetComponent<AiController>();
     }
 
     public void MovementUpdate()
@@ -78,14 +79,10 @@ public class Movement : MonoBehaviour
         if (canMove)
         {
             // if (isSliding)
-            // {
             //     Slide();
-            // }
             // else
-            // {
             JumpFixedUpdate();
             ActualMovement();
-            // }
         }
     }
 
@@ -98,19 +95,22 @@ public class Movement : MonoBehaviour
         }
     }
 
-    private void ActualMovement()
+    public void ActualMovement()
     {
-        bool isAiming = combat != null && combat.isAimingOrShooting;
+        Vector3 direction;
+        if (controller is MovementController.Player)
+        {
+            direction = new(InputManager.Instance.Horizontal, 0, InputManager.Instance.Vertical);
+        }
+        else
+        {
+            direction = new(aiController.horizontal, 0, aiController.vertical);
+        }
 
-        Vector3 direction = new(
-            InputManager.Instance.Horizontal,
-            0,
-            InputManager.Instance.Vertical
-        );
         Vector3 joystickWorldMovement = cameraController.transform.TransformDirection(direction);
         joystickWorldMovement.y = 0;
 
-        inputMagnitude = direction.magnitude;
+        float inputMagnitude = direction.magnitude;
         isMoving = inputMagnitude > 0.1f;
         if (isMoving)
         {
@@ -120,7 +120,7 @@ public class Movement : MonoBehaviour
             else
                 inputMagnitude = 0.5f;
 
-            if (isRunning && !isAiming)
+            if (isRunning && !combat.isAimingOrShooting)
                 inputMagnitude = 2;
 
             // Move character
@@ -137,7 +137,7 @@ public class Movement : MonoBehaviour
             inputMagnitude = 0;
 
         // Aiming state
-        if (isAiming)
+        if (combat.isAimingOrShooting)
         {
             // Rotate character towards camera direction
             Vector3 targetRotation = new(0, cameraController.angleY, 0);

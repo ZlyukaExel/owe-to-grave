@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
+[RequireComponent(typeof(ObjectDisable))]
 public class Weapon : MonoBehaviour
 {
     public WeaponProperties properties;
@@ -16,15 +17,21 @@ public class Weapon : MonoBehaviour
     private AudioSource audioSource;
 
     [SerializeField]
-    private GameObject hidden;
+    private ObjectDisable hidden;
+    private ObjectDisable current;
     public UnityEvent<Vector3> onShot;
+
+    void Awake()
+    {
+        current = GetComponent<ObjectDisable>();
+    }
 
     public void SetShooting(bool isShooting)
     {
         animator.SetBool("isShooting", isShooting);
     }
 
-    public GameObject GetHidden() => hidden;
+    public GameObject GetHidden() => hidden.gameObject;
 
     public ParticleSystem GetFlash() => particle;
 
@@ -39,16 +46,8 @@ public class Weapon : MonoBehaviour
 
     public void Activate(bool primary)
     {
-        if (primary)
-        {
-            hidden.SetActive(false);
-            gameObject.SetActive(true);
-        }
-        else
-        {
-            hidden.SetActive(true);
-            gameObject.SetActive(false);
-        }
+        hidden.SetActive(!primary);
+        current.SetActive(primary);
     }
 
     public void DeactivateBoth()

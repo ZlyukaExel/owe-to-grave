@@ -22,7 +22,7 @@ public class StateManager : NetworkBehaviour
 
     private void Update()
     {
-        state.UpdateState();
+        state?.UpdateState();
     }
 
     // private void LateUpdate()
@@ -33,7 +33,7 @@ public class StateManager : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        state.FixedUpdateState();
+        state?.FixedUpdateState();
     }
 
     public void SetState(EnumState enumState)
@@ -54,7 +54,7 @@ public class StateManager : NetworkBehaviour
         if (this.state.GetType() == state.GetType())
             return;
 
-        this.state.ExitState();
+        this.state?.ExitState();
         this.state = state;
         this.state.EnterState();
     }

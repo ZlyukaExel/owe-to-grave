@@ -11,8 +11,12 @@ public class Entity : NetworkBehaviour
     [SerializeField]
     protected TMP_Text textTag;
 
+    protected NetworkHitpoints hp;
+
     private void Awake()
     {
+        hp = GetComponent<NetworkHitpoints>();
+        hp.onDeath.AddListener(OnDeath);
         OnNicknameChanged("", entityName);
     }
 
@@ -22,4 +26,6 @@ public class Entity : NetworkBehaviour
         if (textTag)
             textTag.text = newName;
     }
+
+    public virtual void OnDeath() { }
 }

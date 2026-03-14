@@ -144,6 +144,7 @@ GameObject:
   - component: {fileID: 6737490236207216602}
   - component: {fileID: 5194367140126000862}
   - component: {fileID: 4953369983077100104}
+  - component: {fileID: 9134496545687161030}
   m_Layer: 0
   m_Name: VanHitbox.004
   m_TagString: Car
@@ -245,6 +246,19 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 8962590349337537707, guid: 4811d7e573f85544180b45ca1331cc1e, type: 3}
+--- !u!114 &9134496545687161030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 93878176736115267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8341c716460eea74cb31ca507ad5f45b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitPoint
+  isCrit: 0
 --- !u!1 &99053643387145132
 GameObject:
   m_ObjectHideFlags: 0
@@ -257,6 +271,7 @@ GameObject:
   - component: {fileID: 9178616166085319036}
   - component: {fileID: 5990051351224609372}
   - component: {fileID: 4153293825645352414}
+  - component: {fileID: 8220847481652939148}
   m_Layer: 0
   m_Name: VanHitbox.010
   m_TagString: Car
@@ -358,6 +373,19 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 8122655783799783505, guid: 4811d7e573f85544180b45ca1331cc1e, type: 3}
+--- !u!114 &8220847481652939148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 99053643387145132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8341c716460eea74cb31ca507ad5f45b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitPoint
+  isCrit: 0
 --- !u!1 &170744979645329740
 GameObject:
   m_ObjectHideFlags: 0
@@ -370,6 +398,7 @@ GameObject:
   - component: {fileID: 8808574408428439336}
   - component: {fileID: 7105122861816862673}
   - component: {fileID: 6091847060419911188}
+  - component: {fileID: 4636792859696712973}
   m_Layer: 0
   m_Name: VanHitbox.002
   m_TagString: Car
@@ -471,6 +500,19 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 7517069933572678440, guid: 4811d7e573f85544180b45ca1331cc1e, type: 3}
+--- !u!114 &4636792859696712973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 170744979645329740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8341c716460eea74cb31ca507ad5f45b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitPoint
+  isCrit: 0
 --- !u!1 &203172945853316562
 GameObject:
   m_ObjectHideFlags: 0
@@ -573,6 +615,7 @@ GameObject:
   - component: {fileID: 3451609809852535714}
   - component: {fileID: 5905542500756828596}
   - component: {fileID: 9041200931908379336}
+  - component: {fileID: 5899941000657815979}
   m_Layer: 0
   m_Name: BodyHitbox
   m_TagString: Car
@@ -669,6 +712,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &5899941000657815979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 505870032149781253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03d9d63fc30ecc44580bac705d02dfed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitPointsSet
+  syncMethod: 0
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  hp: {fileID: 0}
 --- !u!1 &579171867194403083
 GameObject:
   m_ObjectHideFlags: 0
@@ -681,6 +741,7 @@ GameObject:
   - component: {fileID: 5942868703801553222}
   - component: {fileID: 8921246958047398970}
   - component: {fileID: 3736983259533750972}
+  - component: {fileID: 5233527462173637832}
   m_Layer: 0
   m_Name: VanHitbox.008
   m_TagString: Car
@@ -782,6 +843,19 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 898131155176596194, guid: 4811d7e573f85544180b45ca1331cc1e, type: 3}
+--- !u!114 &5233527462173637832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 579171867194403083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8341c716460eea74cb31ca507ad5f45b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitPoint
+  isCrit: 0
 --- !u!1 &604342976834792115
 GameObject:
   m_ObjectHideFlags: 0
@@ -1081,6 +1155,7 @@ GameObject:
   - component: {fileID: 2360826568435743210}
   - component: {fileID: 6329041083333072217}
   - component: {fileID: 9023853291953957118}
+  - component: {fileID: 417904048359356547}
   m_Layer: 0
   m_Name: VanHitbox.006
   m_TagString: Car
@@ -1182,6 +1257,19 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -1798088516410665618, guid: 4811d7e573f85544180b45ca1331cc1e, type: 3}
+--- !u!114 &417904048359356547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1653243446548994693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8341c716460eea74cb31ca507ad5f45b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitPoint
+  isCrit: 0
 --- !u!1 &1660339785072229143
 GameObject:
   m_ObjectHideFlags: 0
@@ -1330,6 +1418,7 @@ GameObject:
   - component: {fileID: -2848185498581049805}
   - component: {fileID: 1629011105315746981}
   - component: {fileID: 4714439596562546713}
+  - component: {fileID: 2304365859363627447}
   m_Layer: 0
   m_Name: Van
   m_TagString: Car
@@ -1739,6 +1828,28 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+--- !u!114 &2304365859363627447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711062861920365403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8748c33acf0f7b74fbe67a529020f9a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkHitpoints
+  syncMethod: 0
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  maxHp: 3000
+  hitPoints: {fileID: 5899941000657815979}
+  currentHp: 0
+  onDeath:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1981730164774010609
 GameObject:
   m_ObjectHideFlags: 0
@@ -3160,6 +3271,7 @@ GameObject:
   - component: {fileID: 300612056037172598}
   - component: {fileID: 5408578445812914593}
   - component: {fileID: 7698989862111366540}
+  - component: {fileID: 8554200351698821075}
   m_Layer: 0
   m_Name: VanHitbox.013
   m_TagString: Car
@@ -3261,6 +3373,19 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 3964640933112256919, guid: 4811d7e573f85544180b45ca1331cc1e, type: 3}
+--- !u!114 &8554200351698821075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3521782170371936384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8341c716460eea74cb31ca507ad5f45b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitPoint
+  isCrit: 0
 --- !u!1 &3613396424310300586
 GameObject:
   m_ObjectHideFlags: 0
@@ -3584,6 +3709,7 @@ GameObject:
   - component: {fileID: 5725166663422273719}
   - component: {fileID: 1510385223411301430}
   - component: {fileID: 4330831665563978419}
+  - component: {fileID: 1287202731485777653}
   m_Layer: 0
   m_Name: VanHitbox.016
   m_TagString: Car
@@ -3685,6 +3811,19 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -4371818897838457067, guid: 4811d7e573f85544180b45ca1331cc1e, type: 3}
+--- !u!114 &1287202731485777653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4451581794514678222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8341c716460eea74cb31ca507ad5f45b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitPoint
+  isCrit: 0
 --- !u!1 &4586542002434843959
 GameObject:
   m_ObjectHideFlags: 0
@@ -3697,6 +3836,7 @@ GameObject:
   - component: {fileID: 5766813216419774208}
   - component: {fileID: 7444817410413859086}
   - component: {fileID: 8349028030816703573}
+  - component: {fileID: 2966907205633544040}
   m_Layer: 0
   m_Name: VanHitbox.005
   m_TagString: Car
@@ -3798,6 +3938,19 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -1458710055534068341, guid: 4811d7e573f85544180b45ca1331cc1e, type: 3}
+--- !u!114 &2966907205633544040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4586542002434843959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8341c716460eea74cb31ca507ad5f45b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitPoint
+  isCrit: 0
 --- !u!1 &4709355989715515329
 GameObject:
   m_ObjectHideFlags: 0
@@ -4126,6 +4279,7 @@ GameObject:
   - component: {fileID: 2954691468830162733}
   - component: {fileID: 979483935134267377}
   - component: {fileID: 620260459972088176}
+  - component: {fileID: 1508751207261138147}
   m_Layer: 0
   m_Name: VanHitbox.009
   m_TagString: Car
@@ -4227,6 +4381,19 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -2903285533878678892, guid: 4811d7e573f85544180b45ca1331cc1e, type: 3}
+--- !u!114 &1508751207261138147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4769279227658065175}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8341c716460eea74cb31ca507ad5f45b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitPoint
+  isCrit: 0
 --- !u!1 &4771766467357482618
 GameObject:
   m_ObjectHideFlags: 0
@@ -4239,6 +4406,7 @@ GameObject:
   - component: {fileID: 5665454122493915433}
   - component: {fileID: 3300639644637538170}
   - component: {fileID: 5940130432257750440}
+  - component: {fileID: 6122589102373695291}
   m_Layer: 0
   m_Name: VanHitbox
   m_TagString: Car
@@ -4340,6 +4508,19 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 2628579985175231435, guid: 4811d7e573f85544180b45ca1331cc1e, type: 3}
+--- !u!114 &6122589102373695291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4771766467357482618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8341c716460eea74cb31ca507ad5f45b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitPoint
+  isCrit: 0
 --- !u!1 &4877559091112045865
 GameObject:
   m_ObjectHideFlags: 0
@@ -4479,6 +4660,7 @@ GameObject:
   - component: {fileID: 3893256458664826877}
   - component: {fileID: 4409692876217287485}
   - component: {fileID: 8818706803041517123}
+  - component: {fileID: 6878856281683567747}
   m_Layer: 0
   m_Name: VanHitbox.001
   m_TagString: Car
@@ -4580,6 +4762,19 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -82434033848365979, guid: 4811d7e573f85544180b45ca1331cc1e, type: 3}
+--- !u!114 &6878856281683567747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4938679958993785038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8341c716460eea74cb31ca507ad5f45b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitPoint
+  isCrit: 0
 --- !u!1 &5049626819441881258
 GameObject:
   m_ObjectHideFlags: 0
@@ -4592,6 +4787,7 @@ GameObject:
   - component: {fileID: 4542049592949918944}
   - component: {fileID: 1647417403540723398}
   - component: {fileID: 8258872605392267350}
+  - component: {fileID: 1980878299415188458}
   m_Layer: 0
   m_Name: VanHitbox.015
   m_TagString: Car
@@ -4693,6 +4889,19 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -627422645011410654, guid: 4811d7e573f85544180b45ca1331cc1e, type: 3}
+--- !u!114 &1980878299415188458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5049626819441881258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8341c716460eea74cb31ca507ad5f45b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitPoint
+  isCrit: 0
 --- !u!1 &5081504249473533480
 GameObject:
   m_ObjectHideFlags: 0
@@ -4818,6 +5027,7 @@ GameObject:
   - component: {fileID: 5675671794818985173}
   - component: {fileID: 8294837296182753191}
   - component: {fileID: 810770369755100339}
+  - component: {fileID: 136061753904939048}
   m_Layer: 0
   m_Name: VanHitbox.012
   m_TagString: Car
@@ -4919,6 +5129,19 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -3324414357824219730, guid: 4811d7e573f85544180b45ca1331cc1e, type: 3}
+--- !u!114 &136061753904939048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5276036601181249683}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8341c716460eea74cb31ca507ad5f45b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitPoint
+  isCrit: 0
 --- !u!1 &6002297276666942019
 GameObject:
   m_ObjectHideFlags: 0
@@ -5559,6 +5782,7 @@ GameObject:
   - component: {fileID: 4274756105490019037}
   - component: {fileID: 2962947045464346092}
   - component: {fileID: 9157690041869065941}
+  - component: {fileID: 5685115967025617709}
   m_Layer: 0
   m_Name: VanHitbox.014
   m_TagString: Car
@@ -5660,6 +5884,19 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 854229488944114286, guid: 4811d7e573f85544180b45ca1331cc1e, type: 3}
+--- !u!114 &5685115967025617709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6457403063939679139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8341c716460eea74cb31ca507ad5f45b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitPoint
+  isCrit: 0
 --- !u!1 &6510530229138454058
 GameObject:
   m_ObjectHideFlags: 0
@@ -6825,6 +7062,7 @@ GameObject:
   - component: {fileID: 8533074869886596214}
   - component: {fileID: 4485096191074861635}
   - component: {fileID: 8884047057646279096}
+  - component: {fileID: 2106233672934647277}
   m_Layer: 0
   m_Name: VanHitbox.011
   m_TagString: Car
@@ -6926,6 +7164,19 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -252821019904200715, guid: 4811d7e573f85544180b45ca1331cc1e, type: 3}
+--- !u!114 &2106233672934647277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7613458510565327605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8341c716460eea74cb31ca507ad5f45b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitPoint
+  isCrit: 0
 --- !u!1 &7710014248882315490
 GameObject:
   m_ObjectHideFlags: 0
@@ -7051,6 +7302,7 @@ GameObject:
   - component: {fileID: 5368618680234919843}
   - component: {fileID: 4942734144740331954}
   - component: {fileID: 3727515916252828560}
+  - component: {fileID: 7533891127632519486}
   m_Layer: 0
   m_Name: VanHitbox.003
   m_TagString: Car
@@ -7152,6 +7404,19 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -4132032396231304278, guid: 4811d7e573f85544180b45ca1331cc1e, type: 3}
+--- !u!114 &7533891127632519486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7975830376770538208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8341c716460eea74cb31ca507ad5f45b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitPoint
+  isCrit: 0
 --- !u!1 &8232047030762638129
 GameObject:
   m_ObjectHideFlags: 0
@@ -8007,6 +8272,7 @@ GameObject:
   - component: {fileID: 3381554799620299367}
   - component: {fileID: 2163212713172622480}
   - component: {fileID: 6048811468858122604}
+  - component: {fileID: 6726714789684440442}
   m_Layer: 0
   m_Name: VanHitbox.007
   m_TagString: Car
@@ -8108,6 +8374,19 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 7503697376245666701, guid: 4811d7e573f85544180b45ca1331cc1e, type: 3}
+--- !u!114 &6726714789684440442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9202103940079831210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8341c716460eea74cb31ca507ad5f45b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitPoint
+  isCrit: 0
 --- !u!1001 &2388324315996105527
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8272,6 +8551,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 9
       objectReference: {fileID: 0}
+    - target: {fileID: 4048935957731440095, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
+      propertyPath: hidden
+      value: 
+      objectReference: {fileID: 5350343312092075398}
     - target: {fileID: 4213446245039002759, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       propertyPath: m_Layer
       value: 9
@@ -8493,6 +8776,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6745089949999026420, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4284436593751443000}
+    - targetCorrespondingSourceObject: {fileID: 405544052544192821, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5350343312092075398}
   m_SourcePrefab: {fileID: 100100000, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
 --- !u!1 &1286508258520153005 stripped
 GameObject:
@@ -8539,6 +8825,7 @@ MonoBehaviour:
     shoesId: 0
     glovesId: 0
     hatId: 0
+    hairId: 0
     maskId: 0
     inCombat: 0
 --- !u!4 &1914391432765071639 stripped
@@ -8546,6 +8833,23 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4302134543082801696, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
   m_PrefabInstance: {fileID: 2388324315996105527}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2631721099301972482 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 405544052544192821, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
+  m_PrefabInstance: {fileID: 2388324315996105527}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5350343312092075398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2631721099301972482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee3306f5b89328045b90d0e31386b808, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectDisable
 --- !u!1 &8988718513797462979 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6745089949999026420, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
@@ -8737,6 +9041,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 9
       objectReference: {fileID: 0}
+    - target: {fileID: 4048935957731440095, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
+      propertyPath: hidden
+      value: 
+      objectReference: {fileID: 9129636354998791997}
     - target: {fileID: 4213446245039002759, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       propertyPath: m_Layer
       value: 9
@@ -8958,6 +9266,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6745089949999026420, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2220386137785566525}
+    - targetCorrespondingSourceObject: {fileID: 405544052544192821, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9129636354998791997}
   m_SourcePrefab: {fileID: 100100000, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
 --- !u!1 &29148524933045006 stripped
 GameObject:
@@ -8986,6 +9297,23 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &6366992378318342863 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 405544052544192821, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
+  m_PrefabInstance: {fileID: 6772518834380442618}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &9129636354998791997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6366992378318342863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee3306f5b89328045b90d0e31386b808, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectDisable
 --- !u!4 &7370300690171740634 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4302134543082801696, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
@@ -9036,6 +9364,7 @@ MonoBehaviour:
     shoesId: 0
     glovesId: 0
     hatId: 0
+    hairId: 0
     maskId: 0
     inCombat: 0
 --- !u!1001 &6892666011308064356
@@ -9206,6 +9535,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 9
       objectReference: {fileID: 0}
+    - target: {fileID: 4048935957731440095, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
+      propertyPath: hidden
+      value: 
+      objectReference: {fileID: 7130716084137066065}
     - target: {fileID: 4213446245039002759, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       propertyPath: m_Layer
       value: 9
@@ -9479,6 +9812,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3690584798624282464, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3007689203597982458}
+    - targetCorrespondingSourceObject: {fileID: 405544052544192821, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7130716084137066065}
   m_SourcePrefab: {fileID: 100100000, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
 --- !u!1 &161272677943946896 stripped
 GameObject:
@@ -9615,6 +9951,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HitPoint
   isCrit: 1
+--- !u!1 &6487262765257310033 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 405544052544192821, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
+  m_PrefabInstance: {fileID: 6892666011308064356}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7130716084137066065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6487262765257310033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee3306f5b89328045b90d0e31386b808, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectDisable
 --- !u!1 &6528587182591663075 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 377625362548893063, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
@@ -9719,6 +10072,7 @@ MonoBehaviour:
     shoesId: 0
     glovesId: 0
     hatId: 0
+    hairId: 0
     maskId: 0
     inCombat: 0
 --- !u!1 &8497019981801523923 stripped

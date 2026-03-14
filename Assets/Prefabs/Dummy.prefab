@@ -1024,13 +1024,29 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0986cc14728606e46af441b270548f94, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6057112467505587250}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0986cc14728606e46af441b270548f94, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5803589344976746805}
   m_SourcePrefab: {fileID: 100100000, guid: 0986cc14728606e46af441b270548f94, type: 3}
 --- !u!1 &405544052544192821 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 0986cc14728606e46af441b270548f94, type: 3}
   m_PrefabInstance: {fileID: 675999519240256612}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5803589344976746805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 405544052544192821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee3306f5b89328045b90d0e31386b808, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectDisable
+  isEnabled: 1
 --- !u!4 &1074979901240187791 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0986cc14728606e46af441b270548f94, type: 3}
@@ -1101,6 +1117,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -5748933000193357700, guid: 0986cc14728606e46af441b270548f94, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5748933000193357700, guid: 0986cc14728606e46af441b270548f94, type: 3}
       propertyPath: m_DirtyAABB
       value: 0
       objectReference: {fileID: 0}
@@ -1135,6 +1155,10 @@ PrefabInstance:
     - target: {fileID: -4999402208657661683, guid: 0986cc14728606e46af441b270548f94, type: 3}
       propertyPath: m_TagString
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: -3887185075125053422, guid: 0986cc14728606e46af441b270548f94, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -3887185075125053422, guid: 0986cc14728606e46af441b270548f94, type: 3}
       propertyPath: m_DirtyAABB
@@ -1182,11 +1206,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 0986cc14728606e46af441b270548f94, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 0986cc14728606e46af441b270548f94, type: 3}
       propertyPath: m_TagString
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 4236992221088000942, guid: 0986cc14728606e46af441b270548f94, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7940357356959463509, guid: 0986cc14728606e46af441b270548f94, type: 3}
       propertyPath: m_Layer
@@ -1212,6 +1240,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0986cc14728606e46af441b270548f94, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7317669893117399763}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0986cc14728606e46af441b270548f94, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9099017601842472718}
   m_SourcePrefab: {fileID: 100100000, guid: 0986cc14728606e46af441b270548f94, type: 3}
 --- !u!1 &3877606035874751649 stripped
 GameObject:
@@ -1240,7 +1271,7 @@ MonoBehaviour:
   animator: {fileID: 7317669893117399763}
   particle: {fileID: 4382234942151373564}
   audioSource: {fileID: 7586599240457687106}
-  hidden: {fileID: 405544052544192821}
+  hidden: {fileID: 5803589344976746805}
   onShot:
     m_PersistentCalls:
       m_Calls: []
@@ -1363,6 +1394,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &9099017601842472718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3877606035874751649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee3306f5b89328045b90d0e31386b808, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectDisable
+  isEnabled: 0
 --- !u!4 &4511435338619158043 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0986cc14728606e46af441b270548f94, type: 3}

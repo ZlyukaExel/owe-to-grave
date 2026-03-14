@@ -144,7 +144,7 @@ public class InputManager : MonoBehaviour
 
         float mouseScroll = Mathf.Clamp(Input.GetAxis("Mouse ScrollWheel"), -0.1f, 0.1f);
         zoomDistance += mouseScroll;
-        OnZoom.Invoke(zoomDistance);
+        OnZoom?.Invoke(zoomDistance);
     }
 
     private float pinchInitialDistance;

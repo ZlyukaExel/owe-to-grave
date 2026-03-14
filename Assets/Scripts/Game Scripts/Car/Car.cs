@@ -2,6 +2,8 @@ using Mirror;
 using TMPro;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(NetworkHitpoints))]
 public class Car : NetworkBehaviour
 {
     public bool isMoving => Mathf.Abs(speed) > 0.5f;
@@ -27,11 +29,14 @@ public class Car : NetworkBehaviour
     private Transform steeringWheel;
     private TMP_Text speedometer;
     private Links l;
+    private NetworkHitpoints hp;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
         wheels = GetComponentsInChildren<Wheel>();
+        hp = GetComponent<NetworkHitpoints>();
+        hp.onDeath.AddListener(Boom);
         steeringWheel = transform.Find("SteeringWheel");
         CarDoor[] doors = transform.GetComponentsInChildren<CarDoor>();
         DestroyOnCollisionEnter[] destroyables =
@@ -60,7 +65,6 @@ public class Car : NetworkBehaviour
 
     private void LateUpdate()
     {
-        // SyncVar on server
         if (isOwned)
             CmdSetSpeed(Vector3.Dot(transform.forward, rb.linearVelocity));
 
@@ -193,7 +197,7 @@ public class Car : NetworkBehaviour
 
             l = character.GetComponent<Links>();
 
-            CmdRequestOwnership(netIdentity);
+            CmdRequestOwnership(netIdentity, character.GetComponent<NetworkIdentity>());
 
             // Change UI (can't use UI cuz keyboard ignores it then, remove on PC)
             Transform carUi = l.ui.Find("Car Ui");
@@ -238,12 +242,18 @@ public class Car : NetworkBehaviour
     }
 
     [Command(requiresAuthority = false)]
-    private void CmdRequestOwnership(NetworkIdentity itemNetId)
+    private void CmdRequestOwnership(NetworkIdentity itemNetId, NetworkIdentity player)
     {
-        if (itemNetId != null && itemNetId.connectionToClient != connectionToClient)
+        if (itemNetId != null && itemNetId.connectionToClient != player.connectionToClient)
         {
             itemNetId.RemoveClientAuthority();
-            itemNetId.AssignClientAuthority(connectionToClient);
+            itemNetId.AssignClientAuthority(player.connectionToClient);
         }
+    }
+
+    public void Boom()
+    {
+        // TODO: make boom.
+        print("Car made boom");
     }
 }

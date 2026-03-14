@@ -2,12 +2,15 @@ using System;
 using Mirror;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class NetworkHitpoints : NetworkBehaviour
 {
     [SerializeField]
     private float maxHp = 100;
+
+    [SerializeField]
     private HitPointsSet hitPoints;
 
     [SyncVar(hook = nameof(OnHpChanged))]
@@ -16,13 +19,18 @@ public class NetworkHitpoints : NetworkBehaviour
     private bool isVulnerable = true;
     private Slider hpSlider;
     private TMP_Text deathsCounterText;
-    private Player player;
+    private Entity player;
+
+    [HideInInspector]
+    public UnityEvent onDeath;
 
     private void Start()
     {
-        player = GetComponent<Player>();
+        player = GetComponent<Entity>();
 
-        if (GetComponent<HitPointsSet>() is HitPointsSet hpSet)
+        if (hitPoints)
+            hitPoints.SetHp(netIdentity);
+        else if (GetComponent<HitPointsSet>() is HitPointsSet hpSet)
             ChangeHitPoints(hpSet);
 
         if (isServer)
@@ -32,13 +40,27 @@ public class NetworkHitpoints : NetworkBehaviour
     [Command(requiresAuthority = false)]
     public void Damage(float damage)
     {
+        // TODO: pass damage info, not damage
+
         //print("Damage taken: " + damage);
 
-        // Ignore if no damage or already dead
-        if (!isVulnerable || damage <= 0 || currentHp <= 0)
+        // Ignore if already dead
+        if (!isVulnerable || currentHp <= 0)
             return;
 
         currentHp = Mathf.Max(0, currentHp - damage);
+
+        if (currentHp <= 0)
+        {
+            if (player)
+                Debug.Log($"/a {player.entityName} died");
+
+            // Items without autority die on Server
+            if (connectionToClient == null)
+                Die();
+            else
+                TargetDie();
+        }
     }
 
     public void ChangeHitPoints(HitPointsSet hitPoints)
@@ -54,12 +76,6 @@ public class NetworkHitpoints : NetworkBehaviour
     private void OnHpChanged(float oldVar, float newVar)
     {
         UpdateUi();
-
-        // Death
-        if (currentHp <= 0)
-        {
-            Die();
-        }
     }
 
     private void UpdateUi()
@@ -71,25 +87,23 @@ public class NetworkHitpoints : NetworkBehaviour
     }
 
     [Command]
-    private void CmdSetHp(float hp)
+    public void Respawn()
     {
-        currentHp = hp;
+        currentHp = maxHp;
     }
 
     private void Die()
     {
         if (player)
         {
-            Debug.Log($"{player.entityName} died");
-
-            if (isOwned)
-            {
-                CmdSetHp(maxHp);
-                deathsCounter++;
-                deathsCounterText.text = $"Deaths: {deathsCounter}";
-            }
+            deathsCounter++;
+            deathsCounterText.text = $"Deaths: {deathsCounter}";
         }
+        onDeath.Invoke();
     }
+
+    [TargetRpc]
+    private void TargetDie() => Die();
 
     public void SetUi(Transform ui)
     {

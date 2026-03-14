@@ -9,6 +9,7 @@ public class Player : Entity
     public override void OnStartLocalPlayer()
     {
         ChangeNickname(PlayerPrefs.GetString("Nickname"));
+        hp.onDeath.AddListener(OnDeath);
     }
 
     public override void OnStopServer()
@@ -50,5 +51,10 @@ public class Player : Entity
         connectionToClient.nickname = uniqueNickname;
 
         ServerManager.Instance.AddPlayer(netIdentity);
+    }
+
+    public override void OnDeath()
+    {
+        hp.Respawn();
     }
 }
