@@ -729,10 +729,10 @@ AnimatorState:
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
+  - {fileID: 3011441358148829892}
   - {fileID: 3260391425470074767}
   - {fileID: -2800146752834779449}
   - {fileID: 2940858228573713362}
-  - {fileID: 3011441358148829892}
   m_StateMachineBehaviours: []
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
@@ -1841,10 +1841,10 @@ AnimatorState:
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
+  - {fileID: 8879789035538271612}
   - {fileID: -7867979815319643885}
   - {fileID: 6612832856328123200}
   - {fileID: -199094966534415661}
-  - {fileID: 8879789035538271612}
   m_StateMachineBehaviours: []
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
@@ -2448,10 +2448,10 @@ AnimatorState:
   m_Speed: 1.3
   m_CycleOffset: 0
   m_Transitions:
+  - {fileID: -933004861049673691}
   - {fileID: -7055333732482715666}
   - {fileID: -5430129192313135174}
   - {fileID: -4733558171227978527}
-  - {fileID: -933004861049673691}
   m_StateMachineBehaviours: []
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
@@ -4170,7 +4170,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Aiming
-  m_Speed: 1
+  m_Speed: 5
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -7365870863627250116}
@@ -5006,7 +5006,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 1
+  m_TransitionDuration: 0.25
   m_TransitionOffset: 0
   m_ExitTime: 0.625
   m_HasExitTime: 0
