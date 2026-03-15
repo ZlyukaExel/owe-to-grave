@@ -1,6 +1,5 @@
 using System;
 using Mirror;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -15,18 +14,18 @@ public class NetworkHitpoints : NetworkBehaviour
 
     [SyncVar(hook = nameof(OnHpChanged))]
     public float currentHp;
-    private int deathsCounter = 0;
     private bool isVulnerable = true;
+
+    [SerializeField]
     private Slider hpSlider;
-    private TMP_Text deathsCounterText;
-    private Entity player;
+    private Player player;
 
     [HideInInspector]
     public UnityEvent onDeath;
 
     private void Start()
     {
-        player = GetComponent<Entity>();
+        player = GetComponent<Player>();
 
         if (hitPoints)
             hitPoints.SetHp(netIdentity);
@@ -94,21 +93,15 @@ public class NetworkHitpoints : NetworkBehaviour
 
     private void Die()
     {
-        if (player)
-        {
-            deathsCounter++;
-            deathsCounterText.text = $"Deaths: {deathsCounter}";
-        }
         onDeath.Invoke();
     }
 
     [TargetRpc]
     private void TargetDie() => Die();
 
-    public void SetUi(Transform ui)
+    public void SetUi(Slider hpSlider)
     {
-        hpSlider = ui.Find("Hitpoints").GetComponent<Slider>();
-        deathsCounterText = ui.Find("Deaths Counter").GetComponent<TMP_Text>();
+        this.hpSlider = hpSlider;
     }
 }
 

@@ -1,5 +1,6 @@
 using Mirror;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(StateManager))]
 [RequireComponent(typeof(MovementManager))]
@@ -97,7 +98,7 @@ public class Links : NetworkBehaviour
 
         rb.isKinematic = false;
 
-        hitpoints.SetUi(ui);
+        hitpoints.SetUi(ui.Find("Hitpoints").GetComponent<Slider>());
         minimap.PlayerMarker = ui.Find("Minimap/Player marker");
     }
 }

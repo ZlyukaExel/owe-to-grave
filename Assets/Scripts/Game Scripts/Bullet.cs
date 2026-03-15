@@ -88,8 +88,6 @@ public class Bullet : NetworkBehaviour
         if (!isServer)
             return;
 
-        //print(hit.collider);
-
         // Deal damage
         if (hit.collider.GetComponent<HitPoint>() is HitPoint hp)
         {

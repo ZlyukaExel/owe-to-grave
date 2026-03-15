@@ -1,17 +1,14 @@
 using UnityEngine;
 
-public class FaceCamera : MonoBehaviour // TODO: fix on start
+public class FaceCamera : MonoBehaviour
 {
     private Transform mainCamera;
 
-    void Start()
-    {
-        mainCamera = Camera.main.transform;
-    }
-
     void LateUpdate()
     {
-        if (mainCamera != null)
+        if (mainCamera == null)
+            mainCamera = Camera.main?.transform;
+        else
             transform.rotation = mainCamera.rotation;
     }
 }
