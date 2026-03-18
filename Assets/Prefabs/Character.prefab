@@ -751,7 +751,7 @@ MonoBehaviour:
   rotationSensitivity: 0.01
   positionPrecision: 0.01
   scalePrecision: 0.01
-  isKinematic: 0
+  isKinematic: 1
 --- !u!114 &4001351664616218128
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -948,6 +948,7 @@ MonoBehaviour:
   groundTriggerLayers:
     serializedVersion: 2
     m_Bits: 1
+  inputActions: {fileID: -944628639613478452, guid: 486cfd0c6e7cb354295055a8253b9a9d, type: 3}
 --- !u!114 &1195854260706180058
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -8,12 +8,12 @@ public class Footsteps : MonoBehaviour
     public float speed = 0;
     private float timer = 0,
         stepInterval = 0;
-    private Links l;
+    private PlayerLinks l;
 
     void Start()
     {
         audioSource = GetComponent<NetworkAudioSource>();
-        l = GetComponentInParent<Links>();
+        l = GetComponentInParent<PlayerLinks>();
     }
 
     void Update()

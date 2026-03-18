@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CombatState))]
@@ -28,19 +29,35 @@ public class MovementManager : MonoBehaviour
     private Rigidbody rb;
     private CombatState combat;
     private CameraController cameraController;
-    private AiController aiController;
+    private InputManager inputManager;
+    private InputManager aiInput;
+    private InputAction jumpAction;
+
+    void Awake()
+    {
+        jumpAction = InputSystem.actions.FindAction("Jump");
+    }
 
     private void Start()
     {
-        InputManager.Instance.GetAction(KeyCode.LeftShift).onDown.AddListener(OnRunButtonDown);
-        InputManager.Instance.GetAction(KeyCode.LeftShift).onUp.AddListener(OnRunButtonUp);
-
-        Links l = GetComponent<Links>();
+        PlayerLinks l = GetComponent<PlayerLinks>();
         rb = GetComponent<Rigidbody>();
         combat = GetComponent<CombatState>();
+        aiInput = GetComponent<InputManager>();
         animator = l.animator;
         cameraController = l.cameraController;
-        aiController = GetComponent<AiController>();
+
+        inputManager = controller switch
+        {
+            MovementController.Player => PlayerInput.Instance,
+            _ => aiInput,
+        };
+
+        InputManagerAction sprintAction = inputManager.GetAction(
+            InputSystem.actions.FindAction("Sprint")
+        );
+        sprintAction.onDown.AddListener(OnSprintButtonDown);
+        sprintAction.onUp.AddListener(OnSprintButtonUp);
     }
 
     public void MovementUpdate()
@@ -56,7 +73,9 @@ public class MovementManager : MonoBehaviour
         {
             runButtonPressedTime += Time.deltaTime;
 
-            if (!runButtonPressed && !InputManager.Instance.isMoving)
+            bool isMoving =
+                new Vector2(inputManager.Vertical, inputManager.Horizontal).magnitude > 0.1f;
+            if (!runButtonPressed && !isMoving)
             {
                 noInputTimer += Time.deltaTime;
                 if (noInputTimer > 0.3f)
@@ -67,6 +86,9 @@ public class MovementManager : MonoBehaviour
         }
 
         animator.SetBool("isJumping", !isGrounded);
+
+        if (inputManager.IsPressed(jumpAction))
+            Jump();
     }
 
     public void MovementFixedUpdate()
@@ -81,14 +103,13 @@ public class MovementManager : MonoBehaviour
             // if (isSliding)
             //     Slide();
             // else
-            JumpFixedUpdate();
             ActualMovement();
         }
     }
 
-    private void JumpFixedUpdate()
+    private void Jump()
     {
-        if (InputManager.Instance.GetKey(KeyCode.Space) && isGrounded)
+        if (isGrounded)
         {
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
             rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
@@ -97,15 +118,7 @@ public class MovementManager : MonoBehaviour
 
     public void ActualMovement()
     {
-        Vector3 direction;
-        if (controller is MovementController.Player)
-        {
-            direction = new(InputManager.Instance.Horizontal, 0, InputManager.Instance.Vertical);
-        }
-        else
-        {
-            direction = new(aiController.horizontal, 0, aiController.vertical);
-        }
+        Vector3 direction = new(inputManager.Horizontal, 0, inputManager.Vertical); // TODO: null first frame
 
         Vector3 joystickWorldMovement = cameraController.transform.TransformDirection(direction);
         joystickWorldMovement.y = 0;
@@ -149,8 +162,8 @@ public class MovementManager : MonoBehaviour
 
             if (animator != null)
             {
-                animator.SetFloat("VelZ", InputManager.Instance.SmoothedVertical);
-                animator.SetFloat("VelX", InputManager.Instance.SmoothedHorizontal);
+                animator.SetFloat("VelZ", inputManager.SmoothedVertical);
+                animator.SetFloat("VelX", inputManager.SmoothedHorizontal);
             }
         }
         // Default state
@@ -175,13 +188,13 @@ public class MovementManager : MonoBehaviour
         }
     }
 
-    public void OnRunButtonDown()
+    public void OnSprintButtonDown()
     {
         runButtonPressedTime = noInputTimer = 0;
         runButtonPressed = isRunning = true;
     }
 
-    public void OnRunButtonUp()
+    public void OnSprintButtonUp()
     {
         if (runButtonPressedTime > holdButtonTime)
             isRunning = false;

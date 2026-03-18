@@ -14,6 +14,8 @@ public class Player : Entity
 
     public override void OnStopServer()
     {
+        if (netIdentity.connectionToServer == null)
+            return;
         Debug.Log($"/a {entityName} has left");
         ServerManager.Instance.RemovePlayer(netIdentity);
     }

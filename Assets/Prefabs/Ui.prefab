@@ -204,7 +204,7 @@ GameObject:
   - component: {fileID: 6226218078437637323}
   - component: {fileID: 1082515168963175975}
   - component: {fileID: 7442544274109372179}
-  - component: {fileID: 7107314717193271289}
+  - component: {fileID: 5367785276927656477}
   m_Layer: 5
   m_Name: Jump Button
   m_TagString: Untagged
@@ -269,7 +269,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7107314717193271289
+--- !u!114 &5367785276927656477
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -278,10 +278,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 69388583024092147}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Script: {fileID: 11500000, guid: 6d54531977ecb194c95e2d3aa7a5d72a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  m_Delegates: []
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.OnScreen.OnScreenButton
+  m_ControlPath: <Gamepad>/buttonWest
 --- !u!1 &137564943267974736
 GameObject:
   m_ObjectHideFlags: 0
@@ -2477,6 +2477,7 @@ GameObject:
   - component: {fileID: 7768354248976401977}
   - component: {fileID: 7693972069916103074}
   - component: {fileID: 6167955959880891520}
+  - component: {fileID: 3336821265849437174}
   m_Layer: 5
   m_Name: Interact Button
   m_TagString: Untagged
@@ -2555,6 +2556,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Delegates: []
+--- !u!114 &3336821265849437174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1631992399787729421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d54531977ecb194c95e2d3aa7a5d72a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.OnScreen.OnScreenButton
+  m_ControlPath: <Gamepad>/buttonEast
 --- !u!1 &1748680041929279534
 GameObject:
   m_ObjectHideFlags: 0
@@ -3244,6 +3258,7 @@ GameObject:
   - component: {fileID: 610417279681654761}
   - component: {fileID: 1282432366930723042}
   - component: {fileID: 2481778761620160290}
+  - component: {fileID: 2993135093513589810}
   m_Layer: 5
   m_Name: Attack Button
   m_TagString: Untagged
@@ -3321,6 +3336,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Delegates: []
+--- !u!114 &2993135093513589810
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2058132780242125452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d54531977ecb194c95e2d3aa7a5d72a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.OnScreen.OnScreenButton
+  m_ControlPath: <Gamepad>/rightTrigger
 --- !u!1 &2198975057869414695
 GameObject:
   m_ObjectHideFlags: 0
@@ -6163,6 +6191,7 @@ GameObject:
   - component: {fileID: 4394462520932176895}
   - component: {fileID: 537562903609523293}
   - component: {fileID: 329664590148320948}
+  - component: {fileID: 8321656169093765880}
   m_Layer: 5
   m_Name: Car Button
   m_TagString: Untagged
@@ -6271,6 +6300,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8321656169093765880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3964079221731083437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d54531977ecb194c95e2d3aa7a5d72a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.OnScreen.OnScreenButton
+  m_ControlPath: <Gamepad>/buttonNorth
 --- !u!1 &3986527577907183265
 GameObject:
   m_ObjectHideFlags: 0
@@ -6463,6 +6505,7 @@ GameObject:
   - component: {fileID: 1176413220797930538}
   - component: {fileID: 959530713565965960}
   - component: {fileID: 3339709908394957594}
+  - component: {fileID: 7746315676579197566}
   m_Layer: 5
   m_Name: Aim Button
   m_TagString: Untagged
@@ -6541,6 +6584,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Delegates: []
+--- !u!114 &7746315676579197566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4009740596229055874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d54531977ecb194c95e2d3aa7a5d72a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.OnScreen.OnScreenButton
+  m_ControlPath: <Gamepad>/leftTrigger
 --- !u!1 &4027483678379724662
 GameObject:
   m_ObjectHideFlags: 0
@@ -6898,6 +6954,7 @@ GameObject:
   - component: {fileID: 2818741668556222830}
   - component: {fileID: 7246480696631120406}
   - component: {fileID: 311007899479921708}
+  - component: {fileID: 3491709315657595474}
   m_Layer: 5
   m_Name: Run Button
   m_TagString: Untagged
@@ -6977,6 +7034,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Delegates: []
+--- !u!114 &3491709315657595474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4129818852390992698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d54531977ecb194c95e2d3aa7a5d72a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.OnScreen.OnScreenButton
+  m_ControlPath: <Gamepad>/buttonSouth
 --- !u!1 &4140350342203818706
 GameObject:
   m_ObjectHideFlags: 0
@@ -10443,8 +10513,8 @@ GameObject:
   - component: {fileID: 7637099403400559152}
   - component: {fileID: 7766731827531454286}
   - component: {fileID: 3658834607572596341}
-  - component: {fileID: 5347405820504578764}
   - component: {fileID: 5407465361813485319}
+  - component: {fileID: 1853317604653902804}
   m_Layer: 0
   m_Name: Ui
   m_TagString: Untagged
@@ -10522,138 +10592,6 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   keyCode: 27
---- !u!114 &5347405820504578764
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6287158938969843256}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a1191b57fa463646a53e298be7cf705, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  smoothingSpeed: 3
-  inputActions:
-  - keyCode: 101
-    triggers:
-    - {fileID: 6167955959880891520}
-    buttons: []
-    onDown:
-      m_PersistentCalls:
-        m_Calls: []
-    onUp:
-      m_PersistentCalls:
-        m_Calls: []
-    mobileOnly: 0
-  - keyCode: 102
-    triggers: []
-    buttons:
-    - {fileID: 329664590148320948}
-    onDown:
-      m_PersistentCalls:
-        m_Calls: []
-    onUp:
-      m_PersistentCalls:
-        m_Calls: []
-    mobileOnly: 0
-  - keyCode: 32
-    triggers:
-    - {fileID: 7107314717193271289}
-    - {fileID: 8020907992023666364}
-    buttons: []
-    onDown:
-      m_PersistentCalls:
-        m_Calls: []
-    onUp:
-      m_PersistentCalls:
-        m_Calls: []
-    mobileOnly: 0
-  - keyCode: 304
-    triggers:
-    - {fileID: 311007899479921708}
-    buttons: []
-    onDown:
-      m_PersistentCalls:
-        m_Calls: []
-    onUp:
-      m_PersistentCalls:
-        m_Calls: []
-    mobileOnly: 0
-  - keyCode: 323
-    triggers:
-    - {fileID: 2481778761620160290}
-    buttons: []
-    onDown:
-      m_PersistentCalls:
-        m_Calls: []
-    onUp:
-      m_PersistentCalls:
-        m_Calls: []
-    mobileOnly: 1
-  - keyCode: 324
-    triggers:
-    - {fileID: 3339709908394957594}
-    - {fileID: 9144378200805582253}
-    buttons: []
-    onDown:
-      m_PersistentCalls:
-        m_Calls: []
-    onUp:
-      m_PersistentCalls:
-        m_Calls: []
-    mobileOnly: 1
-  - keyCode: 119
-    triggers:
-    - {fileID: 1283850379966043108}
-    buttons: []
-    onDown:
-      m_PersistentCalls:
-        m_Calls: []
-    onUp:
-      m_PersistentCalls:
-        m_Calls: []
-    mobileOnly: 0
-  - keyCode: 97
-    triggers:
-    - {fileID: 4865414001538553508}
-    buttons: []
-    onDown:
-      m_PersistentCalls:
-        m_Calls: []
-    onUp:
-      m_PersistentCalls:
-        m_Calls: []
-    mobileOnly: 0
-  - keyCode: 115
-    triggers:
-    - {fileID: 9110703980556129033}
-    buttons: []
-    onDown:
-      m_PersistentCalls:
-        m_Calls: []
-    onUp:
-      m_PersistentCalls:
-        m_Calls: []
-    mobileOnly: 0
-  - keyCode: 100
-    triggers:
-    - {fileID: 3653799852147088624}
-    buttons: []
-    onDown:
-      m_PersistentCalls:
-        m_Calls: []
-    onUp:
-      m_PersistentCalls:
-        m_Calls: []
-    mobileOnly: 0
-  onMovement:
-    m_PersistentCalls:
-      m_Calls: []
-  onNoMovement:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!82 &5407465361813485319
 AudioSource:
   m_ObjectHideFlags: 0
@@ -10751,6 +10689,102 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1853317604653902804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6287158938969843256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b1e31c88a707784fb6397118fff732f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInput
+  smoothingSpeed: 3
+  inputMabagerActions:
+  - inputAction:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    onDown:
+      m_PersistentCalls:
+        m_Calls: []
+    onUp:
+      m_PersistentCalls:
+        m_Calls: []
+  - inputAction:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    onDown:
+      m_PersistentCalls:
+        m_Calls: []
+    onUp:
+      m_PersistentCalls:
+        m_Calls: []
+  - inputAction:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    onDown:
+      m_PersistentCalls:
+        m_Calls: []
+    onUp:
+      m_PersistentCalls:
+        m_Calls: []
+  - inputAction:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    onDown:
+      m_PersistentCalls:
+        m_Calls: []
+    onUp:
+      m_PersistentCalls:
+        m_Calls: []
+  - inputAction:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    onDown:
+      m_PersistentCalls:
+        m_Calls: []
+    onUp:
+      m_PersistentCalls:
+        m_Calls: []
+  onMovement:
+    m_PersistentCalls:
+      m_Calls: []
+  onNoMovement:
+    m_PersistentCalls:
+      m_Calls: []
+  inputActions: {fileID: 0}
 --- !u!1 &6373174722544582164
 GameObject:
   m_ObjectHideFlags: 0
@@ -11267,6 +11301,7 @@ GameObject:
   - component: {fileID: 3381626234760647062}
   - component: {fileID: 2308051819623017355}
   - component: {fileID: 9144378200805582253}
+  - component: {fileID: 819851660324906087}
   m_Layer: 5
   m_Name: Aim Button 2
   m_TagString: Untagged
@@ -11345,6 +11380,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Delegates: []
+--- !u!114 &819851660324906087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6692145459012286033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d54531977ecb194c95e2d3aa7a5d72a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.OnScreen.OnScreenButton
+  m_ControlPath: <Gamepad>/leftTrigger
 --- !u!1 &6696040552766101318
 GameObject:
   m_ObjectHideFlags: 0

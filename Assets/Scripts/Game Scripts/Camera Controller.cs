@@ -34,12 +34,12 @@ public class CameraController : MonoBehaviour
         thirdPersonCameraPivot,
         firstPersonCameraPivot;
     private Transform cameraPivot => transform.parent;
-    private Links l;
+    private PlayerLinks l;
 
     private void Start()
     {
         UpdateSettings();
-        InputManager.Instance.OnZoom += Zoom;
+        PlayerInput.Instance.OnZoom += Zoom;
     }
 
     public void Initialize(Transform character)
@@ -53,7 +53,7 @@ public class CameraController : MonoBehaviour
 
     public void ChangeTarget(
         Transform target,
-        Links links,
+        PlayerLinks links,
         Transform firstPersonCameraPivot,
         Transform thirdPersonCameraPivot
     )
@@ -86,8 +86,8 @@ public class CameraController : MonoBehaviour
             }
         }
 
-        angleX -= InputManager.Instance.MouseVertical * verticalSens;
-        angleY += InputManager.Instance.MouseHorizontal * horizontalSens;
+        angleX -= PlayerInput.Instance.MouseVertical * verticalSens;
+        angleY += PlayerInput.Instance.MouseHorizontal * horizontalSens;
 
         // Camera angle borders
         angleX = Mathf.Clamp(angleX, minPitch, maxPitch);
@@ -117,7 +117,7 @@ public class CameraController : MonoBehaviour
 
     void OnDestroy()
     {
-        InputManager.Instance.OnZoom -= Zoom;
+        PlayerInput.Instance.OnZoom -= Zoom;
     }
 
     private Car carScript;
@@ -136,7 +136,7 @@ public class CameraController : MonoBehaviour
     private void CameraMode_Player()
     {
         // Cam slowly rotates towards direction if no movement
-        if (!isFirstPerson && !InputManager.Instance.mouseMoved && autoRotationEnabled)
+        if (!isFirstPerson && !mouseMoved && autoRotationEnabled)
         {
             if (
                 l.movement.isMoving
@@ -181,7 +181,7 @@ public class CameraController : MonoBehaviour
     private void CameraMode_Car()
     {
         // Cam slowly returns to zero rotation
-        if (!InputManager.Instance.mouseMoved && autoRotationEnabled) // If mouse is not moved
+        if (!mouseMoved && autoRotationEnabled) // If mouse is not moved
         {
             if (timeWithoutCameraMovement > 3)
             {
@@ -190,7 +190,7 @@ public class CameraController : MonoBehaviour
                 if (isFirstPerson)
                     angleY = Mathf.LerpAngle(
                         angleY,
-                        InputManager.Instance.Horizontal * 20,
+                        PlayerInput.Instance.Horizontal * 20,
                         Time.unscaledDeltaTime * 2
                     );
                 else if (carScript.isMoving)
@@ -219,6 +219,9 @@ public class CameraController : MonoBehaviour
             l.minimap.angleY = angleY;
         }
     }
+
+    bool mouseMoved =>
+        (PlayerInput.Instance.MouseHorizontal != 0) && (PlayerInput.Instance.MouseVertical != 0);
 
     private void MoveCamera()
     {

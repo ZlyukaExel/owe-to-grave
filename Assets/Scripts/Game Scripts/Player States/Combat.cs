@@ -1,5 +1,6 @@
 using Mirror;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CombatState : State
 {
@@ -26,13 +27,21 @@ public class CombatState : State
 
     [SerializeField]
     private GameObject bulletPrefab;
+    private PlayerLinks pLinks;
+    private InputAction attackAction,
+        aimAction;
 
     public void Start()
     {
-        InputManager.Instance.GetAction(KeyCode.Mouse0)?.onDown.AddListener(OnShootButtonDown);
-        InputManager.Instance.GetAction(KeyCode.Mouse1)?.onDown.AddListener(OnAimButtonDown);
+        attackAction = InputSystem.actions.FindAction("Attack");
+        aimAction = InputSystem.actions.FindAction("Aim");
 
-        Transform combatUi = l.ui.Find("Ground Ui");
+        PlayerInput.Instance.GetAction(attackAction)?.onDown.AddListener(OnShootButtonDown);
+        PlayerInput.Instance.GetAction(aimAction)?.onDown.AddListener(OnAimButtonDown);
+
+        pLinks = l as PlayerLinks;
+
+        Transform combatUi = pLinks.ui.Find("Ground Ui");
 
         aimFiller = combatUi.Find("Aim Button/Filler").gameObject;
         aimFiller2 = combatUi.Find("Aim Button 2/Filler").gameObject;
@@ -51,36 +60,26 @@ public class CombatState : State
     {
         inCombat = true;
 
-        InputManager.Instance.GetAction(KeyCode.Mouse0)?.onUp.AddListener(OnShootButtonUp);
-        InputManager.Instance.GetAction(KeyCode.Mouse1)?.onUp.AddListener(OnAimButtonUp);
+        PlayerInput.Instance.GetAction(attackAction)?.onUp.AddListener(OnShootButtonUp);
+        PlayerInput.Instance.GetAction(aimAction)?.onUp.AddListener(OnAimButtonUp);
 
-        if (InputManager.Instance.GetKey(KeyCode.Mouse0))
-        {
-            OnShootButtonDown();
-        }
+        if (!pLinks.cameraController.isFirstPerson)
+            pLinks.cameraController.positionOffset.x = 0.7f;
 
-        if (InputManager.Instance.GetKey(KeyCode.Mouse1))
-        {
-            OnAimButtonDown();
-        }
+        pLinks.animator.SetBool("inCombat", true);
 
-        if (!l.cameraController.isFirstPerson)
-            l.cameraController.positionOffset.x = 0.7f;
+        CharacterConfig config = new(pLinks.netConfig.config) { inCombat = true };
+        pLinks.netConfig.CmdSetConfig(config);
 
-        l.animator.SetBool("inCombat", true);
-
-        CharacterConfig config = new(l.netConfig.config) { inCombat = true };
-        l.netConfig.CmdSetConfig(config);
-
-        l.weapon.onShot.AddListener(SpawnBullet);
+        pLinks.weapon.onShot.AddListener(SpawnBullet);
 
         currentSet = 1;
     }
 
     public override void UpdateState()
     {
-        l.movement.MovementUpdate();
-        l.carTrigger.CarTriggerUpdate();
+        pLinks.movement.MovementUpdate();
+        pLinks.carTrigger.CarTriggerUpdate();
 
         float target = isAiming ? 1f : 0f;
         aimingWeight = Mathf.MoveTowards(
@@ -90,8 +89,8 @@ public class CombatState : State
         );
 
         // Aiming ray checks there's no obstacle in the way
-        Vector3 origin = l.transform.position + new Vector3(0.2f, 1.25f, 0);
-        Vector3 direction = l.cameraPivot.forward * 0.75f;
+        Vector3 origin = pLinks.transform.position + new Vector3(0.2f, 1.25f, 0);
+        Vector3 direction = pLinks.cameraPivot.forward * 0.75f;
         Debug.DrawRay(origin, direction, Color.red);
         isAimingOrShooting =
             (shootButtonPressed || aimButtonClicked || aimButtonPressed)
@@ -114,19 +113,19 @@ public class CombatState : State
             notInCombatTime += Time.deltaTime;
             if (notInCombatTime > 5)
             {
-                l.stateManager.SetState(EnumState.Default);
+                pLinks.stateManager.SetState(EnumState.Default);
             }
         }
     }
 
     public override void FixedUpdateState()
     {
-        l.movement.MovementFixedUpdate();
+        pLinks.movement.MovementFixedUpdate();
     }
 
     public override void ExitState()
     {
-        l.cameraController.positionOffset.x = 0;
+        pLinks.cameraController.positionOffset.x = 0;
 
         aimButtonClicked = aimButtonPressed = false;
         StopAim();
@@ -134,21 +133,21 @@ public class CombatState : State
         // if (isCrouching)
         //     OnCrouchButtonDown();
 
-        l.animator.SetBool("inCombat", false);
+        pLinks.animator.SetBool("inCombat", false);
 
-        CharacterConfig config = new(l.netConfig.config) { inCombat = false };
-        l.netConfig.CmdSetConfig(config);
-        l.weapon.onShot.RemoveListener(SpawnBullet);
+        CharacterConfig config = new(pLinks.netConfig.config) { inCombat = false };
+        pLinks.netConfig.CmdSetConfig(config);
+        pLinks.weapon.onShot.RemoveListener(SpawnBullet);
 
-        InputManager.Instance.GetAction(KeyCode.Mouse0)?.onUp.RemoveListener(OnShootButtonUp);
-        InputManager.Instance.GetAction(KeyCode.Mouse1)?.onUp.RemoveListener(OnAimButtonUp);
+        PlayerInput.Instance.GetAction(attackAction)?.onUp.RemoveListener(OnShootButtonUp);
+        PlayerInput.Instance.GetAction(aimAction)?.onUp.RemoveListener(OnAimButtonUp);
 
         inCombat = false;
     }
 
     private void AimingAndShotingUpdate()
     {
-        l.animator.SetFloat("RotX", Mathf.DeltaAngle(0, l.playerCamera.eulerAngles.x));
+        pLinks.animator.SetFloat("RotX", Mathf.DeltaAngle(0, pLinks.playerCamera.eulerAngles.x));
 
         // Start aiming
         if (!isAiming)
@@ -157,11 +156,11 @@ public class CombatState : State
         }
 
         // Slow down when shooting
-        l.weapon.SetShooting(aimingWeight >= 0.9f && shootButtonPressed);
+        pLinks.weapon.SetShooting(aimingWeight >= 0.9f && shootButtonPressed);
 
         if (shootButtonPressed && !isShooting)
         {
-            l.movement.speedModifier /= 1.2f;
+            pLinks.movement.speedModifier /= 1.2f;
             isShooting = true;
         }
     }
@@ -175,7 +174,7 @@ public class CombatState : State
         Vector3 dirWithoutSpread;
 
         // Aim ray
-        Ray aimRay = new(l.playerCamera.position, l.playerCamera.forward);
+        Ray aimRay = new(pLinks.playerCamera.position, pLinks.playerCamera.forward);
 
         // Get raycast hit
         if (Physics.Raycast(aimRay, out RaycastHit aimHit, Mathf.Infinity, combatLayers))
@@ -184,8 +183,8 @@ public class CombatState : State
             dirWithoutSpread = aimRay.GetPoint(100) - spawnerPosition;
 
         // Add spread
-        float currentSpread = l.weapon.properties.spread;
-        currentSpread *= 1 + l.movement.currentSpeed / 8;
+        float currentSpread = pLinks.weapon.properties.spread;
+        currentSpread *= 1 + pLinks.movement.currentSpeed / 8;
 
         // if (isCrouching)
         //     currentSpread /= 1.25f;
@@ -197,12 +196,12 @@ public class CombatState : State
         ).normalized;
 
         // Spawn bullet
-        CmdSpawnBullet(spawnerPosition, dirWithSpread, l.weapon.properties);
+        CmdSpawnBullet(spawnerPosition, dirWithSpread, pLinks.weapon.properties);
 
         // mFireCD = true;
         // StartCoroutine(FireRate());
 
-        // Not automatic l.weapon makes a single shot
+        // Not automatic pLinks.weapon makes a single shot
         // if (!isAutomatic)
         //     weaponAnim.SetBool("isShooting", false);
     }
@@ -222,8 +221,7 @@ public class CombatState : State
     {
         if (!inCombat)
         {
-            l.stateManager.SetState(EnumState.Combat);
-            return;
+            pLinks.stateManager.SetState(EnumState.Combat);
         }
 
         shootButtonPressed = true;
@@ -245,8 +243,7 @@ public class CombatState : State
     {
         if (!inCombat)
         {
-            l.stateManager.SetState(EnumState.Combat);
-            return;
+            pLinks.stateManager.SetState(EnumState.Combat);
         }
 
         if (aimButtonClicked) // Stop aim
@@ -260,7 +257,7 @@ public class CombatState : State
         {
             aimButtonPressed = true;
 
-            zAxisSaver = l.cameraController.positionOffset.z;
+            zAxisSaver = pLinks.cameraController.positionOffset.z;
 
             //#if UNITY_ANDROID
             aimFiller.SetActive(true);
@@ -288,23 +285,23 @@ public class CombatState : State
 
     private void StartAim()
     {
-        l.movement.ActualMovement();
+        pLinks.movement.ActualMovement();
 
-        l.movement.speedModifier /= 1.4f;
+        pLinks.movement.speedModifier /= 1.4f;
 
         crosshairAnimator.SetFloat("AnimSpeed", 1);
         crosshairAnimator.Play("AimAppears");
-        l.animator.SetBool("isAiming", true);
+        pLinks.animator.SetBool("isAiming", true);
 
-        l.cameraController.horizontalSens /= 2;
-        l.cameraController.verticalSens /= 2;
+        pLinks.cameraController.horizontalSens /= 2;
+        pLinks.cameraController.verticalSens /= 2;
 
-        l.cameraController.isAiming = true;
+        pLinks.cameraController.isAiming = true;
 
-        if (!l.cameraController.isFirstPerson)
+        if (!pLinks.cameraController.isFirstPerson)
         {
-            zAxisSaver = l.cameraController.positionOffset.z;
-            l.cameraController.positionOffset.z = -1.2f;
+            zAxisSaver = pLinks.cameraController.positionOffset.z;
+            pLinks.cameraController.positionOffset.z = -1.2f;
         }
 
         isAiming = true;
@@ -315,22 +312,22 @@ public class CombatState : State
         if (!isAiming)
             return;
 
-        l.movement.speedModifier *= 1.4f;
+        pLinks.movement.speedModifier *= 1.4f;
 
         crosshairAnimator.SetFloat("AnimSpeed", -1);
         crosshairAnimator.Play("AimAppears");
-        l.animator.SetBool("isAiming", false);
+        pLinks.animator.SetBool("isAiming", false);
 
-        l.cameraController.horizontalSens = PlayerPrefs.GetFloat("HorizontalSensivity", 20);
-        l.cameraController.verticalSens = PlayerPrefs.GetFloat("VerticalSensivity", 20);
+        pLinks.cameraController.horizontalSens = PlayerPrefs.GetFloat("HorizontalSensivity", 20);
+        pLinks.cameraController.verticalSens = PlayerPrefs.GetFloat("VerticalSensivity", 20);
 
-        l.cameraController.isAiming = l.cameraController.isAiming = false;
+        pLinks.cameraController.isAiming = pLinks.cameraController.isAiming = false;
 
-        if (!l.cameraController.isFirstPerson)
-            l.cameraController.positionOffset.z = zAxisSaver;
+        if (!pLinks.cameraController.isFirstPerson)
+            pLinks.cameraController.positionOffset.z = zAxisSaver;
 
         isAiming = isAimingOrShooting = false;
-        l.movement.ActualMovement();
+        pLinks.movement.ActualMovement();
 
         //#if UNITY_ANDROID
         aimFiller.SetActive(false);
@@ -343,9 +340,9 @@ public class CombatState : State
         if (!isShooting)
             return;
 
-        l.movement.speedModifier *= 1.2f;
+        pLinks.movement.speedModifier *= 1.2f;
 
-        l.weapon.SetShooting(false);
+        pLinks.weapon.SetShooting(false);
 
         isShooting = false;
     }
@@ -359,9 +356,9 @@ public class CombatState : State
 
     //         isCrouching = true;
 
-    //         l.animator.SetBool("inCover", true);
-    //         l.movement.StartSlide();
-    //         l.cameraController.positionOffset.y = -0.5f;
+    //         pLinks.animator.SetBool("inCover", true);
+    //         pLinks.movement.StartSlide();
+    //         pLinks.cameraController.positionOffset.y = -0.5f;
 
     //         dashButton.SetActive(false);
     //     }
@@ -373,16 +370,16 @@ public class CombatState : State
     //             //characterCollider.center = Vector3.zero;
 
     //             isCrouching = false;
-    //             l.movement.isSliding = false;
+    //             pLinks.movement.isSliding = false;
 
-    //             l.animator.SetBool("inCover", false);
-    //             l.animator.SetBool("isSliding", false);
-    //             l.cameraController.positionOffset.y = 0;
+    //             pLinks.animator.SetBool("inCover", false);
+    //             pLinks.animator.SetBool("isSliding", false);
+    //             pLinks.cameraController.positionOffset.y = 0;
 
-    //             if (l.cameraController.isFirstPerson)
-    //                 l.cameraController.positionOffset = Vector3.zero;
+    //             if (pLinks.cameraController.isFirstPerson)
+    //                 pLinks.cameraController.positionOffset = Vector3.zero;
     //             else
-    //                 l.cameraController.positionOffset.x = 0.7f;
+    //                 pLinks.cameraController.positionOffset.x = 0.7f;
 
     //             dashButton.SetActive(true);
     //         }

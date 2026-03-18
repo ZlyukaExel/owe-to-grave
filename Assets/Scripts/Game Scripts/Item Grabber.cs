@@ -1,8 +1,9 @@
 using Mirror;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(Links))]
+[RequireComponent(typeof(PlayerLinks))]
 public class ItemGrabber : NetworkBehaviour
 {
     public float itemGrabberLength = 3;
@@ -21,11 +22,11 @@ public class ItemGrabber : NetworkBehaviour
     private Rigidbody itemRigidbody;
     private float takeButtonPressedTime;
     private float holdButtonTime = 0.15f;
-    private Links l;
+    private PlayerLinks l;
 
     public void Start()
     {
-        l = GetComponent<Links>();
+        l = GetComponent<PlayerLinks>();
 
         itemsLayerId = LayerMask.NameToLayer("Items");
         takeButtonObj = l.ui.Find("Ground Ui/Interact Button").gameObject;
@@ -37,8 +38,9 @@ public class ItemGrabber : NetworkBehaviour
         aimButton = l.ui.Find("Ground Ui/Aim Button").gameObject;
         attackButton = l.ui.Find("Ground Ui/Attack Button").gameObject;
 
-        InputManager.Instance.GetAction(KeyCode.E).onDown.AddListener(OnTakeButtonDown);
-        InputManager.Instance.GetAction(KeyCode.E).onUp.AddListener(OnTakeButtonUp);
+        InputAction interactAction = InputSystem.actions.FindAction("Interact");
+        PlayerInput.Instance.GetAction(interactAction).onDown.AddListener(OnTakeButtonDown);
+        PlayerInput.Instance.GetAction(interactAction).onUp.AddListener(OnTakeButtonUp);
     }
 
     public void ItemGrabbingUpdate()

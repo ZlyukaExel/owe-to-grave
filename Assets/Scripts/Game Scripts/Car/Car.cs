@@ -1,6 +1,7 @@
 using Mirror;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(NetworkHitpoints))]
@@ -28,8 +29,9 @@ public class Car : NetworkBehaviour
     public Seat[] seats;
     private Transform steeringWheel;
     private TMP_Text speedometer;
-    private Links l;
+    private PlayerLinks l;
     private NetworkHitpoints hp;
+    private InputAction handBrakeAction;
 
     private void Start()
     {
@@ -61,6 +63,8 @@ public class Car : NetworkBehaviour
                 );
             }
         }
+
+        handBrakeAction = InputSystem.actions.FindAction("Jump"); // TODO: replace by car ui
     }
 
     private void LateUpdate()
@@ -107,20 +111,20 @@ public class Car : NetworkBehaviour
         float currentSteerRange = Mathf.Lerp(maxSteerAngle, maxSteerAngleAtMaxSpeed, speedFactor);
 
         bool isAccelerating =
-            (InputManager.Instance.Vertical > 0 && speed >= -0.5f)
-            || (InputManager.Instance.Vertical < 0 && speed <= 0.5);
+            (PlayerInput.Instance.Vertical > 0 && speed >= -0.5f)
+            || (PlayerInput.Instance.Vertical < 0 && speed <= 0.5);
 
         foreach (var wheel in wheels)
         {
             WheelCollider col = wheel.wheelCollider;
 
             if (wheel.steerable)
-                col.steerAngle = InputManager.Instance.SmoothedHorizontal * currentSteerRange;
+                col.steerAngle = PlayerInput.Instance.SmoothedHorizontal * currentSteerRange;
 
             if (isAccelerating)
             {
                 if (wheel.motorized)
-                    col.motorTorque = InputManager.Instance.SmoothedVertical * currentTorque;
+                    col.motorTorque = PlayerInput.Instance.SmoothedVertical * currentTorque;
                 col.brakeTorque = 0;
             }
             else
@@ -129,35 +133,35 @@ public class Car : NetworkBehaviour
                 col.brakeTorque = torque;
             }
 
-            if (wheel.isBackWheel && InputManager.Instance.GetKey(KeyCode.Space))
+            if (wheel.isBackWheel && PlayerInput.Instance.IsPressed(handBrakeAction))
                 col.brakeTorque = torque;
         }
 
         steeringWheel.localEulerAngles =
-            -currentSteerRange * 2 * InputManager.Instance.SmoothedHorizontal * Vector3.forward;
+            -currentSteerRange * 2 * PlayerInput.Instance.SmoothedHorizontal * Vector3.forward;
 
         if (wheelsGrounded == 0)
         {
             float rotateForce = 30;
 
             rb.angularVelocity +=
-                rotateForce * InputManager.Instance.SmoothedVertical * transform.right / rb.mass;
+                rotateForce * PlayerInput.Instance.SmoothedVertical * transform.right / rb.mass;
 
             if (rb.linearVelocity.magnitude < 5 && rb.angularVelocity.magnitude < 1)
             {
                 timeStuck += 10 * Time.fixedDeltaTime;
-                if (timeStuck > 5 && !InputManager.Instance.GetKey(KeyCode.Space))
+                if (timeStuck > 5 && !PlayerInput.Instance.IsPressed(handBrakeAction))
                     rotateForce = 500;
             }
             else
                 timeStuck = 0;
 
-            if (InputManager.Instance.GetKey(KeyCode.Space))
+            if (PlayerInput.Instance.IsPressed(handBrakeAction))
                 rb.angularVelocity +=
-                    InputManager.Instance.SmoothedHorizontal * rotateForce * transform.up / rb.mass;
+                    PlayerInput.Instance.SmoothedHorizontal * rotateForce * transform.up / rb.mass;
             else
                 rb.angularVelocity -=
-                    InputManager.Instance.SmoothedHorizontal
+                    PlayerInput.Instance.SmoothedHorizontal
                     * rotateForce
                     * transform.forward
                     / rb.mass;
@@ -195,7 +199,7 @@ public class Car : NetworkBehaviour
         {
             driver = character;
 
-            l = character.GetComponent<Links>();
+            l = character.GetComponent<PlayerLinks>();
 
             CmdRequestOwnership(netIdentity, character.GetComponent<NetworkIdentity>());
 
@@ -217,7 +221,7 @@ public class Car : NetworkBehaviour
         // Change UI (can't use UI cuz keyboard ignores it then, remove on PC)
         l.ui.Find("Car Ui").gameObject.SetActive(false);
 
-        //InputManager.Instance.ResetInput();
+        //PlayerInput.Instance.ResetInput();
 
         foreach (var wheel in wheels)
         {

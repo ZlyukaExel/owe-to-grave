@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class FallDamage : MonoBehaviour
 {
-    private Links l;
+    private PlayerLinks l;
     private NetworkHitpoints hp;
 
     void Start()
     {
-        l = GetComponent<Links>();
+        l = GetComponent<PlayerLinks>();
         hp = GetComponent<NetworkHitpoints>();
     }
 

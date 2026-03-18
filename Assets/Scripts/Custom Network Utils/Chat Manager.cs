@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(Player))]
-[RequireComponent(typeof(Links))]
+[RequireComponent(typeof(PlayerLinks))]
 public class ChatManager : NetworkBehaviour
 {
     private Player player;
@@ -20,7 +20,7 @@ public class ChatManager : NetworkBehaviour
     {
         player = GetComponent<Player>();
 
-        Transform chat = GetComponent<Links>().ui.Find("Chat Ui/Chat");
+        Transform chat = GetComponent<PlayerLinks>().ui.Find("Chat Ui/Chat");
         this.chat = chat.Find("Scroll View/Viewport/Text").GetComponent<TMP_Text>();
         inputField = chat.Find("Input Field").GetComponent<TMP_InputField>();
 

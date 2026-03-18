@@ -1,6 +1,7 @@
 using System.Collections;
 using Mirror;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class Seat : InteractiveObject
@@ -16,7 +17,7 @@ public class Seat : InteractiveObject
     [SerializeField]
     private Transform thirdPersonCameraPivot;
     private Transform firstPersonCameraPivot;
-    private InputManager input;
+    private PlayerInput input;
     private GameObject dummy;
 
     [Header("Stand Settings")]
@@ -31,10 +32,12 @@ public class Seat : InteractiveObject
 
     [SerializeField]
     private LayerMask obstacleLayers = (1 << 0) | (1 << 3);
+    private InputAction carAction;
 
     void Awake()
     {
         dummy = transform.GetChild(0).gameObject;
+        carAction = InputSystem.actions.FindAction("Car");
     }
 
     void Start()
@@ -62,11 +65,11 @@ public class Seat : InteractiveObject
         };
         dummy.GetComponent<NetworkCharacterConfig>().CmdSetConfig(dummyCfg);
 
-        Links l = character.GetComponent<Links>();
+        PlayerLinks l = character.GetComponent<PlayerLinks>();
 
         l.stateManager.SetState(EnumState.Freezed);
 
-        input = InputManager.Instance;
+        input = PlayerInput.Instance;
         l.ui.Find("Ground Ui").gameObject.SetActive(false);
         Image crosshair = l.ui.Find("Ground Ui/Crosshair").GetComponent<Image>();
         Color newColor = crosshair.color;
@@ -106,7 +109,7 @@ public class Seat : InteractiveObject
         }
         else
         {
-            InputManager.Instance.onMovement.AddListener(Stand);
+            PlayerInput.Instance.onMovement.AddListener(Stand);
             l.minimap.target = transform;
         }
 
@@ -117,7 +120,7 @@ public class Seat : InteractiveObject
             thirdPersonCameraPivot
         );
 
-        input.GetAction(KeyCode.F).onUp.AddListener(Stand);
+        input.GetAction(carAction).onUp.AddListener(Stand);
 
         l.hitpoints.ChangeHitPoints(dummy.GetComponent<HitPointsSet>());
 
@@ -131,10 +134,10 @@ public class Seat : InteractiveObject
 
         currentCharacter.GetComponent<NetworkDisable>().SetEnabled(true);
 
-        Links l = currentCharacter.GetComponent<Links>();
+        PlayerLinks l = currentCharacter.GetComponent<PlayerLinks>();
         input.joystick.gameObject.SetActive(true);
-        input.GetAction(KeyCode.F).onUp.RemoveListener(Stand);
-        InputManager.Instance.onMovement.RemoveListener(Stand);
+        input.GetAction(carAction).onUp.RemoveListener(Stand);
+        PlayerInput.Instance.onMovement.RemoveListener(Stand);
 
         l.stateManager.SetState(EnumState.Default);
 

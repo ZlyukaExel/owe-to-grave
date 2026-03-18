@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Links))]
 public class CarTrigger : MonoBehaviour
@@ -11,9 +12,11 @@ public class CarTrigger : MonoBehaviour
 
     private void Start()
     {
-        Links l = GetComponent<Links>();
+        PlayerLinks l = GetComponent<PlayerLinks>();
         getInTheCarButton = l.ui.Find("Car Button").gameObject;
-        InputManager.Instance.GetAction(KeyCode.F).onUp.AddListener(GetInTheCar);
+
+        InputAction carAction = InputSystem.actions.FindAction("Car");
+        PlayerInput.Instance.GetAction(carAction).onUp.AddListener(GetInTheCar);
     }
 
     // Remove in PC

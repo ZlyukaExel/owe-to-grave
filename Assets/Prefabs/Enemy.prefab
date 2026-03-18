@@ -578,10 +578,10 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: 1
-      addedObject: {fileID: 3145397852210263178}
+      addedObject: {fileID: 4737034734182828294}
     - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: 2
-      addedObject: {fileID: 8392359010730549035}
+      addedObject: {fileID: 176556713951728422}
     - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: 3
       addedObject: {fileID: 2344521096632744380}
@@ -611,10 +611,10 @@ PrefabInstance:
       addedObject: {fileID: 4546414353998530309}
     - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2415199679992316158}
+      addedObject: {fileID: 8407583282041037836}
     - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8407583282041037836}
+      addedObject: {fileID: 8216600502040429296}
     - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2596955675861981858}
@@ -626,13 +626,10 @@ PrefabInstance:
       addedObject: {fileID: 5579596140632228645}
     - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8017620783216342622}
+      addedObject: {fileID: 4402073845533899290}
     - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 4546757828734658442}
-    - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 36364202673382276}
+      addedObject: {fileID: 6950187555586301682}
     - targetCorrespondingSourceObject: {fileID: 6745089949999026420, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4128742238520580748}
@@ -860,7 +857,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
   m_PrefabInstance: {fileID: 8790594861701038468}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &3145397852210263178
+--- !u!114 &4737034734182828294
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -869,27 +866,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 5260740160240455966}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a373bd794242af46a19b3c03c4510ed, type: 3}
+  m_Script: {fileID: 11500000, guid: 63e6a2ba7e754b544ba637dc080a6eb0, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::EntityLinks
   syncMethod: 0
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  localScripts:
-  - {fileID: 8407583282041037836}
-  - {fileID: 4546414353998530309}
-  - {fileID: 2415199679992316158}
-  - {fileID: 8017620783216342622}
-  - {fileID: 1506279612592297479}
-  - {fileID: 2596955675861981858}
-  - {fileID: 5579596140632228645}
-  - {fileID: 4546757828734658442}
-  - {fileID: 36364202673382276}
-  cameraPrefab: {fileID: 3208859204956351565, guid: 41ff51f06462845469921dc01635db24, type: 3}
-  uiPrefab: {fileID: 6287158938969843256, guid: a4dc19b8f79be504da67435d649ef7e9, type: 3}
-  minimapPrefab: {fileID: 7974011845758807737, guid: 8261bab3171a441438e986d6ee7ac120, type: 3}
---- !u!114 &8392359010730549035
+  localScripts: []
+--- !u!114 &176556713951728422
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -898,9 +883,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 5260740160240455966}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e85890ec7b010349a7c2a372bc2df17, type: 3}
+  m_Script: {fileID: 11500000, guid: 9a170bbab4a91b346b7d67cbccaaa486, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Player
+  m_EditorClassIdentifier: Assembly-CSharp::Entity
   syncMethod: 0
   syncDirection: 0
   syncMode: 0
@@ -1022,7 +1007,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMethod: 0
-  syncDirection: 1
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0.05
   target: {fileID: 4776691794294590372}
@@ -1044,7 +1029,7 @@ MonoBehaviour:
   rotationSensitivity: 0.01
   positionPrecision: 0.01
   scalePrecision: 0.01
-  isKinematic: 0
+  isKinematic: 1
 --- !u!114 &6798352397956535892
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1058,7 +1043,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMethod: 0
-  syncDirection: 1
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0.05
   target: {fileID: 4776691794294590372}
@@ -1123,24 +1108,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
---- !u!114 &2415199679992316158
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5260740160240455966}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f263504ad6586804eb63215b12dc849c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMethod: 0
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  chat: {fileID: 0}
-  inputField: {fileID: 0}
 --- !u!114 &8407583282041037836
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1157,6 +1124,31 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+--- !u!114 &8216600502040429296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5260740160240455966}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64229518710e23f45807e8fdc5fd6144, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Movement
+  controller: 1
+  canMove: 1
+  defaultSpeed: 3
+  jumpForce: 4
+  isRunning: 0
+  runButtonPressed: 0
+  speedModifier: 1
+  isGrounded: 0
+  groundRayOffset: {x: 0, y: 0.25, z: 0}
+  groundRayLength: 0.25
+  groundTriggerLayers:
+    serializedVersion: 2
+    m_Bits: 1
 --- !u!114 &2596955675861981858
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1216,32 +1208,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
---- !u!114 &8017620783216342622
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5260740160240455966}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64229518710e23f45807e8fdc5fd6144, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Movement
-  controller: 0
-  canMove: 1
-  defaultSpeed: 3
-  jumpForce: 4
-  isRunning: 0
-  runButtonPressed: 0
-  speedModifier: 1
-  isGrounded: 0
-  groundRayOffset: {x: 0, y: 0.25, z: 0}
-  groundRayLength: 0.25
-  groundTriggerLayers:
-    serializedVersion: 2
-    m_Bits: 1
---- !u!114 &4546757828734658442
+--- !u!114 &4402073845533899290
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1258,28 +1225,19 @@ MonoBehaviour:
   carTriggerLayers:
     serializedVersion: 2
     m_Bits: 9
---- !u!114 &36364202673382276
+--- !u!114 &6950187555586301682
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5260740160240455966}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aad05daa0ff8f0c4cb7d855342c62215, type: 3}
+  m_Script: {fileID: 11500000, guid: 1a1191b57fa463646a53e298be7cf705, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ItemGrabber
-  syncMethod: 0
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  itemGrabberLength: 3
-  itemThrowingForce: 20
-  itemGrabberLayers:
-    serializedVersion: 2
-    m_Bits: 521
-  takeButtonPressed: 0
+  m_EditorClassIdentifier: Assembly-CSharp::InputManager
+  smoothingSpeed: 3
 --- !u!1 &5489449613937681701 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3877606035874751649, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
