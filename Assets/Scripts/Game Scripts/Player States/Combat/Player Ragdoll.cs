@@ -17,7 +17,6 @@ public class PlayerRagdollControl : Ragdoll
     private Vector3 mAngleOffset = Vector3.zero;
     private Minimap minimap;
 
-
     void Start()
     {
         _RagdollStart();
@@ -42,13 +41,22 @@ public class PlayerRagdollControl : Ragdoll
 
     void FollowFreeRotation()
     {
-        float mx, my;
+        float mx,
+            my;
 
         if (mFirstPerson)
         {
-            mCamera.rotation = Quaternion.Slerp(mCamera.rotation, mCameraHolder.rotation, Time.deltaTime * 2);
+            mCamera.rotation = Quaternion.Slerp(
+                mCamera.rotation,
+                mCameraHolder.rotation,
+                Time.deltaTime * 2
+            );
             cameraMovingTime += Time.deltaTime;
-            mCamera.position = Vector3.Slerp(mCamera.position, mCameraHolder.position, cameraMovingTime);
+            mCamera.position = Vector3.Slerp(
+                mCamera.position,
+                mCameraHolder.position,
+                cameraMovingTime
+            );
         }
         else
         {
@@ -81,7 +89,8 @@ public class PlayerRagdollControl : Ragdoll
                 Vector3 up = mCamera.rotation * Vector3.up;
 
                 Vector3 targetPos = mCameraHolder.position;
-                Vector3 desiredPosition = targetPos
+                Vector3 desiredPosition =
+                    targetPos
                     + forward * positionOffset.z
                     + right * positionOffset.x
                     + up * positionOffset.y;
@@ -94,20 +103,41 @@ public class PlayerRagdollControl : Ragdoll
                 Vector3 direction = desiredPosition - targetPos;
                 Debug.DrawRay(targetPos, direction, Color.yellow);
                 float mCollisionRadius = 0.4f;
-                if (Physics.SphereCast(mCameraHolder.position, mCollisionRadius, direction.normalized, out hit, direction.magnitude, defaultLayerId | itemsLayerId))
+                if (
+                    Physics.SphereCast(
+                        mCameraHolder.position,
+                        mCollisionRadius,
+                        direction.normalized,
+                        out hit,
+                        direction.magnitude,
+                        defaultLayerId | itemsLayerId
+                    )
+                )
                 {
                     if (!hit.collider.CompareTag("Interactable"))
                         desiredPosition = hit.point + hit.normal * mCollisionRadius;
                 }
 
-                mCamera.position = Vector3.Slerp(mCamera.position, desiredPosition, cameraSpeed * Time.deltaTime);
+                mCamera.position = Vector3.Slerp(
+                    mCamera.position,
+                    desiredPosition,
+                    cameraSpeed * Time.deltaTime
+                );
             }
         }
     }
 
-    public void Setter(TouchField touchField, Vector3 pos, int set, FixedJoystick joystick, Minimap minimap)
+    public void Setter(
+        TouchField touchField,
+        Vector3 pos,
+        int set,
+        FixedJoystick joystick,
+        Minimap minimap
+    )
     {
-        mCameraHolder = transform.Find("Armature/mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2/mixamorig:Neck/mixamorig:Head");
+        mCameraHolder = transform.Find(
+            "Armature/mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2/mixamorig:Neck/mixamorig:Head"
+        );
         mTouchField = touchField;
         positionOffset = pos;
         if (positionOffset.z == 0)

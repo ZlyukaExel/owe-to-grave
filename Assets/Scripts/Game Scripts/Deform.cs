@@ -1,6 +1,7 @@
 using Mirror;
 using UnityEngine;
 
+[RequireComponent(typeof(MeshFilter))]
 public class Deform : NetworkBehaviour
 {
     private Mesh mesh;

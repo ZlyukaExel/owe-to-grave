@@ -17,7 +17,7 @@ public class NetworkAudioSource : NetworkBehaviour
             CmdPlay();
     }
 
-    [Command]
+    [Command(requiresAuthority = false)]
     private void CmdPlay()
     {
         RpcPlay();

@@ -4,19 +4,11 @@ using UnityEngine.UI;
 [RequireComponent(typeof(ItemGrabber))]
 public class PlayerLinks : Links
 {
-    [HideInInspector]
     public Transform ui { get; private set; }
-
-    [HideInInspector]
     public Minimap minimap { get; private set; }
-
-    [HideInInspector]
     public CameraController cameraController { get; private set; }
-
-    [HideInInspector]
+    public ItemGrabber itemGrabber { get; private set; }
     public Transform playerCamera => cameraController.transform;
-
-    [HideInInspector]
     public Transform cameraPivot => playerCamera.parent;
 
     [SerializeField]
@@ -24,17 +16,25 @@ public class PlayerLinks : Links
         uiPrefab,
         minimapPrefab;
 
+    public override void Awake()
+    {
+        base.Awake();
+
+        itemGrabber = GetComponent<ItemGrabber>();
+    }
+
     public override void Start()
     {
         if (!(netIdentity.connectionToClient == null && isServer || isOwned))
             return;
 
-        base.Start();
-
         ui = Instantiate(uiPrefab).transform.Find("Game Ui");
         minimap = Instantiate(minimapPrefab).GetComponent<Minimap>();
         cameraController = Instantiate(cameraPrefab).GetComponentInChildren<CameraController>();
         minimap.SetTarget(transform); // TODO: change in movement
+        input = PlayerInput.Instance;
+
+        base.Start();
 
         // Camera init
         cameraController.Initialize(transform);

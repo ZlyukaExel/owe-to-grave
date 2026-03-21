@@ -1,6 +1,6 @@
-using UnityEngine;
-using TMPro;
 using System.Text.RegularExpressions;
+using TMPro;
+using UnityEngine;
 
 [RequireComponent(typeof(TMP_InputField))]
 public class InputFilter : MonoBehaviour
@@ -18,7 +18,8 @@ public class InputFilter : MonoBehaviour
 
     private void FilterRichText(string text)
     {
-        if (string.IsNullOrEmpty(text)) return;
+        if (string.IsNullOrEmpty(text))
+            return;
 
         text = Regex.Replace(text, blackListSingleString, "", RegexOptions.IgnoreCase);
 

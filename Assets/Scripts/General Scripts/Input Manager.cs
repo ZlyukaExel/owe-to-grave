@@ -91,7 +91,7 @@ public class InputManagerAction
     public UnityEvent onUp = new();
     private bool isSubscribed = false;
 
-    public InputManagerAction(InputAction inputAction, HashSet<InputAction> pressed) // Check enable Input Action
+    public InputManagerAction(InputAction inputAction, HashSet<InputAction> pressed)
     {
         this.inputAction = inputAction;
         onDown.AddListener(() => pressed.Add(inputAction));

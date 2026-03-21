@@ -1,5 +1,5 @@
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 public class NickChanger : MonoBehaviour
 {
@@ -15,9 +15,8 @@ public class NickChanger : MonoBehaviour
     private void ChangeNickname(string newNickname)
     {
         if (string.IsNullOrWhiteSpace(newNickname)
-
 #if UNITY_STANDALONE
-        || !Input.GetKeyDown(KeyCode.Return)
+            || !Input.GetKeyDown(KeyCode.Return)
 #endif
 
         )

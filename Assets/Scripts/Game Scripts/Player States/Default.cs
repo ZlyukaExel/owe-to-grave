@@ -3,8 +3,8 @@ public class DefaultState : State
     public override void UpdateState()
     {
         l.movement.MovementUpdate();
-        l?.carTrigger.CarTriggerUpdate();
-        l.itemGrabber?.ItemGrabbingUpdate();
+        l.carTrigger.CarTriggerUpdate();
+        pLinks?.itemGrabber.ItemGrabbingUpdate();
     }
 
     public override void FixedUpdateState()
@@ -14,6 +14,6 @@ public class DefaultState : State
 
     public override void ExitState()
     {
-        l.itemGrabber?.StopDragging();
+        pLinks?.itemGrabber.StopDragging();
     }
 }

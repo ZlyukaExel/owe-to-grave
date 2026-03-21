@@ -27,7 +27,6 @@ public class CombatState : State
 
     [SerializeField]
     private GameObject bulletPrefab;
-    private PlayerLinks pLinks;
     private InputAction attackAction,
         aimAction;
 
@@ -38,8 +37,6 @@ public class CombatState : State
 
         PlayerInput.Instance.GetAction(attackAction)?.onDown.AddListener(OnShootButtonDown);
         PlayerInput.Instance.GetAction(aimAction)?.onDown.AddListener(OnAimButtonDown);
-
-        pLinks = l as PlayerLinks;
 
         Transform combatUi = pLinks.ui.Find("Ground Ui");
 

@@ -630,6 +630,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6950187555586301682}
+    - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -3352048153882858386}
     - targetCorrespondingSourceObject: {fileID: 6745089949999026420, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4128742238520580748}
@@ -873,7 +876,12 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  localScripts: []
+  localScripts:
+  - {fileID: 8216600502040429296}
+  - {fileID: 1506279612592297479}
+  - {fileID: 4546414353998530309}
+  - {fileID: 4402073845533899290}
+  - {fileID: 8407583282041037836}
 --- !u!114 &176556713951728422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1136,13 +1144,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64229518710e23f45807e8fdc5fd6144, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Movement
-  controller: 1
   canMove: 1
+  angleY: 0
+  speedModifier: 1
   defaultSpeed: 3
   jumpForce: 4
   isRunning: 0
   runButtonPressed: 0
-  speedModifier: 1
   isGrounded: 0
   groundRayOffset: {x: 0, y: 0.25, z: 0}
   groundRayLength: 0.25
@@ -1238,6 +1246,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InputManager
   smoothingSpeed: 3
+--- !u!114 &-3352048153882858386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5260740160240455966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f28fdd6758d704fae3781fa4bb54c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AiController
+  movementVector: {x: 0, y: 0}
 --- !u!1 &5489449613937681701 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3877606035874751649, guid: dbe1828e08b32754489dc7d494784b47, type: 3}

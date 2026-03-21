@@ -176,6 +176,7 @@ public class CameraController : MonoBehaviour
         cameraPivot.rotation = Quaternion.Euler(angleX, angleY, 0);
 
         l.minimap.angleY = angleY;
+        l.movement.angleY = angleY;
     }
 
     private void CameraMode_Car()

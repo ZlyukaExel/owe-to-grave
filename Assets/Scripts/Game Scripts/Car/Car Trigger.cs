@@ -12,16 +12,21 @@ public class CarTrigger : MonoBehaviour
 
     private void Start()
     {
-        PlayerLinks l = GetComponent<PlayerLinks>();
-        getInTheCarButton = l.ui.Find("Car Button").gameObject;
+        Links l = GetComponent<Links>();
+
+        if (l is PlayerLinks pLinks)
+            getInTheCarButton = pLinks.ui.Find("Car Button").gameObject;
 
         InputAction carAction = InputSystem.actions.FindAction("Car");
-        PlayerInput.Instance.GetAction(carAction).onUp.AddListener(GetInTheCar);
+        l.input.GetAction(carAction).onUp.AddListener(GetInTheCar);
     }
 
     // Remove in PC
     public void CarTriggerUpdate()
     {
+        if (!getInTheCarButton)
+            return;
+
         bool isCarValid = false;
 
         foreach (

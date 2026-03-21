@@ -14,7 +14,7 @@ public class Ragdoll : MonoBehaviour
     protected Vector3 positionOffset;
 #if UNITY_ANDROID
     protected FixedJoystick mJoystick;
-#endif    
+#endif
     protected Trigger _back;
     protected Transform mRifle;
     protected Transform mCamera;
@@ -44,14 +44,21 @@ public class Ragdoll : MonoBehaviour
         {
             _time += Time.deltaTime;
 
-            if (mCameraHolder == null || (
+            if (
+                mCameraHolder == null
+                || (
 #if UNITY_ANDROID
-               mJoystick.Horizontal != 0 || mJoystick.Vertical != 0 ||
+                    mJoystick.Horizontal != 0
+                    || mJoystick.Vertical != 0
+                    ||
 #endif
-               //#if UNITY_STANDALONE
-               Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0
-               //#endif
-               ) && _time > 1) //stand up
+                    //#if UNITY_STANDALONE
+                    Input.GetAxis("Horizontal") != 0
+                    || Input.GetAxis("Vertical") != 0
+                //#endif
+                )
+                    && _time > 1
+            ) //stand up
                 TransitionToAnim();
         }
         else
@@ -68,7 +75,10 @@ public class Ragdoll : MonoBehaviour
         foreach (Transform t in allTransforms)
         {
             if (t.gameObject.name == "WeaponHolder")
-            { mRifle = t; break; }
+            {
+                mRifle = t;
+                break;
+            }
         }
 
         List<Transform> boneTransforms = new List<Transform>();
@@ -79,7 +89,9 @@ public class Ragdoll : MonoBehaviour
                 boneTransforms.Add(objTransform);
 
                 if (objTransform.name.Contains("Hips"))
-                    ch.GetComponent<Rigidbody>().linearVelocity = objTransform.GetComponent<Rigidbody>().linearVelocity;
+                    ch.GetComponent<Rigidbody>().linearVelocity = objTransform
+                        .GetComponent<Rigidbody>()
+                        .linearVelocity;
             }
         }
 
@@ -136,7 +148,7 @@ public class Ragdoll : MonoBehaviour
             Destroy(mCamera.gameObject);
         }
         // else
-            // ch.GetComponent<Humanoid>().StartBonesRotationFront();
+        // ch.GetComponent<Humanoid>().StartBonesRotationFront();
 
         Destroy(gameObject);
     }

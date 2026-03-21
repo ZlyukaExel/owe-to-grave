@@ -48,12 +48,18 @@ public class NetworkItem : NetworkBehaviour
     [Command(requiresAuthority = false)]
     public void SetVelocity(Vector3 velocity)
     {
+        if (rb.isKinematic)
+            return;
+
         rb.linearVelocity = velocity;
     }
 
     [Command(requiresAuthority = false)]
     public void AddForce(Vector3 velocity)
     {
+        if (rb.isKinematic)
+            return;
+
         rb.AddForce(velocity);
     }
 }

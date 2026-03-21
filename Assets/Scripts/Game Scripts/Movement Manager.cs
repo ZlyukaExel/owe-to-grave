@@ -6,14 +6,18 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Links))]
 public class MovementManager : MonoBehaviour
 {
-    public MovementController controller = MovementController.Player;
     public bool canMove = true;
-    public float defaultSpeed = 3,
+    public float angleY,
+        speedModifier = 1;
+
+    [SerializeField]
+    private float defaultSpeed = 3,
         jumpForce = 4;
-    public bool isRunning,
+
+    [SerializeField]
+    private bool isRunning,
         runButtonPressed;
     public bool isMoving { get; private set; }
-    public float speedModifier = 1;
     public float currentSpeed { get; private set; }
     private float runButtonPressedTime;
     private float holdButtonTime = 0.15f;
@@ -28,34 +32,23 @@ public class MovementManager : MonoBehaviour
     private Animator animator;
     private Rigidbody rb;
     private CombatState combat;
-    private CameraController cameraController;
-    private InputManager inputManager;
-    private InputManager aiInput;
+    private InputManager input;
     private InputAction jumpAction;
 
-    void Awake()
+    private void Awake()
     {
         jumpAction = InputSystem.actions.FindAction("Jump");
     }
 
     private void Start()
     {
-        PlayerLinks l = GetComponent<PlayerLinks>();
+        Links l = GetComponent<Links>();
         rb = GetComponent<Rigidbody>();
         combat = GetComponent<CombatState>();
-        aiInput = GetComponent<InputManager>();
         animator = l.animator;
-        cameraController = l.cameraController;
+        input = l.input;
 
-        inputManager = controller switch
-        {
-            MovementController.Player => PlayerInput.Instance,
-            _ => aiInput,
-        };
-
-        InputManagerAction sprintAction = inputManager.GetAction(
-            InputSystem.actions.FindAction("Sprint")
-        );
+        InputManagerAction sprintAction = input.GetAction(InputSystem.actions.FindAction("Sprint"));
         sprintAction.onDown.AddListener(OnSprintButtonDown);
         sprintAction.onUp.AddListener(OnSprintButtonUp);
     }
@@ -73,8 +66,7 @@ public class MovementManager : MonoBehaviour
         {
             runButtonPressedTime += Time.deltaTime;
 
-            bool isMoving =
-                new Vector2(inputManager.Vertical, inputManager.Horizontal).magnitude > 0.1f;
+            bool isMoving = new Vector2(input.Vertical, input.Horizontal).magnitude > 0.1f;
             if (!runButtonPressed && !isMoving)
             {
                 noInputTimer += Time.deltaTime;
@@ -87,7 +79,7 @@ public class MovementManager : MonoBehaviour
 
         animator.SetBool("isJumping", !isGrounded);
 
-        if (inputManager.IsPressed(jumpAction))
+        if (input.IsPressed(jumpAction))
             Jump();
     }
 
@@ -109,19 +101,19 @@ public class MovementManager : MonoBehaviour
 
     private void Jump()
     {
-        if (isGrounded)
-        {
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
-        }
+        if (!isGrounded || rb.isKinematic)
+            return;
+
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
     }
 
     public void ActualMovement()
     {
-        Vector3 direction = new(inputManager.Horizontal, 0, inputManager.Vertical); // TODO: null first frame
+        Vector3 direction = new(input.Horizontal, 0, input.Vertical);
 
-        Vector3 joystickWorldMovement = cameraController.transform.TransformDirection(direction);
-        joystickWorldMovement.y = 0;
+        Quaternion rotation = Quaternion.Euler(0, angleY, 0);
+        Vector3 joystickWorldMovement = rotation * direction;
 
         float inputMagnitude = direction.magnitude;
         isMoving = inputMagnitude > 0.1f;
@@ -153,7 +145,7 @@ public class MovementManager : MonoBehaviour
         if (combat.isAimingOrShooting)
         {
             // Rotate character towards camera direction
-            Vector3 targetRotation = new(0, cameraController.angleY, 0);
+            Vector3 targetRotation = new(0, angleY, 0);
             transform.rotation = Quaternion.Lerp(
                 transform.rotation,
                 Quaternion.Euler(targetRotation),
@@ -162,8 +154,8 @@ public class MovementManager : MonoBehaviour
 
             if (animator != null)
             {
-                animator.SetFloat("VelZ", inputManager.SmoothedVertical);
-                animator.SetFloat("VelX", inputManager.SmoothedHorizontal);
+                animator.SetFloat("VelZ", input.SmoothedVertical);
+                animator.SetFloat("VelX", input.SmoothedHorizontal);
             }
         }
         // Default state
@@ -240,10 +232,4 @@ public class MovementManager : MonoBehaviour
     //         animator.SetBool("isSliding", false);
     //     }
     // }
-}
-
-public enum MovementController
-{
-    Player,
-    Ai,
 }

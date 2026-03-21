@@ -4,6 +4,7 @@ using Mirror;
 public abstract class State : NetworkBehaviour
 {
     protected Links l;
+    protected PlayerLinks pLinks => l as PlayerLinks;
 
     public virtual void Awake()
     {
