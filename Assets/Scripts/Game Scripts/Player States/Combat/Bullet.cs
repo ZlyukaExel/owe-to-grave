@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
+[RequireComponent(typeof(MeshRenderer))]
 public class Bullet : NetworkBehaviour
 {
     private WeaponProperties weapon;
@@ -14,7 +15,8 @@ public class Bullet : NetworkBehaviour
     [HideInInspector]
     public int piercing = 0;
 
-    private readonly HashSet<uint> ignorePlayers = new();
+    [SerializeField]
+    private List<uint> ignorePlayers = new();
 
     [SerializeField]
     private bool isKinematic = false;
@@ -37,6 +39,9 @@ public class Bullet : NetworkBehaviour
         // If PVP enabled, handle Players layer too
         if (ServerManager.Instance.pvpEnabled)
             obstaclesLayers |= 1 << LayerMask.NameToLayer("Player");
+        // Current Player for the server
+        if (ServerManager.Instance.pvpEnabled)
+            obstaclesLayers |= 1 << LayerMask.NameToLayer("Current Player");
 
         StartCoroutine(DelayedDestroy(lifeTime));
     }
@@ -100,12 +105,7 @@ public class Bullet : NetworkBehaviour
                 return;
             ignorePlayers.Add(playerId);
 
-            DamageInfo damageInfo = new(
-                weapon.damage,
-                weapon.critMultiplier,
-                DamageType.Bullet,
-                shooter
-            );
+            DamageInfo damageInfo = new(weapon.damage, DamageType.Bullet, shooter);
             hp.Damage(damageInfo);
 
             // Destroying bullet
@@ -154,7 +154,14 @@ public class Bullet : NetworkBehaviour
                 // Use TargetRpc cuz only owner can apply force
                 Vector3 forceDirection = -hit.normal;
                 forceDirection.y = 0;
-                RpcApplyForce(networkIdentity, forceDirection);
+
+                if (networkIdentity.connectionToClient == null)
+                    ApplyForce(
+                        networkIdentity.GetComponent<Rigidbody>(),
+                        weapon.damage * forceDirection
+                    );
+                else
+                    RpcApplyForce(networkIdentity, weapon.damage * forceDirection);
             }
             // Non-items create bullet holes
             else
@@ -191,15 +198,14 @@ public class Bullet : NetworkBehaviour
     }
 
     [TargetRpc]
-    private void RpcApplyForce(NetworkIdentity target, Vector3 direction)
+    private void RpcApplyForce(NetworkIdentity target, Vector3 force)
     {
-        target
-            .GetComponent<Rigidbody>()
-            .AddForceAtPosition(
-                5 * weapon.damage * direction,
-                transform.position,
-                ForceMode.Impulse
-            );
+        ApplyForce(target.GetComponent<Rigidbody>(), force);
+    }
+
+    private void ApplyForce(Rigidbody rigidbody, Vector3 force)
+    {
+        rigidbody.AddForceAtPosition(5 * force, transform.position, ForceMode.Impulse);
     }
 
     private IEnumerator DelayedDestroy(float delay)

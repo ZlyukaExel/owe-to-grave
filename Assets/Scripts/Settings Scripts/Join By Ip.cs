@@ -1,25 +1,27 @@
-using UnityEngine;
-using TMPro;
-using System.Net;
-using Mirror.Discovery;
 using Mirror;
+using TMPro;
+using UnityEngine;
 
 public class JoinByIp : MonoBehaviour
 {
     public TMP_InputField ipInputField;
-    public TMP_InputField portInputField;
 
     public void Join()
     {
-        if (!ipInputField.text.Contains(".")) return;
-        if (ipInputField.text.Split(".").Length != 4) return;
+        string[] parts = ipInputField.text.Split(":");
+        if (parts.Length != 2)
+            return;
+        if (parts[0].Split(".").Length != 4)
+            return;
 
         NetworkManager.singleton.networkAddress = ipInputField.text;
         if (Transport.active is PortTransport portTransport)
         {
             // use TryParse in case someone tries to enter non-numeric characters
-            if (ushort.TryParse(portInputField.text, out ushort uport))
+            if (ushort.TryParse(parts[1], out ushort uport))
                 portTransport.Port = uport;
+            else
+                return;
         }
         NetworkManager.singleton.StartClient();
     }

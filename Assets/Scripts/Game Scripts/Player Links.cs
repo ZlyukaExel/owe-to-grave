@@ -37,7 +37,6 @@ public class PlayerLinks : Links
         base.Start();
 
         // Camera init
-        cameraController.Initialize(transform);
         Transform firstPersonCameraPivot = transform.Find("First Person Camera Pivot");
         Transform thirdPersonCameraPivot = transform.Find("Third Person Camera Pivot");
         cameraController.ChangeTarget(

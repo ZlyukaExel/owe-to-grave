@@ -23,6 +23,9 @@ public class NetworkHitpoints : NetworkBehaviour
     [HideInInspector]
     public UnityEvent onDeath;
 
+    [HideInInspector]
+    public UnityEvent<DamageInfo> onDamage;
+
     private void Start()
     {
         player = GetComponent<Player>();
@@ -37,17 +40,17 @@ public class NetworkHitpoints : NetworkBehaviour
     }
 
     [Command(requiresAuthority = false)]
-    public void Damage(float damage)
+    public void Damage(DamageInfo damageInfo)
     {
-        // TODO: pass damage info, not damage
+        // TODO: pass crit
 
-        //print("Damage taken: " + damage);
+        // print("Damage taken: " + damageInfo.damage);
 
         // Ignore if already dead
         if (!isVulnerable || currentHp <= 0)
             return;
 
-        currentHp = Mathf.Max(0, currentHp - damage);
+        currentHp = Mathf.Max(0, currentHp - damageInfo.damage);
 
         if (currentHp <= 0)
         {
@@ -109,14 +112,14 @@ public class NetworkHitpoints : NetworkBehaviour
 public class DamageInfo
 {
     public float damage = 20;
-    public float critMultiplier = 1;
     public DamageType type;
     public NetworkIdentity source;
 
-    public DamageInfo(float damage, float critMultiplier, DamageType type, NetworkIdentity source)
+    public DamageInfo() { }
+
+    public DamageInfo(float damage, DamageType type, NetworkIdentity source)
     {
         this.damage = damage;
-        this.critMultiplier = critMultiplier;
         this.type = type;
         this.source = source;
     }

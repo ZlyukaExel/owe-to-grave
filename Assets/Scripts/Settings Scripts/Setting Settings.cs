@@ -4,10 +4,10 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Localization.Settings;
 
-
 public class PlayerPrefsSet : MonoBehaviour
 {
-    [SerializeField] private AudioMixer audioMixer;
+    [SerializeField]
+    private AudioMixer audioMixer;
 
     void Start()
     {
@@ -23,7 +23,8 @@ public class PlayerPrefsSet : MonoBehaviour
 
         //Graphics
         QualitySettings.SetQualityLevel(PlayerPrefs.GetInt("Graphics quality settings", 0));
-        QualitySettings.shadowResolution = (ShadowResolution)PlayerPrefs.GetInt("Shadows quality settings", 0);
+        QualitySettings.shadowResolution = (ShadowResolution)
+            PlayerPrefs.GetInt("Shadows quality settings", 0);
         Application.targetFrameRate = PlayerPrefs.GetInt("FPS lock", 30);
 
         //Language
@@ -32,8 +33,16 @@ public class PlayerPrefsSet : MonoBehaviour
             string lang = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
             switch (lang)
             {
-                case "ru": { PlayerPrefs.SetInt("Language", 1); break; }
-                default: { PlayerPrefs.SetInt("Language", 0); break; }
+                case "ru":
+                {
+                    PlayerPrefs.SetInt("Language", 1);
+                    break;
+                }
+                default:
+                {
+                    PlayerPrefs.SetInt("Language", 0);
+                    break;
+                }
             }
         }
         StartCoroutine(SetLanguage(PlayerPrefs.GetInt("Language")));

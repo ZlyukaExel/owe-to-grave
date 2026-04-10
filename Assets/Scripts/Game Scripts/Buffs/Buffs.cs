@@ -3,15 +3,23 @@ using UnityEngine;
 
 public class Buffs : MonoBehaviour
 {
-    [SerializeField]
+    [SerializeReference]
     private List<Buff> _activeBuffs = new();
 
     public void AddBuff(Buff newBuff)
     {
+        if (_activeBuffs.Contains(newBuff))
+            return;
+
         _activeBuffs.Add(newBuff);
     }
 
-    public IReadOnlyList<Buff> GetActiveBuffs() // ООП
+    public void RemoveBuff(Buff buff)
+    {
+        _activeBuffs.Remove(buff);
+    }
+
+    public IReadOnlyList<Buff> GetActiveBuffs()
     {
         return _activeBuffs;
     }
@@ -20,12 +28,15 @@ public class Buffs : MonoBehaviour
     {
         for (int i = _activeBuffs.Count - 1; i >= 0; i--)
         {
-            _activeBuffs[i].TimeRemaining -= Time.deltaTime;
+            Buff buff = _activeBuffs[i];
 
-            if (_activeBuffs[i].TimeRemaining <= 0)
+            if (buff.TimeRemaining < 0)
+                continue;
+
+            buff.TimeRemaining -= Time.deltaTime;
+            if (buff.TimeRemaining <= 0)
             {
                 _activeBuffs.RemoveAt(i);
-                // Debug.Log("Бафф истек и был удален.");
             }
         }
     }

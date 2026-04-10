@@ -1,59 +1,40 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
-public class AnyDirectionSlider: MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class AnyDirectionSlider : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    [HideInInspector]
-    public Vector2 TouchDist;
-    [HideInInspector]
-    public Vector2 PointerOld;
-    [HideInInspector]
-    protected int PointerId;
-    [HideInInspector]
-    public bool Pressed;
-
-    public float x = 0;
-    public float y = 0;
-    private float t = 0;
+    public bool Pressed { get; private set; }
+    public float x = 0,
+        y = 0;
+    private float startTime;
 
     void Update()
     {
-        if (Pressed)
+        if (Pressed && Pointer.current != null)
         {
-            t += Time.deltaTime;
-            if (PointerId >= 0 && PointerId < Input.touches.Length)
-            {
-                TouchDist = Input.touches[PointerId].position - PointerOld;
-                PointerOld = Input.touches[PointerId].position;
-            }
-            else
-            {
-                TouchDist = new Vector2(Input.mousePosition.x, Input.mousePosition.y) - PointerOld;
-                PointerOld = Input.mousePosition;
-            }
-            x += TouchDist.x;
-            y += TouchDist.y;
+            Vector2 delta = Pointer.current.delta.ReadValue();
+            x += delta.x;
+            y += delta.y;
         }
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
         Pressed = true;
-        PointerId = eventData.pointerId;
-        PointerOld = eventData.position;
+        startTime = Time.time;
     }
-
 
     public void OnPointerUp(PointerEventData eventData)
     {
         Pressed = false;
-        if (t < 0.2f)
+        if (Time.time - startTime < 0.2f)
             x = y = 0;
-        t = 0;
     }
 
     private void OnDisable()
     {
-        x = y = 0;
+        x = y = Pressed ? x : 0;
+        Pressed = false;
     }
 }

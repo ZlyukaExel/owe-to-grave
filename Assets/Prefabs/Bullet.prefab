@@ -121,10 +121,11 @@ MonoBehaviour:
   syncInterval: 0
   lifeTime: 20
   piercing: 0
+  ignorePlayers: 
   isKinematic: 0
   obstaclesLayers:
     serializedVersion: 2
-    m_Bits: 1065
+    m_Bits: 1577
   bulletHole: {fileID: 3008708767746873235, guid: b8dd65151c102fd4f9f1f43e6cee5e59, type: 3}
   bulletParticle: {fileID: 551470386481314703, guid: 1a85943fc28fc58438c1d3da2c37bdb0, type: 3}
 --- !u!96 &8170357199826751334

@@ -8,6 +8,7 @@ using UnityEngine;
 [RequireComponent(typeof(CarTrigger))]
 [RequireComponent(typeof(NetworkCharacterConfig))]
 [RequireComponent(typeof(NetworkRigidbodyReliable))]
+[RequireComponent(typeof(Buffs))]
 public class Links : NetworkBehaviour
 {
     public StateManager stateManager { get; private set; }
@@ -16,7 +17,8 @@ public class Links : NetworkBehaviour
     public Animator animator { get; private set; }
     public NetworkHitpoints hitpoints { get; private set; }
     public InputManager input { get; protected set; }
-    public Weapon weapon => netConfig.configManager.GetWeapon().GetComponent<Weapon>();
+    public Buffs buffs { get; private set; }
+    public Weapon weapon => netConfig.configManager.GetWeapon();
     public NetworkCharacterConfig netConfig { get; private set; }
 
     [SerializeField]
@@ -25,6 +27,7 @@ public class Links : NetworkBehaviour
     public virtual void Awake()
     {
         input = GetComponent<InputManager>();
+        buffs = GetComponent<Buffs>();
         movement = GetComponent<MovementManager>();
         stateManager = GetComponent<StateManager>();
         animator = transform.Find("Armature").GetComponent<Animator>();

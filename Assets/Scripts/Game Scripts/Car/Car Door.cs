@@ -139,4 +139,6 @@ public class CarDoor : InteractiveObject
     {
         gameObject.SetActive(!newVar);
     }
+
+    public override string InteractionText() => "Open";
 }

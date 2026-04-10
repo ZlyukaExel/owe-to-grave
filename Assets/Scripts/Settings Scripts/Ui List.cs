@@ -17,11 +17,17 @@ public class UiList : MonoBehaviour
     [SerializeField]
     private RectTransform content;
     public UnityEvent onValueChanged;
+
+    [SerializeField]
     private TMP_Text text;
 
     void Awake()
     {
-        text = GetComponent<TMP_Text>();
+        if (!text)
+            text = GetComponent<TMP_Text>();
+        if (!text)
+            Debug.LogWarning("No text component found or set");
+
         nextButton.onClick.AddListener(Next);
         previousButton.onClick.AddListener(Previous);
         onValueChanged.AddListener(CheckButtons);
@@ -53,13 +59,19 @@ public class UiList : MonoBehaviour
 
     public void Next()
     {
+        int index = Array.IndexOf(list, text.text);
+        if (index >= list.Length - 1)
+            return;
         text.text = list[Array.IndexOf(list, text.text) + 1];
         onValueChanged.Invoke();
     }
 
     public void Previous()
     {
-        text.text = list[Array.IndexOf(list, text.text) - 1];
+        int index = Array.IndexOf(list, text.text);
+        if (index <= 0)
+            return;
+        text.text = list[index - 1];
         onValueChanged.Invoke();
     }
 
@@ -68,8 +80,11 @@ public class UiList : MonoBehaviour
         int index = Array.IndexOf(list, text.text);
         previousButton.interactable = index > 0;
         nextButton.interactable = index < list.Length - 1;
-        LayoutRebuilder.ForceRebuildLayoutImmediate(content);
-        LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+        if (content)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+        }
     }
 
     public string GetValue()

@@ -1487,6 +1487,7 @@ MonoBehaviour:
   - {fileID: 8777154716100300863}
   - {fileID: 6813495118342770100}
   - {fileID: 5570526412455594309}
+  handBrakeAction: {fileID: 4461874679068748308, guid: cdba55201852797459211659e79fcd0d, type: 3}
 --- !u!54 &8354681184896240276
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1844,9 +1845,10 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHp: 3000
+  maxHp: 1000
   hitPoints: {fileID: 5899941000657815979}
   currentHp: 0
+  hpSlider: {fileID: 0}
   onDeath:
     m_PersistentCalls:
       m_Calls: []
@@ -3527,6 +3529,7 @@ MonoBehaviour:
   obstacleLayers:
     serializedVersion: 2
     m_Bits: 9
+  carAction: {fileID: 1462341527435286764, guid: cdba55201852797459211659e79fcd0d, type: 3}
 --- !u!54 &1822969633941712160
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4224,6 +4227,7 @@ MonoBehaviour:
   obstacleLayers:
     serializedVersion: 2
     m_Bits: 9
+  carAction: {fileID: 1462341527435286764, guid: cdba55201852797459211659e79fcd0d, type: 3}
 --- !u!54 &6215174414294057946
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6414,6 +6418,7 @@ MonoBehaviour:
   obstacleLayers:
     serializedVersion: 2
     m_Bits: 9
+  carAction: {fileID: 1462341527435286764, guid: cdba55201852797459211659e79fcd0d, type: 3}
 --- !u!54 &5236003460027198402
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -8850,6 +8855,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee3306f5b89328045b90d0e31386b808, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectDisable
+  isEnabled: 0
 --- !u!1 &8988718513797462979 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6745089949999026420, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
@@ -9314,6 +9320,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee3306f5b89328045b90d0e31386b808, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectDisable
+  isEnabled: 0
 --- !u!4 &7370300690171740634 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4302134543082801696, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
@@ -9968,6 +9975,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee3306f5b89328045b90d0e31386b808, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectDisable
+  isEnabled: 0
 --- !u!1 &6528587182591663075 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 377625362548893063, guid: dbe1828e08b32754489dc7d494784b47, type: 3}

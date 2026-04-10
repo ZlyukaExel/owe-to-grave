@@ -10,15 +10,17 @@ public class CarTrigger : MonoBehaviour
     public Vector3 carTriggerOffset = new(0, 1, 0);
     public LayerMask carTriggerLayers;
 
+    [SerializeField]
+    private InputActionReference carAction;
+
     private void Start()
     {
         Links l = GetComponent<Links>();
 
         if (l is PlayerLinks pLinks)
-            getInTheCarButton = pLinks.ui.Find("Car Button").gameObject;
+            getInTheCarButton = pLinks.ui.Find("Mobile Ui/Car Button").gameObject;
 
-        InputAction carAction = InputSystem.actions.FindAction("Car");
-        l.input.GetAction(carAction).onUp.AddListener(GetInTheCar);
+        l.input.GetAction(carAction.action).onUp.AddListener(GetInTheCar);
     }
 
     // Remove in PC

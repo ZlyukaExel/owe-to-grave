@@ -15,9 +15,14 @@ public class StateManager : NetworkBehaviour
 
     private void Awake()
     {
-        state = defaultState = GetComponent<DefaultState>();
+        defaultState = GetComponent<DefaultState>();
         combatState = GetComponent<CombatState>();
         freezedState = GetComponent<FreezedState>();
+    }
+
+    void Start()
+    {
+        SetState(defaultState);
     }
 
     private void Update()
@@ -51,7 +56,7 @@ public class StateManager : NetworkBehaviour
 
     private void SetState(State state)
     {
-        if (this.state.GetType() == state.GetType())
+        if (this.state && this.state.GetType() == state.GetType())
             return;
 
         this.state?.ExitState();

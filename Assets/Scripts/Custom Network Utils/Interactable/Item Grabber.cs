@@ -1,4 +1,5 @@
 using Mirror;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -16,31 +17,35 @@ public class ItemGrabber : NetworkBehaviour
         attackButton;
     private AnyDirectionSlider rotateField;
     private Image takeButtonFiller;
-    private bool isDragging;
+    private bool holdingItem;
     private int itemsLayerId;
-    private Transform itemTransform;
-    private Rigidbody itemRigidbody;
+    private InteractiveObject interactive;
+    public Rigidbody itemRigidbody { private set; get; }
     private float takeButtonPressedTime;
     private float holdButtonTime = 0.15f;
+    private TMP_Text interactableLabel;
     private PlayerLinks l;
+
+    [SerializeField]
+    private InputActionReference interactAction;
 
     public void Start()
     {
         l = GetComponent<PlayerLinks>();
 
         itemsLayerId = LayerMask.NameToLayer("Items");
-        takeButtonObj = l.ui.Find("Ground Ui/Interact Button").gameObject;
+        interactableLabel = l.ui.Find("Interactable Label").GetComponent<TMP_Text>();
+        takeButtonObj = l.ui.Find("Mobile Ui/Ground Ui/Interact Button").gameObject;
         takeButtonFiller = takeButtonObj.transform.Find("Filler").GetComponent<Image>();
 
         rotateItemButton = takeButtonObj.transform.parent.Find("RotateField").gameObject;
         rotateField = rotateItemButton.GetComponent<AnyDirectionSlider>();
 
-        aimButton = l.ui.Find("Ground Ui/Aim Button").gameObject;
-        attackButton = l.ui.Find("Ground Ui/Attack Button").gameObject;
+        aimButton = l.ui.Find("Mobile Ui/Ground Ui/Aim Button").gameObject;
+        attackButton = l.ui.Find("Mobile Ui/Ground Ui/Attack Button").gameObject;
 
-        InputAction interactAction = InputSystem.actions.FindAction("Interact");
-        PlayerInput.Instance.GetAction(interactAction).onDown.AddListener(OnTakeButtonDown);
-        PlayerInput.Instance.GetAction(interactAction).onUp.AddListener(OnTakeButtonUp);
+        PlayerInput.Instance.GetAction(interactAction.action).onDown.AddListener(OnTakeButtonDown);
+        PlayerInput.Instance.GetAction(interactAction.action).onUp.AddListener(OnTakeButtonUp);
     }
 
     public void ItemGrabbingUpdate()
@@ -51,7 +56,7 @@ public class ItemGrabber : NetworkBehaviour
         {
             takeButtonPressedTime = Mathf.Clamp01(takeButtonPressedTime + Time.deltaTime);
 
-            if (isDragging)
+            if (holdingItem)
                 takeButtonFiller.fillAmount = takeButtonPressedTime;
         }
 
@@ -61,10 +66,10 @@ public class ItemGrabber : NetworkBehaviour
     private void CheckGrabRay()
     {
         // If already holding an item, then no need to update
-        if (isDragging || takeButtonPressed)
+        if (holdingItem || takeButtonPressed)
             return;
 
-        // Grab ray on hit enables button
+        // Debug ray
         Ray grabRay = new(l.playerCamera.position, l.playerCamera.forward);
         Debug.DrawRay(
             l.playerCamera.position,
@@ -72,45 +77,36 @@ public class ItemGrabber : NetworkBehaviour
             Color.yellow
         );
 
-        bool validItem = false;
         if (
+            //Raycast hit
             Physics.Raycast(
                 grabRay,
                 out RaycastHit hit,
                 itemGrabberLength - l.cameraController.positionOffset.z,
                 itemGrabberLayers
             )
+            // Is intaractive object
+            && hit.transform.TryGetComponent(out InteractiveObject interactiveObject)
+            // Is interactable
+            && interactiveObject.IsInteractable()
         )
-        {
-            // Checking item
-            itemTransform = hit.transform;
+            interactive = interactiveObject;
+        // else
+        //     interactive = null;
 
-            if (itemTransform.TryGetComponent(out InteractiveObject interactiveObject))
-            {
-                validItem = interactiveObject.IsInteractable();
-            }
-            else
-                validItem =
-                    itemTransform.CompareTag("Interactable")
-                    || itemTransform.CompareTag("Resourse");
-        }
+        // if (interactive)
+        //     interactableLabel.text =
+        //         interactive.gameObject.name + "\n" + interactive.InteractionText();
+        // else
+        //     interactableLabel.text = "";
 
-        if (validItem)
-        {
-            takeButtonObj.SetActive(true);
-            attackButton.SetActive(false);
-        }
-        else
-        {
-            attackButton.SetActive(true);
-            takeButtonObj.SetActive(false);
-            itemTransform = null;
-        }
+        attackButton.SetActive(!interactive);
+        takeButtonObj.SetActive(interactive);
     }
 
     private void DraggingItem()
     {
-        if (isDragging || takeButtonPressed && (takeButtonPressedTime > holdButtonTime))
+        if (holdingItem || takeButtonPressed && (takeButtonPressedTime > holdButtonTime))
         {
             // Changing layer so other players can't grab the item
             if (itemRigidbody.gameObject.layer != LayerMask.NameToLayer("Projectiles"))
@@ -149,18 +145,19 @@ public class ItemGrabber : NetworkBehaviour
     {
         // Grab only items
         if (
-            itemTransform != null
-                && !itemTransform.TryGetComponent(out CarDoor _)
-                && !itemTransform.TryGetComponent(out Seat _)
-            || isDragging
+            interactive
+                && !interactive.TryGetComponent(out CarDoor _)
+                && !interactive.TryGetComponent(out Seat _)
+                && !interactive.TryGetComponent(out DialogueManager _)
+            || holdingItem
         )
         {
             takeButtonPressed = true;
 
             // Grab the item
-            if (!isDragging)
+            if (!holdingItem)
             {
-                itemRigidbody = itemTransform.GetComponent<Rigidbody>();
+                itemRigidbody = interactive.GetComponent<Rigidbody>();
 
                 // Set buttons
 
@@ -174,13 +171,13 @@ public class ItemGrabber : NetworkBehaviour
 
     public void OnTakeButtonUp()
     {
-        if (itemTransform == null)
+        if (!interactive)
             return;
 
         // If interactable object
         if (itemRigidbody == null)
         {
-            if (itemTransform.TryGetComponent(out InteractiveObject interactiveObject))
+            if (interactive.TryGetComponent(out InteractiveObject interactiveObject))
                 interactiveObject.Interact(transform);
         }
         else
@@ -188,9 +185,9 @@ public class ItemGrabber : NetworkBehaviour
             takeButtonPressed = false;
 
             // Throw / drop item
-            if (isDragging)
+            if (holdingItem)
             {
-                isDragging = false;
+                holdingItem = false;
 
                 if (takeButtonPressedTime > holdButtonTime)
                     itemRigidbody.linearVelocity =
@@ -210,11 +207,12 @@ public class ItemGrabber : NetworkBehaviour
 
                     // Move item to inventory
                     CmdDestroy(itemRigidbody.GetComponent<NetworkIdentity>());
-                    l.cameraController.positionOffset.x = 0;
+                    if (l.stateManager.state is not CombatState)
+                        l.cameraController.positionOffset.x = 0;
                     itemRigidbody = null;
                 }
                 else // Start dragging the resourse
-                    isDragging = true;
+                    holdingItem = true;
             }
 
             takeButtonPressedTime = takeButtonFiller.fillAmount = 0;
@@ -229,7 +227,7 @@ public class ItemGrabber : NetworkBehaviour
 
     public void StopDragging()
     {
-        takeButtonPressed = isDragging = false;
+        takeButtonPressed = holdingItem = false;
         takeButtonPressedTime = takeButtonFiller.fillAmount = 0;
 
         // Aim button appears, replacing rotate field
@@ -247,7 +245,8 @@ public class ItemGrabber : NetworkBehaviour
                 itemRigidbody.transform.GetComponent<NetworkIdentity>(),
                 itemsLayerId
             );
-            l.cameraController.positionOffset.x = 0;
+            if (l.stateManager.state is not CombatState)
+                l.cameraController.positionOffset.x = 0;
             itemRigidbody = null;
         }
     }

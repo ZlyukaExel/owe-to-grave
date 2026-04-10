@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(NetworkAudioSource))]
 public class Footsteps : MonoBehaviour
 {
     private NetworkAudioSource audioSource;
@@ -8,12 +9,12 @@ public class Footsteps : MonoBehaviour
     public float speed = 0;
     private float timer = 0,
         stepInterval = 0;
-    private PlayerLinks l;
+    private Links l;
 
     void Start()
     {
         audioSource = GetComponent<NetworkAudioSource>();
-        l = GetComponentInParent<PlayerLinks>();
+        l = GetComponentInParent<Links>();
     }
 
     void Update()

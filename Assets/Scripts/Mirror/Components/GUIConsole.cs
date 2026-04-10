@@ -12,8 +12,9 @@
 //
 // Note: normal Debug.Log messages can be shown by building in Debug/Development
 //       mode.
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Mirror
 {
@@ -43,13 +44,15 @@ namespace Mirror
         public bool showInEditor = false;
 
         // log as queue so we can remove the first entry easily
-        readonly Queue<LogEntry> log = new Queue<LogEntry>();
+        readonly Queue<LogEntry> log = new();
 
         // hotkey to show/hide at runtime for easier debugging
         // (sometimes we need to temporarily hide/show it)
         // Default is BackQuote, because F keys are already assigned in browsers
-        [Tooltip("Hotkey to show/hide the console at runtime\nBack Quote is usually on the left above Tab\nChange with caution - F keys are generally already taken in Browsers")]
-        public KeyCode hotKey = KeyCode.BackQuote;
+        [Tooltip(
+            "Hotkey to show/hide the console at runtime\nBack Quote is usually on the left above Tab\nChange with caution - F keys are generally already taken in Browsers"
+        )]
+        public InputActionReference debugAction;
 
         // GUI
         bool visible;
@@ -74,7 +77,8 @@ namespace Mirror
             // => always show exceptions & errors
             // => usually a good idea to show warnings too, otherwise it's too
             //    easy to miss OnDeserialize warnings etc. in builds
-            bool isImportant = type == LogType.Error || type == LogType.Exception || type == LogType.Warning;
+            bool isImportant =
+                type == LogType.Error || type == LogType.Exception || type == LogType.Warning;
 
             // use stack trace only if important
             // (otherwise users would have to find and search the log file.
@@ -101,21 +105,27 @@ namespace Mirror
 
         void Update()
         {
-            if (show && Input.GetKeyDown(hotKey))
+            if (show && debugAction.action.IsPressed())
                 visible = !visible;
         }
 
 #if !UNITY_SERVER
         void OnGUI()
         {
-            if (!visible) return;
+            if (!visible)
+                return;
 
             // If this offset is changed, also change width in NetworkManagerHUD::OnGUI
             int offsetX = 300 + 20;
 
             GUILayout.BeginArea(new Rect(offsetX, offsetY, Screen.width - offsetX - 10, height));
 
-            scroll = GUILayout.BeginScrollView(scroll, "Box", GUILayout.Width(Screen.width - offsetX - 10), GUILayout.Height(height));
+            scroll = GUILayout.BeginScrollView(
+                scroll,
+                "Box",
+                GUILayout.Width(Screen.width - offsetX - 10),
+                GUILayout.Height(height)
+            );
             foreach (LogEntry entry in log)
             {
                 if (entry.type == LogType.Error || entry.type == LogType.Exception)

@@ -13,6 +13,7 @@
 using System;
 using System.IO;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Mirror
 {
@@ -20,17 +21,17 @@ namespace Mirror
     struct Stats
     {
         // general
-        public int    connections;
+        public int connections;
         public double uptime;
-        public int    configuredTickRate;
-        public int    actualTickRate;
+        public int configuredTickRate;
+        public int actualTickRate;
 
         // traffic
         public long sentBytesPerSecond;
         public long receiveBytesPerSecond;
 
         // cpu
-        public float  serverTickInterval;
+        public float serverTickInterval;
         public double fullUpdateAvg;
         public double serverEarlyAvg;
         public double serverLateAvg;
@@ -48,7 +49,7 @@ namespace Mirror
             long sentBytesPerSecond,
             long receiveBytesPerSecond,
             // cpu
-            float  serverTickInterval,
+            float serverTickInterval,
             double fullUpdateAvg,
             double serverEarlyAvg,
             double serverLateAvg,
@@ -57,10 +58,10 @@ namespace Mirror
         )
         {
             // general
-            this.connections        = connections;
-            this.uptime             = uptime;
+            this.connections = connections;
+            this.uptime = uptime;
             this.configuredTickRate = configuredTickRate;
-            this.actualTickRate     = actualTickRate;
+            this.actualTickRate = actualTickRate;
 
             // traffic
             this.sentBytesPerSecond = sentBytesPerSecond;
@@ -87,22 +88,22 @@ namespace Mirror
         // instead of sending multiple times per second via NB.OnSerialize.
         [Tooltip("Send stats every 'interval' seconds to client.")]
         public float sendInterval = 1;
-        double           lastSendTime;
+        double lastSendTime;
 
         [Header("GUI")]
         public bool showGui;
-        public KeyCode hotKey     = KeyCode.BackQuote;
-        Rect           windowRect = new Rect(0, 0, 400, 400);
+        public InputActionReference debugAction;
+        Rect windowRect = new Rect(0, 0, 400, 400);
 
         // password can't be stored in code or in Unity project.
         // it would be available in clients otherwise.
         // this is not perfectly secure. that's why RemoteStatistics is read-only.
         [Header("Authentication")]
         public string passwordFile = "remote_statistics.txt";
-        protected bool         serverAuthenticated;   // client needs to authenticate
-        protected bool         clientAuthenticated;   // show GUI until authenticated
-        protected string       serverPassword = null; // null means not found, auth impossible
-        protected string       clientPassword = "";   // for GUI
+        protected bool serverAuthenticated; // client needs to authenticate
+        protected bool clientAuthenticated; // show GUI until authenticated
+        protected string serverPassword = null; // null means not found, auth impossible
+        protected string clientPassword = ""; // for GUI
 
         // statistics synced to client
         Stats stats;
@@ -124,12 +125,16 @@ namespace Mirror
                 }
                 catch (Exception exception)
                 {
-                    Debug.LogWarning($"RemoteStatistics: failed to read password file: {exception}");
+                    Debug.LogWarning(
+                        $"RemoteStatistics: failed to read password file: {exception}"
+                    );
                 }
             }
             else
             {
-                Debug.LogWarning($"RemoteStatistics: password file has not been created. Authentication will be impossible. Please save the password in: {path}");
+                Debug.LogWarning(
+                    $"RemoteStatistics: password file has not been created. Authentication will be impossible. Please save the password in: {path}"
+                );
             }
         }
 
@@ -144,7 +149,10 @@ namespace Mirror
         public override void OnStartServer()
         {
             NetworkStatistics = NetworkManager.singleton.GetComponent<NetworkStatistics>();
-            if (NetworkStatistics == null) throw new Exception($"RemoteStatistics requires a NetworkStatistics component on {NetworkManager.singleton.name}!");
+            if (NetworkStatistics == null)
+                throw new Exception(
+                    $"RemoteStatistics requires a NetworkStatistics component on {NetworkManager.singleton.name}!"
+                );
 
             // server needs to load the password
             LoadPassword();
@@ -153,7 +161,7 @@ namespace Mirror
         public override void OnStartLocalPlayer()
         {
             // center the window initially
-            windowRect.x = Screen.width  / 2 - windowRect.width  / 2;
+            windowRect.x = Screen.width / 2 - windowRect.width / 2;
             windowRect.y = Screen.height / 2 - windowRect.height / 2;
         }
 
@@ -170,18 +178,20 @@ namespace Mirror
         {
             // was a valid password loaded on the server,
             // and did the client send the correct one?
-            if (!string.IsNullOrWhiteSpace(serverPassword) &&
-                serverPassword.Equals(v))
+            if (!string.IsNullOrWhiteSpace(serverPassword) && serverPassword.Equals(v))
             {
                 serverAuthenticated = true;
-                Debug.Log($"RemoteStatistics: connectionId {connectionToClient.connectionId} authenticated with player {name}");
+                Debug.Log(
+                    $"RemoteStatistics: connectionId {connectionToClient.connectionId} authenticated with player {name}"
+                );
             }
         }
 
         void UpdateServer()
         {
             // only sync if client has authenticated on the server
-            if (!serverAuthenticated) return;
+            if (!serverAuthenticated)
+                return;
 
             // NetworkTime.localTime has defines for 2019 / 2020 compatibility
             if (NetworkTime.localTime >= lastSendTime + sendInterval)
@@ -189,45 +199,49 @@ namespace Mirror
                 lastSendTime = NetworkTime.localTime;
 
                 // target rpc to owner client
-                TargetRpcSync(new Stats(
-                    // general
-                    NetworkServer.connections.Count,
-                    NetworkTime.time,
-                    NetworkServer.tickRate,
-                    NetworkServer.actualTickRate,
-
-                    // traffic
-                    NetworkStatistics.serverSentBytesPerSecond,
-                    NetworkStatistics.serverReceivedBytesPerSecond,
-
-                    // cpu
-                    NetworkServer.tickInterval,
-                    NetworkServer.fullUpdateDuration.average,
-                    NetworkServer.earlyUpdateDuration.average,
-                    NetworkServer.lateUpdateDuration.average,
-                    0, // TODO ServerTransport.earlyUpdateDuration.average,
-                    0 // TODO ServerTransport.lateUpdateDuration.average
-                ));
+                TargetRpcSync(
+                    new Stats(
+                        // general
+                        NetworkServer.connections.Count,
+                        NetworkTime.time,
+                        NetworkServer.tickRate,
+                        NetworkServer.actualTickRate,
+                        // traffic
+                        NetworkStatistics.serverSentBytesPerSecond,
+                        NetworkStatistics.serverReceivedBytesPerSecond,
+                        // cpu
+                        NetworkServer.tickInterval,
+                        NetworkServer.fullUpdateDuration.average,
+                        NetworkServer.earlyUpdateDuration.average,
+                        NetworkServer.lateUpdateDuration.average,
+                        0, // TODO ServerTransport.earlyUpdateDuration.average,
+                        0 // TODO ServerTransport.lateUpdateDuration.average
+                    )
+                );
             }
         }
 
         void UpdateClient()
         {
-            if (Input.GetKeyDown(hotKey))
+            if (debugAction.action.IsPressed())
                 showGui = !showGui;
         }
 
         void Update()
         {
-            if (isServer)      UpdateServer();
-            if (isLocalPlayer) UpdateClient();
+            if (isServer)
+                UpdateServer();
+            if (isLocalPlayer)
+                UpdateClient();
         }
 
 #if !UNITY_SERVER
         void OnGUI()
         {
-            if (!isLocalPlayer) return;
-            if (!showGui) return;
+            if (!isLocalPlayer)
+                return;
+            if (!showGui)
+                return;
 
             windowRect = GUILayout.Window(0, windowRect, OnWindow, "Remote Statistics");
             windowRect = Utils.KeepInScreen(windowRect);
@@ -254,7 +268,14 @@ namespace Mirror
         // need to specify progress bar & caption width,
         // otherwise differently sized captions would always misalign the
         // progress bars.
-        void GUILayout_TextAndProgressBar(string text, double ratio, int progressbarWidth, string caption, int captionWidth, Color captionColor)
+        void GUILayout_TextAndProgressBar(
+            string text,
+            double ratio,
+            int progressbarWidth,
+            string caption,
+            int captionWidth,
+            Color captionColor
+        )
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label(text);
@@ -281,7 +302,7 @@ namespace Mirror
             // }
             // else
             // {
-                GUILayout.Label("<i>Connection is not encrypted. Use with care!</i>");
+            GUILayout.Label("<i>Connection is not encrypted. Use with care!</i>");
             // }
 
             // input
@@ -298,11 +319,7 @@ namespace Mirror
             GUILayout.EndVertical(); // end general
         }
 
-        void GUI_General(
-            int connections,
-            double uptime,
-            int configuredTickRate,
-            int actualTickRate)
+        void GUI_General(int connections, double uptime, int configuredTickRate, int actualTickRate)
         {
             GUILayout.BeginVertical("Box"); // start general
             GUILayout.Label("<b>General</b>");
@@ -317,21 +334,28 @@ namespace Mirror
             // might be lower under heavy load.
             // might be higher in editor if targetFrameRate can't be set.
             GUI.color = actualTickRate < configuredTickRate ? Color.red : Color.green;
-            GUILayout_TextAndValue("Tick Rate:", $"<b>{actualTickRate} Hz / {configuredTickRate} Hz</b>");
+            GUILayout_TextAndValue(
+                "Tick Rate:",
+                $"<b>{actualTickRate} Hz / {configuredTickRate} Hz</b>"
+            );
             GUI.color = Color.white;
 
             GUILayout.EndVertical(); // end general
         }
 
-        void GUI_Traffic(
-            long serverSentBytesPerSecond,
-            long serverReceivedBytesPerSecond)
+        void GUI_Traffic(long serverSentBytesPerSecond, long serverReceivedBytesPerSecond)
         {
             GUILayout.BeginVertical("Box");
             GUILayout.Label("<b>Network</b>");
 
-            GUILayout_TextAndValue("Outgoing:", $"<b>{Utils.PrettyBytes(serverSentBytesPerSecond)    }/s</b>");
-            GUILayout_TextAndValue("Incoming:", $"<b>{Utils.PrettyBytes(serverReceivedBytesPerSecond)}/s</b>");
+            GUILayout_TextAndValue(
+                "Outgoing:",
+                $"<b>{Utils.PrettyBytes(serverSentBytesPerSecond)}/s</b>"
+            );
+            GUILayout_TextAndValue(
+                "Incoming:",
+                $"<b>{Utils.PrettyBytes(serverReceivedBytesPerSecond)}/s</b>"
+            );
 
             GUILayout.EndVertical();
         }
@@ -342,7 +366,8 @@ namespace Mirror
             double serverEarlyAvg,
             double serverLateAvg,
             double transportEarlyAvg,
-            double transportLateAvg)
+            double transportLateAvg
+        )
         {
             const int barWidth = 120;
             const int captionWidth = 90;
@@ -357,9 +382,11 @@ namespace Mirror
             GUILayout_TextAndProgressBar(
                 "World Update Avg:",
                 fullRatio,
-                barWidth, $"<b>{fullUpdateAvg * 1000:F1} ms</b>",
+                barWidth,
+                $"<b>{fullUpdateAvg * 1000:F1} ms</b>",
                 captionWidth,
-                fullRatio <= 0.9 ? Color.green : Color.red);
+                fullRatio <= 0.9 ? Color.green : Color.red
+            );
 
             // server update
             // happens every 'tickInterval'. progress bar shows it in relation.
@@ -368,9 +395,11 @@ namespace Mirror
             GUILayout_TextAndProgressBar(
                 "Server Update Avg:",
                 serverRatio,
-                barWidth, $"<b>{serverEarlyAvg * 1000:F1} + {serverLateAvg * 1000:F1} ms</b>",
+                barWidth,
+                $"<b>{serverEarlyAvg * 1000:F1} + {serverLateAvg * 1000:F1} ms</b>",
                 captionWidth,
-                serverRatio <= 0.9 ? Color.green : Color.red);
+                serverRatio <= 0.9 ? Color.green : Color.red
+            );
 
             // transport: early + late update milliseconds.
             // for threaded transport, this is the thread's update time.
@@ -418,10 +447,7 @@ namespace Mirror
                     stats.actualTickRate
                 );
 
-                GUI_Traffic(
-                    stats.sentBytesPerSecond,
-                    stats.receiveBytesPerSecond
-                );
+                GUI_Traffic(stats.sentBytesPerSecond, stats.receiveBytesPerSecond);
 
                 GUI_Cpu(
                     stats.serverTickInterval,

@@ -1,14 +1,21 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class QuitScript : MonoBehaviour
 {
 #if UNITY_ANDROID
-    private float backButtonPressTime = 0f, backButtonMaxTime = 1f;
-    public GameObject confirmExitScreen;
+    private float backButtonPressTime = 0f;
+    private readonly float backButtonMaxTime = 1f;
+
+    [SerializeField]
+    private GameObject confirmExitScreen;
+
+    [SerializeField]
+    private InputActionReference cancelAction;
 
     void Update()
     {
-        if (confirmExitScreen && Input.GetKeyDown(KeyCode.Escape))
+        if (confirmExitScreen && cancelAction.action.triggered)
         {
             if (Time.time - backButtonPressTime < backButtonMaxTime)
             {

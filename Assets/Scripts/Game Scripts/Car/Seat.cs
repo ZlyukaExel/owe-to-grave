@@ -17,7 +17,7 @@ public class Seat : InteractiveObject
     [SerializeField]
     private Transform thirdPersonCameraPivot;
     private Transform firstPersonCameraPivot;
-    private PlayerInput input;
+    private InputManager input;
     private GameObject dummy;
 
     [Header("Stand Settings")]
@@ -32,12 +32,13 @@ public class Seat : InteractiveObject
 
     [SerializeField]
     private LayerMask obstacleLayers = (1 << 0) | (1 << 3);
-    private InputAction carAction;
+
+    [SerializeField]
+    private InputActionReference carAction;
 
     void Awake()
     {
         dummy = transform.GetChild(0).gameObject;
-        carAction = InputSystem.actions.FindAction("Car");
     }
 
     void Start()
@@ -58,28 +59,24 @@ public class Seat : InteractiveObject
 
         CmdSetCharacter(character.GetComponent<NetworkIdentity>());
 
-        // Change config
+        // Change dummy config
         CharacterConfig dummyCfg = new(character.GetComponent<NetworkCharacterConfig>().config)
         {
             inCombat = false,
         };
         dummy.GetComponent<NetworkCharacterConfig>().CmdSetConfig(dummyCfg);
 
-        PlayerLinks l = character.GetComponent<PlayerLinks>();
+        Links l = character.GetComponent<Links>();
+        PlayerLinks pLinks = l as PlayerLinks;
 
         l.stateManager.SetState(EnumState.Freezed);
 
-        input = PlayerInput.Instance;
-        l.ui.Find("Ground Ui").gameObject.SetActive(false);
-        Image crosshair = l.ui.Find("Ground Ui/Crosshair").GetComponent<Image>();
-        Color newColor = crosshair.color;
-        newColor.a = 0;
-        crosshair.color = newColor;
+        input = l.input;
 
         // If it's a car seat
         if (attachedCarScript != null)
         {
-            // Camera ignores car
+            // Camera ignores car collision now
             int ignoreCameraLayerId = LayerMask.NameToLayer("Ignore Camera");
             foreach (Collider collider in attachedCarScript.GetComponentsInChildren<Collider>())
             {
@@ -89,38 +86,51 @@ public class Seat : InteractiveObject
             }
 
             //Change camera settings if it's a car seat
-            l.cameraController.ChangeCameraRange(-5, -10);
-            l.cameraController.CarScript = attachedCarScript;
-
-            // First person in car uses local coordinates
-            if (l.cameraController.isFirstPerson)
-                l.cameraController.angleY -= transform.eulerAngles.y;
-
-            l.minimap.target = attachedCarScript.transform;
-
-            input.joystick.gameObject.SetActive(false);
-            StartCoroutine(Delay());
-
-            IEnumerator Delay()
+            if (pLinks)
             {
-                yield return new WaitForSeconds(0.1f);
-                l.ui.Find("Car Button").gameObject.SetActive(true);
+                pLinks.cameraController.ChangeCameraRange(-5, -10);
+                pLinks.cameraController.CarScript = attachedCarScript;
+
+                // First person in car uses local coordinates
+                if (pLinks.cameraController.isFirstPerson)
+                    pLinks.cameraController.angleY -= transform.eulerAngles.y;
+
+                pLinks.minimap.target = attachedCarScript.transform;
+
+                PlayerInput pInput = input as PlayerInput;
+                pInput.joystick.gameObject.SetActive(false);
+                StartCoroutine(Delay());
+
+                IEnumerator Delay()
+                {
+                    yield return new WaitForSeconds(0.1f);
+                    pLinks.ui.Find("Mobile Ui/Car Button").gameObject.SetActive(true);
+                }
             }
         }
-        else
+        else if (pLinks)
         {
-            PlayerInput.Instance.onMovement.AddListener(Stand);
-            l.minimap.target = transform;
+            PlayerInput pInput = input as PlayerInput;
+            pInput.onMovement.AddListener(Stand);
+            pLinks.minimap.target = transform;
         }
 
-        l.cameraController.ChangeTarget(
-            transform,
-            l,
-            firstPersonCameraPivot,
-            thirdPersonCameraPivot
-        );
+        if (pLinks)
+        {
+            pLinks.ui.Find("Mobile Ui/Ground Ui").gameObject.SetActive(false);
+            Image crosshair = pLinks.ui.Find("Crosshair").GetComponent<Image>();
+            Color newColor = crosshair.color;
+            newColor.a = 0;
+            crosshair.color = newColor;
+            pLinks.cameraController.ChangeTarget(
+                dummy.transform,
+                pLinks,
+                firstPersonCameraPivot,
+                thirdPersonCameraPivot
+            );
+        }
 
-        input.GetAction(carAction).onUp.AddListener(Stand);
+        input.GetAction(carAction.action).onUp.AddListener(Stand);
 
         l.hitpoints.ChangeHitPoints(dummy.GetComponent<HitPointsSet>());
 
@@ -134,10 +144,9 @@ public class Seat : InteractiveObject
 
         currentCharacter.GetComponent<NetworkDisable>().SetEnabled(true);
 
-        PlayerLinks l = currentCharacter.GetComponent<PlayerLinks>();
-        input.joystick.gameObject.SetActive(true);
-        input.GetAction(carAction).onUp.RemoveListener(Stand);
-        PlayerInput.Instance.onMovement.RemoveListener(Stand);
+        Links l = currentCharacter.GetComponent<Links>();
+        PlayerLinks pLinks = l as PlayerLinks;
+        input.GetAction(carAction.action).onUp.RemoveListener(Stand);
 
         l.stateManager.SetState(EnumState.Default);
 
@@ -157,18 +166,17 @@ public class Seat : InteractiveObject
             }
 
             // Changing camera settings to default
-            l.cameraController.ChangeCameraRange(-1, -7);
-            l.cameraController.positionOffset.y = 0;
-            l.cameraController.CarScript = null;
+            if (pLinks)
+            {
+                pLinks.cameraController.ChangeCameraRange(-1, -7);
+                pLinks.cameraController.positionOffset.y = 0;
+                pLinks.cameraController.CarScript = null;
 
-            // First person uses global coordinates
-            if (l.cameraController.isFirstPerson)
-                l.cameraController.angleY = l.cameraPivot.eulerAngles.y;
+                // First person uses global coordinates
+                if (pLinks.cameraController.isFirstPerson)
+                    pLinks.cameraController.angleY = pLinks.cameraPivot.eulerAngles.y;
+            }
         }
-
-        l.minimap.target = currentCharacter.transform;
-
-        l.ui.Find("Ground Ui").gameObject.SetActive(true);
 
         // Move
         Vector3 standPosition = transform.TransformPoint(standOffset);
@@ -191,13 +199,23 @@ public class Seat : InteractiveObject
         // Rotate
         currentCharacter.transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
 
-        // Change target
-        l.cameraController.ChangeTarget(
-            currentCharacter.transform,
-            l,
-            currentCharacter.transform.Find("Third Person Camera Pivot"),
-            currentCharacter.transform.Find("First Person Camera Pivot")
-        );
+        if (pLinks)
+        {
+            pLinks.minimap.target = currentCharacter.transform;
+            pLinks.ui.Find("Mobile Ui/Ground Ui").gameObject.SetActive(true);
+
+            PlayerInput pInput = input as PlayerInput;
+            pInput.onMovement.RemoveListener(Stand);
+            pInput.joystick.gameObject.SetActive(true);
+
+            // Change target
+            pLinks.cameraController.ChangeTarget(
+                currentCharacter.transform,
+                pLinks,
+                currentCharacter.transform.Find("Third Person Camera Pivot"),
+                currentCharacter.transform.Find("First Person Camera Pivot")
+            );
+        }
 
         l.hitpoints.ChangeHitPoints(currentCharacter.GetComponent<HitPointsSet>());
 
@@ -240,4 +258,6 @@ public class Seat : InteractiveObject
             standPos + Vector3.up * characterHeight - Vector3.forward * characterRadius
         );
     }
+
+    public override string InteractionText() => "Sit";
 }

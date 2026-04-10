@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Events;
 
 public class CharacterConfigManager : MonoBehaviour
 {
@@ -10,7 +9,7 @@ public class CharacterConfigManager : MonoBehaviour
     private GameObject head;
 
     [SerializeField]
-    private GameObject[] weapons = new GameObject[0];
+    private Weapon[] weapons = new Weapon[0];
 
     [SerializeField]
     private GameObject[] pants = new GameObject[0];
@@ -37,16 +36,15 @@ public class CharacterConfigManager : MonoBehaviour
     {
         if (currentConfig.weaponId != config.weaponId)
         {
-            UnityEvent<Vector3> onShot = weapons[currentConfig.weaponId] // TODO: can be null, store weapon class somewhere
-                .GetComponent<Weapon>()
-                .onShot;
-            RemoveWeapons(weapons[config.weaponId]);
-            SetWeaponActive(weapons[currentConfig.weaponId], config.inCombat);
-            weapons[config.weaponId].GetComponent<Weapon>().onShot = onShot;
+            Weapon currentWeapon = weapons[currentConfig.weaponId];
+            weapons[config.weaponId].DeactivateBoth();
+            weapons[currentConfig.weaponId].Activate(config.inCombat);
+
+            weapons[config.weaponId].onShot = currentWeapon.onShot;
         }
 
         if (currentConfig.inCombat != config.inCombat)
-            SetWeaponActive(weapons[config.weaponId], config.inCombat);
+            weapons[config.weaponId].Activate(config.inCombat);
 
         if (currentConfig.pantsId != config.pantsId)
         {
@@ -113,27 +111,9 @@ public class CharacterConfigManager : MonoBehaviour
             gameObject.SetActive(isActive);
     }
 
-    private void SetWeaponActive(GameObject weaponObject, bool primary)
-    {
-        if (!weaponObject)
-            return;
-
-        Weapon weapon = weaponObject.GetComponent<Weapon>();
-        weapon.Activate(primary);
-    }
-
-    private void RemoveWeapons(GameObject weaponObject)
-    {
-        if (!weaponObject)
-            return;
-
-        Weapon weapon = weaponObject.GetComponent<Weapon>();
-        weapon.DeactivateBoth();
-    }
-
     public GameObject GetHead() => head;
 
-    public GameObject GetWeapon() => weapons[currentConfig.weaponId];
+    public Weapon GetWeapon() => weapons[currentConfig.weaponId];
 
     public GameObject GetPants() => pants[currentConfig.pantsId];
 

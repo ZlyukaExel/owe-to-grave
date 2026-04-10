@@ -3,12 +3,16 @@ using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(NetworkAudioSource))]
-public class NetworkItem : NetworkBehaviour
+public class NetworkItem : InteractiveObject
 {
     private NetworkAudioSource audioSource;
     private Rigidbody rb;
     private float lastHitTime = -999,
         hitCooldown = 0.1f;
+    private ItemGrabber itemGrabber;
+
+    [SyncVar]
+    private bool isInteractable = true;
 
     void Start()
     {
@@ -32,7 +36,7 @@ public class NetworkItem : NetworkBehaviour
             {
                 if (Time.time - lastHitTime > hitCooldown)
                 {
-                    DamageInfo damageInfo = new(velocity, 1, DamageType.Item, null);
+                    DamageInfo damageInfo = new(velocity, DamageType.Item, null);
                     hp.Damage(damageInfo);
 
                     // Audio SFX
@@ -61,5 +65,20 @@ public class NetworkItem : NetworkBehaviour
             return;
 
         rb.AddForce(velocity);
+    }
+
+    public override string InteractionText() => "Grab";
+
+    public override bool IsInteractable() => isInteractable;
+
+    public override void Interact(Transform character)
+    {
+        // itemGrabber = character.GetComponent<ItemGrabber>(); gregrre
+    }
+
+    [Command(requiresAuthority = false)]
+    public void SetInteractable(bool isInteractable)
+    {
+        this.isInteractable = isInteractable;
     }
 }

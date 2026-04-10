@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class AudioSettingsScript : MonoBehaviour
@@ -19,7 +20,13 @@ public class AudioSettingsScript : MonoBehaviour
 
     [SerializeField]
     private GameObject settingsMenu,
-        saveOrGo;
+        saveOrGoScreen;
+
+    [SerializeField]
+    private UnityEvent onExit;
+
+    [SerializeField]
+    private Selectable defaultSelectable;
 
     void Start()
     {
@@ -53,12 +60,28 @@ public class AudioSettingsScript : MonoBehaviour
     {
         if (confirmButton.interactable)
         {
-            saveOrGo.SetActive(true);
+            saveOrGoScreen.SetActive(true);
+            saveOrGoScreen.transform.Find("NoButton").GetComponent<Button>().Select();
         }
         else
         {
+            onExit.Invoke();
             gameObject.SetActive(false);
             settingsMenu.SetActive(true);
         }
+    }
+
+    public void ExitMenu()
+    {
+        ResetSettings();
+        onExit.Invoke();
+        gameObject.SetActive(false);
+        settingsMenu.SetActive(true);
+    }
+
+    public void SelectIfActive()
+    {
+        if (gameObject.activeInHierarchy)
+            defaultSelectable.Select();
     }
 }

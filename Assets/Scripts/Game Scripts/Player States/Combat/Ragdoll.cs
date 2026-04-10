@@ -38,31 +38,31 @@ public class Ragdoll : MonoBehaviour
 
     protected void _RagdollUpdate()
     {
-        speed = _rb.linearVelocity.magnitude;
+        //         speed = _rb.linearVelocity.magnitude;
 
-        if (speed <= 1)
-        {
-            _time += Time.deltaTime;
+        //         if (speed <= 1)
+        //         {
+        //             _time += Time.deltaTime;
 
-            if (
-                mCameraHolder == null
-                || (
-#if UNITY_ANDROID
-                    mJoystick.Horizontal != 0
-                    || mJoystick.Vertical != 0
-                    ||
-#endif
-                    //#if UNITY_STANDALONE
-                    Input.GetAxis("Horizontal") != 0
-                    || Input.GetAxis("Vertical") != 0
-                //#endif
-                )
-                    && _time > 1
-            ) //stand up
-                TransitionToAnim();
-        }
-        else
-            _time = 0;
+        //             if (
+        //                 mCameraHolder == null
+        //                 || (
+        // #if UNITY_ANDROID
+        //                     mJoystick.Horizontal != 0
+        //                     || mJoystick.Vertical != 0
+        //                     ||
+        // #endif
+        //                     //#if UNITY_STANDALONE
+        //                     Input.GetAxis("Horizontal") != 0
+        //                     || Input.GetAxis("Vertical") != 0
+        //                 //#endif
+        //                 )
+        //                     && _time > 1
+        //             ) //stand up
+        //                 TransitionToAnim();
+        //         }
+        //         else
+        //             _time = 0;
     }
 
     public void TransitionToAnim()

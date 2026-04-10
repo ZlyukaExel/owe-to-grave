@@ -2,6 +2,7 @@ using System;
 using Mirror;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Player))]
 [RequireComponent(typeof(PlayerLinks))]
@@ -15,6 +16,9 @@ public class ChatManager : NetworkBehaviour
     [HideInInspector]
     public TMP_InputField inputField;
     private static event Action<string> OnMessage;
+
+    [SerializeField]
+    private InputActionReference submitAction;
 
     private void Start()
     {
@@ -110,7 +114,7 @@ public class ChatManager : NetworkBehaviour
     public void EditInput(string message)
     {
 #if UNITY_STANDALONE
-        if (!Input.GetKeyDown(KeyCode.Return))
+        if (!submitAction.action.triggered)
             return;
 #endif
         if (string.IsNullOrWhiteSpace(message))

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class GraphicsSettingsScript : MonoBehaviour
@@ -17,6 +18,12 @@ public class GraphicsSettingsScript : MonoBehaviour
     private GameObject saveOrGoScreen,
         settingsMenu;
 
+    [SerializeField]
+    private UnityEvent onExit;
+
+    [SerializeField]
+    private Selectable defaultSelectable;
+
     void Start()
     {
         ResetSettings();
@@ -24,9 +31,9 @@ public class GraphicsSettingsScript : MonoBehaviour
 
     public void ResetSettings()
     {
-        //graphicsQualityText.SetValue(PlayerPrefs.GetInt("Graphics quality settings", 0));
-        //shadowsQualityText.SetValue(PlayerPrefs.GetInt("Shadows quality settings", 0));
-        //fpsLockText.SetValue(PlayerPrefs.GetInt("FPS lock", 30).ToString());
+        graphicsQualityText.SetValue(PlayerPrefs.GetInt("Graphics quality settings", 0));
+        shadowsQualityText.SetValue(PlayerPrefs.GetInt("Shadows quality settings", 0));
+        fpsLockText.SetValue(PlayerPrefs.GetInt("FPS lock", 30).ToString());
 
         confirmButton.interactable = cancelButton.interactable = false;
     }
@@ -56,12 +63,28 @@ public class GraphicsSettingsScript : MonoBehaviour
         if (confirmButton.interactable)
         {
             saveOrGoScreen.SetActive(true);
+            saveOrGoScreen.transform.Find("NoButton").GetComponent<Button>().Select();
         }
         else
         {
+            onExit.Invoke();
             gameObject.SetActive(false);
             settingsMenu.SetActive(true);
         }
+    }
+
+    public void ExitMenu()
+    {
+        ResetSettings();
+        onExit.Invoke();
+        gameObject.SetActive(false);
+        settingsMenu.SetActive(true);
+    }
+
+    public void SelectIfActive()
+    {
+        if (gameObject.activeInHierarchy)
+            defaultSelectable.Select();
     }
 }
 

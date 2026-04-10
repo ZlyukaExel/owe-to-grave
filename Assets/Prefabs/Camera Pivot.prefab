@@ -60,7 +60,7 @@ MonoBehaviour:
   positionOffset: {x: 0, y: 0, z: -3}
   excudeLayers:
     serializedVersion: 2
-    m_Bits: 772
+    m_Bits: 2820
   cameraSpeed: 2
   collisionRadius: 0.1
   minDistance: -1
@@ -104,7 +104,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 1919
+    m_Bits: 3967
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -136,7 +136,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22df0f0a851022c4a8c0534281c1c9d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nameTag: {fileID: 0}
 --- !u!65 &4700981896345926634
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -150,14 +149,14 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 959
+    m_Bits: 3007
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 10}
-  m_Center: {x: 0, y: 0, z: 4}
+  m_Size: {x: 3, y: 3, z: 20}
+  m_Center: {x: 0, y: 0, z: 8}
 --- !u!1 &3208859204956351565
 GameObject:
   m_ObjectHideFlags: 0

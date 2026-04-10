@@ -10,13 +10,15 @@ public class PlayerInput : InputManager
     public event Action<float> OnZoom;
     public Joystick joystick { get; private set; }
     public static PlayerInput Instance { get; private set; }
-    private float pinchInitialDistance;
 
     [HideInInspector]
     public UnityEvent onMovement,
         onNoMovement;
-    private InputAction moveAction,
-        jumpAction;
+
+    [SerializeField]
+    private InputActionReference moveAction,
+        jumpAction,
+        lookAction;
 
     public override void Awake()
     {
@@ -27,9 +29,6 @@ public class PlayerInput : InputManager
             Destroy(gameObject);
             return;
         }
-
-        moveAction = InputSystem.actions.FindAction("Move");
-        jumpAction = InputSystem.actions.FindAction("Jump");
 
         base.Awake();
 
@@ -46,72 +45,49 @@ public class PlayerInput : InputManager
 
     public override void Update()
     {
-        MouseHandle();
+        MouseUpdate();
 
         if (ignoreInputCount != 0)
             return;
 
-        Vector2 moveVector = moveAction.ReadValue<Vector2>();
-        Vertical = Mathf.Clamp(joystick.Vertical + moveVector.y, -1, 1);
-        Horizontal = Mathf.Clamp(joystick.Horizontal + moveVector.x, -1, 1);
-
-        if (Vertical == 0 && Horizontal == 0 && !IsPressed(jumpAction))
-            onNoMovement.Invoke();
-        else
-            onMovement.Invoke();
+        MovementUpdate();
 
         base.Update();
     }
 
-    private void MouseHandle()
+    private void MouseUpdate()
     {
-        // #if UNITY_STANDALONE
-        //         MouseHorizontal = Input.GetAxis("Mouse X");
-        //         MouseVertical = Input.GetAxis("Mouse Y");
-        // #endif
+        Vector2 lookVector = lookAction.action.ReadValue<Vector2>();
+        MouseHorizontal = lookVector.x;
+        MouseVertical = lookVector.y;
 
-        float zoomDistance = GetPinch();
+        float zoomDistance = touchField.zoomDistance;
 
-        // Simple swipe if not zooming
+        // Rotate camera only if not zooming
         if (zoomDistance == 0)
         {
-            MouseHorizontal = touchField.TouchDist.x;
-            MouseVertical = touchField.TouchDist.y;
-
-            MouseHorizontal *= Time.unscaledDeltaTime;
-            MouseVertical *= Time.unscaledDeltaTime;
+            MouseHorizontal += touchField.TouchDist.x;
+            MouseVertical += touchField.TouchDist.y;
         }
 
-        float mouseScroll = Mathf.Clamp(Input.GetAxis("Mouse ScrollWheel"), -0.1f, 0.1f);
-        zoomDistance += mouseScroll;
-        OnZoom?.Invoke(zoomDistance);
+        MouseHorizontal *= Time.unscaledDeltaTime;
+        MouseVertical *= Time.unscaledDeltaTime;
+
+        float scrollValue = Mouse.current.scroll.y.ReadValue();
+        float mouseScroll = Mathf.Clamp(scrollValue, -0.3f, 0.3f);
+        OnZoom?.Invoke(zoomDistance + mouseScroll);
     }
 
-    private float GetPinch()
+    private void MovementUpdate()
     {
-        float zoomDistance = 0;
+        Vector2 moveVector = moveAction.action.ReadValue<Vector2>();
+        Vertical = Mathf.Clamp(joystick.Vertical + moveVector.y, -1, 1);
+        Horizontal = Mathf.Clamp(joystick.Horizontal + moveVector.x, -1, 1);
 
-        // Pinch if no input and two fingers
-        if (pressed.Count == 0 && Input.touchCount == 2)
-        {
-            Touch touch1 = Input.GetTouch(0);
-            Touch touch2 = Input.GetTouch(1);
-
-            if (
-                touch1.phase == UnityEngine.TouchPhase.Moved
-                && touch2.phase == UnityEngine.TouchPhase.Moved
-            )
-            {
-                float distance = Vector2.Distance(touch1.position, touch2.position);
-
-                zoomDistance =
-                    (distance < pinchInitialDistance ? -1 : 1) * 20 * Time.unscaledDeltaTime;
-
-                pinchInitialDistance = distance;
-            }
-        }
-
-        return zoomDistance;
+        if (Vertical == 0 && Horizontal == 0 && !IsPressed(jumpAction.action))
+            onNoMovement.Invoke();
+        else
+            onMovement.Invoke();
     }
 
     public void StartInput()
@@ -128,8 +104,8 @@ public class PlayerInput : InputManager
 
     private void GetButtons()
     {
-        Transform gameUi = transform.Find("Game Ui");
-        touchField = gameUi.GetComponent<TouchField>();
-        joystick = gameUi.Find("Fixed Joystick").GetComponent<FixedJoystick>();
+        Transform mobileUi = transform.Find("Game Ui/Mobile Ui");
+        touchField = mobileUi.Find("Touch Field").GetComponent<TouchField>();
+        joystick = mobileUi.Find("Fixed Joystick").GetComponent<FixedJoystick>();
     }
 }

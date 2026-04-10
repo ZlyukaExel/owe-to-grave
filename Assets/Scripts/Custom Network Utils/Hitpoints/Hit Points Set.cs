@@ -24,8 +24,8 @@ public class HitPointsSet : NetworkBehaviour
 
     public NetworkHitpoints GetHp() => hp;
 
-    public void Damage(float damage)
+    public void Damage(DamageInfo damageInfo)
     {
-        hp?.Damage(damage);
+        hp?.Damage(damageInfo);
     }
 }

@@ -949,6 +949,10 @@ AnimatorStateMachine:
   - first: {fileID: 110705439}
     second:
     - {fileID: 110934624}
+  - first: {fileID: 110791088}
+    second:
+    - {fileID: 110939348}
+    - {fileID: 110995194}
   - first: {fileID: 110781930}
     second:
     - {fileID: 110969146}
@@ -957,10 +961,6 @@ AnimatorStateMachine:
     second:
     - {fileID: 110921094}
     - {fileID: 110969226}
-  - first: {fileID: 110791088}
-    second:
-    - {fileID: 110939348}
-    - {fileID: 110995194}
   m_StateMachineBehaviours: []
   m_AnyStatePosition: {x: -60, y: -60, z: 0}
   m_EntryPosition: {x: 60, y: 36, z: 0}

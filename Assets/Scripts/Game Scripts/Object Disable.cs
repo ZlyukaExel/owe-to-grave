@@ -8,7 +8,7 @@ public class ObjectDisable : MonoBehaviour
 
     void Awake()
     {
-        renderers = GetComponentsInChildren<Renderer>();
+        renderers = GetComponentsInChildren<Renderer>(true);
     }
 
     public void SetActive(bool isEnabled)
@@ -19,6 +19,8 @@ public class ObjectDisable : MonoBehaviour
 
     public void UpdateState()
     {
+        renderers ??= GetComponentsInChildren<Renderer>(true);
+
         foreach (var renderer in renderers)
         {
             renderer.enabled = isEnabled;

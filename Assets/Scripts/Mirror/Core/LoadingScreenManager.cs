@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [DisallowMultipleComponent]
+[RequireComponent(typeof(Animator))]
 public class LoadingScreenManager : MonoBehaviour
 {
     private Animator animator;
@@ -8,7 +9,12 @@ public class LoadingScreenManager : MonoBehaviour
 
     void Awake()
     {
-        if (FindObjectsByType<LoadingScreenManager>(FindObjectsInactive.Include, FindObjectsSortMode.None).Length > 1)
+        if (
+            FindObjectsByType<LoadingScreenManager>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None
+            ).Length > 1
+        )
             Destroy(gameObject);
         DontDestroyOnLoad(gameObject);
         animator = GetComponent<Animator>();

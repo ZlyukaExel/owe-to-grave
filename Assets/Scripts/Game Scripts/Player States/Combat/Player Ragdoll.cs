@@ -61,9 +61,10 @@ public class PlayerRagdollControl : Ragdoll
         else
         {
             {
+                mx = my = 0;
 #if UNITY_STANDALONE
-                mx = Input.GetAxis("Mouse X");
-                my = Input.GetAxis("Mouse Y");
+                // mx = Input.GetAxis("Mouse X");
+                // my = Input.GetAxis("Mouse Y");
 #endif
 #if UNITY_ANDROID
                 mx = mTouchField.TouchDist.x * Time.deltaTime;

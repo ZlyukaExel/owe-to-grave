@@ -46,6 +46,7 @@ public class Weapon : MonoBehaviour
 
     public void Activate(bool primary)
     {
+        current ??= GetComponent<ObjectDisable>();
         hidden.SetActive(!primary);
         current.SetActive(primary);
     }
@@ -61,7 +62,6 @@ public class Weapon : MonoBehaviour
 public class WeaponProperties
 {
     public float damage = 20,
-        critMultiplier = 3,
         bulletSpeed = 10,
         spread = 1;
     public int piercing = 0;

@@ -18,7 +18,7 @@ public class PushItems : NetworkBehaviour
         if (
             (isOwned || isServer && connectionToClient == null)
             && collision.gameObject.layer == itemsLayerId
-            && collision.rigidbody.TryGetComponent(out NetworkItem networkItem)
+            && collision.transform.TryGetComponent(out NetworkItem networkItem)
         )
             networkItem.AddForce(rb.linearVelocity * 0.5f);
     }

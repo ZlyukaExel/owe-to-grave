@@ -1,22 +1,34 @@
+using Mirror.Discovery;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using TMPro;
-using Mirror.Discovery;
+using UnityEngine.InputSystem;
 
 public class PasswordCheck : MonoBehaviour
 {
-    [HideInInspector] public string password;
-    [HideInInspector] public UnityEvent action;
-    [SerializeField] private TMP_Text label;
-    [SerializeField] private TMP_InputField passwordField;
-    [SerializeField] private CustomNetworkDiscovery customNetworkDiscovery;
+    [HideInInspector]
+    public string password;
+
+    [HideInInspector]
+    public UnityEvent action;
+
+    [SerializeField]
+    private TMP_Text label;
+
+    [SerializeField]
+    private TMP_InputField passwordField;
+
+    [SerializeField]
+    private CustomNetworkDiscovery customNetworkDiscovery;
+
+    [SerializeField]
+    private InputActionReference submitAction;
 
     public void OnPasswordEnter(string text)
     {
         if (string.IsNullOrWhiteSpace(text)
-
 #if UNITY_STANDALONE
-        || !Input.GetKeyDown(KeyCode.Return)
+            || !submitAction.action.triggered
 #endif
 
         )

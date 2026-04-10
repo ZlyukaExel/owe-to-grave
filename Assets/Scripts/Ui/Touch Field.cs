@@ -1,125 +1,116 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class TouchField : MonoBehaviour
 {
     [SerializeField]
     private RectTransform[] ignoreObjects;
 
-    //[HideInInspector]
-    public Vector2 TouchDist;
-
     [SerializeField]
     private float minDistance = 0.5f;
-    private Vector2 PointerOld;
 
-    [HideInInspector]
-    public bool Pressed;
-    private int activeTouchId = -1;
+    public Vector2 TouchDist { get; private set; }
+    public float zoomDistance { get; private set; }
+    public bool Pressed { get; private set; }
+
+    private Vector2 pointerOld;
+    private float lastPinchDistance;
 
     void Update()
     {
-        // Mobile input handle
-        if (Input.touchCount > 0)
+        HandlePointerInput();
+        zoomDistance = GetZoom();
+    }
+
+    private void HandlePointerInput()
+    {
+        var pointer = Pointer.current;
+        if (pointer == null)
+            return;
+
+        bool isCurrentlyPressed = pointer.press.isPressed;
+        Vector2 currentPosition = pointer.position.ReadValue();
+
+        if (isCurrentlyPressed)
         {
-            for (int i = 0; i < Input.touchCount; i++)
+            if (!Pressed)
             {
-                Touch touch = Input.touches[i];
-
-                // If it's new touch and no active touch
-                if (touch.phase == TouchPhase.Began && activeTouchId == -1)
-                {
-                    if (!IsTouchInIgnoredObject(touch.position))
-                    {
-                        activeTouchId = touch.fingerId; // Save touch's ID
-                        Pressed = true;
-                        PointerOld = touch.position;
-                    }
-                }
-
-                // If it's active touch
-                if (touch.fingerId == activeTouchId)
-                {
-                    if (
-                        (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
-                        && Pressed
-                    )
-                    {
-                        Vector2 delta = (touch.position - PointerOld) / 2;
-                        if (delta.magnitude > minDistance)
-                            TouchDist = delta;
-                        else
-                            TouchDist = Vector2.zero;
-
-                        PointerOld = touch.position;
-                    }
-                    else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
-                    {
-                        activeTouchId = -1; // Remove active touch ID
-                        Pressed = false;
-                        TouchDist = Vector2.zero;
-                    }
-                }
-            }
-        }
-        // Mouse handle for Editor
-        else
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                if (!IsTouchInIgnoredObject(Input.mousePosition))
+                if (!IsTouchInIgnoredObject(currentPosition))
                 {
                     Pressed = true;
-                    PointerOld = Input.mousePosition;
+                    pointerOld = currentPosition;
                 }
             }
-            else if (Input.GetMouseButton(0) && Pressed)
+            else
             {
-                TouchDist = (Vector2)Input.mousePosition - PointerOld;
-                PointerOld = Input.mousePosition;
-            }
-            else if (Input.GetMouseButtonUp(0))
-            {
-                Pressed = false;
-                TouchDist = Vector2.zero;
+                Vector2 delta = (currentPosition - pointerOld) / 2f;
+                TouchDist = (delta.magnitude > minDistance) ? delta : Vector2.zero;
+                pointerOld = currentPosition;
             }
         }
-
-        // If no touch, touch dist = 0
-        if (!Pressed)
+        else
         {
+            Pressed = false;
             TouchDist = Vector2.zero;
         }
     }
 
+    private float GetZoom()
+    {
+        var ts = Touchscreen.current;
+        if (ts == null || ts.touches.Count < 2)
+        {
+            lastPinchDistance = 0;
+            return 0;
+        }
+
+        var t1 = ts.touches[0];
+        var t2 = ts.touches[1];
+
+        if (t1.isInProgress && t2.isInProgress)
+        {
+            Vector2 pos1 = t1.position.ReadValue();
+            Vector2 pos2 = t2.position.ReadValue();
+            float currentDistance = Vector2.Distance(pos1, pos2);
+
+            if (lastPinchDistance <= 0)
+                lastPinchDistance = currentDistance;
+
+            float deltaDistance = currentDistance - lastPinchDistance;
+            lastPinchDistance = currentDistance;
+
+            return deltaDistance * Time.unscaledDeltaTime * 10f;
+        }
+
+        lastPinchDistance = 0;
+        return 0;
+    }
+
     private bool IsTouchInIgnoredObject(Vector2 screenPosition)
     {
-        foreach (var rectTransform in ignoreObjects)
+        foreach (var rect in ignoreObjects)
         {
             if (
-                rectTransform != null
-                && rectTransform.gameObject.activeInHierarchy
-                && RectTransformUtility.RectangleContainsScreenPoint(rectTransform, screenPosition)
+                rect != null
+                && rect.gameObject.activeInHierarchy
+                && RectTransformUtility.RectangleContainsScreenPoint(rect, screenPosition)
             )
-            {
                 return true;
-            }
         }
         return false;
     }
 
     private void OnGUI()
     {
-        if (Pressed && PointerOld != Vector2.zero)
+        if (Pressed)
         {
-            // Draw rectangle
             float size = 30f;
             Rect rect = new(
-                PointerOld.x - size / 2,
-                Screen.height - PointerOld.y - size / 2,
+                pointerOld.x - size / 2,
+                Screen.height - pointerOld.y - size / 2,
                 size,
                 size
             );
-
             GUI.color = Color.red;
             GUI.Box(rect, "");
         }

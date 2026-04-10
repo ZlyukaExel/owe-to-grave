@@ -1,7 +1,10 @@
 using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
+[RequireComponent(typeof(DefaultState))]
+[RequireComponent(typeof(Vector2Reference))]
 public class CombatState : State
 {
     [HideInInspector]
@@ -21,28 +24,41 @@ public class CombatState : State
         aimFiller2;
     private Animator crosshairAnimator;
     private float notInCombatTime = 0;
+    private Vector2Reference aimingVector;
 
     [SerializeField]
     private LayerMask combatLayers;
 
     [SerializeField]
     private GameObject bulletPrefab;
-    private InputAction attackAction,
+    private readonly SpeedBuff aimingSlowdown =
+            new("Aiming slowdown", "Slows down to shoot properly", null, -1, -0.3f),
+        shootingSlowdown = new("Shoting slowdown", "Slows down to aim properly", null, -1, -0.15f);
+
+    [SerializeField]
+    private InputActionReference attackAction,
         aimAction;
+    private InputManager input;
 
-    public void Start()
+    public override void Awake()
     {
-        attackAction = InputSystem.actions.FindAction("Attack");
-        aimAction = InputSystem.actions.FindAction("Aim");
+        base.Awake();
+        GetComponent<DefaultState>().onStateEnter.AddListener(() => SetListeners(true));
+        GetComponent<DefaultState>().onStateExit.AddListener(() => SetListeners(false));
+        aimingVector = GetComponent<Vector2Reference>();
+    }
 
-        PlayerInput.Instance.GetAction(attackAction)?.onDown.AddListener(OnShootButtonDown);
-        PlayerInput.Instance.GetAction(aimAction)?.onDown.AddListener(OnAimButtonDown);
+    private void Start()
+    {
+        input = l.input;
 
-        Transform combatUi = pLinks.ui.Find("Ground Ui");
-
-        aimFiller = combatUi.Find("Aim Button/Filler").gameObject;
-        aimFiller2 = combatUi.Find("Aim Button 2/Filler").gameObject;
-        crosshairAnimator = combatUi.Find("Crosshair").GetComponent<Animator>();
+        if (pLinks)
+        {
+            Transform combatUi = pLinks.ui.Find("Mobile Ui/Ground Ui");
+            aimFiller = combatUi.Find("Aim Button/Filler").gameObject;
+            aimFiller2 = combatUi.Find("Aim Button 2/Filler").gameObject;
+            crosshairAnimator = pLinks.ui.Find("Crosshair").GetComponent<Animator>();
+        }
 
         // canStandTrigger = l
         //     .transform.Find("Armature/Point Of Scaling/Can Stand Trigger")
@@ -57,26 +73,32 @@ public class CombatState : State
     {
         inCombat = true;
 
-        PlayerInput.Instance.GetAction(attackAction)?.onUp.AddListener(OnShootButtonUp);
-        PlayerInput.Instance.GetAction(aimAction)?.onUp.AddListener(OnAimButtonUp);
+        if (pLinks)
+        {
+            if (!pLinks.cameraController.isFirstPerson)
+                pLinks.cameraController.positionOffset.x = 0.7f;
+        }
 
-        if (!pLinks.cameraController.isFirstPerson)
-            pLinks.cameraController.positionOffset.x = 0.7f;
+        SetListeners(true);
+        input.GetAction(attackAction.action)?.onUp.AddListener(OnShootButtonUp);
+        input.GetAction(aimAction.action)?.onUp.AddListener(OnAimButtonUp);
 
-        pLinks.animator.SetBool("inCombat", true);
+        l.animator.SetBool("inCombat", true);
 
-        CharacterConfig config = new(pLinks.netConfig.config) { inCombat = true };
-        pLinks.netConfig.CmdSetConfig(config);
+        CharacterConfig config = new(l.netConfig.config) { inCombat = true };
+        l.netConfig.CmdSetConfig(config);
 
-        pLinks.weapon.onShot.AddListener(SpawnBullet);
+        l.weapon.onShot.AddListener(SpawnBullet);
 
         currentSet = 1;
+
+        base.EnterState();
     }
 
     public override void UpdateState()
     {
-        pLinks.movement.MovementUpdate();
-        pLinks.carTrigger.CarTriggerUpdate();
+        l.movement.MovementUpdate();
+        l.carTrigger.CarTriggerUpdate();
 
         float target = isAiming ? 1f : 0f;
         aimingWeight = Mathf.MoveTowards(
@@ -86,8 +108,10 @@ public class CombatState : State
         );
 
         // Aiming ray checks there's no obstacle in the way
-        Vector3 origin = pLinks.transform.position + new Vector3(0.2f, 1.25f, 0);
-        Vector3 direction = pLinks.cameraPivot.forward * 0.75f;
+        Vector3 origin = l.transform.position + new Vector3(-0.2f, 1.25f, 0);
+        Vector2 angles = new(aimingVector.value.x, aimingVector.value.y);
+        Vector3 direction = Quaternion.Euler(angles.x, angles.y, 0) * Vector3.forward * 0.75f;
+
         Debug.DrawRay(origin, direction, Color.red);
         isAimingOrShooting =
             (shootButtonPressed || aimButtonClicked || aimButtonPressed)
@@ -110,19 +134,29 @@ public class CombatState : State
             notInCombatTime += Time.deltaTime;
             if (notInCombatTime > 5)
             {
-                pLinks.stateManager.SetState(EnumState.Default);
+                l.stateManager.SetState(EnumState.Default);
             }
         }
+
+        pLinks?.itemGrabber.ItemGrabbingUpdate();
     }
 
     public override void FixedUpdateState()
     {
-        pLinks.movement.MovementFixedUpdate();
+        l.movement.MovementFixedUpdate();
     }
 
     public override void ExitState()
     {
-        pLinks.cameraController.positionOffset.x = 0;
+        if (pLinks)
+        {
+            if (!pLinks.itemGrabber.itemRigidbody)
+                pLinks.cameraController.positionOffset.x = 0;
+            pLinks.animator.SetBool("inCombat", false);
+            CharacterConfig config = new(pLinks.netConfig.config) { inCombat = false };
+            pLinks.netConfig.CmdSetConfig(config);
+            pLinks.weapon.onShot.RemoveListener(SpawnBullet);
+        }
 
         aimButtonClicked = aimButtonPressed = false;
         StopAim();
@@ -130,21 +164,32 @@ public class CombatState : State
         // if (isCrouching)
         //     OnCrouchButtonDown();
 
-        pLinks.animator.SetBool("inCombat", false);
-
-        CharacterConfig config = new(pLinks.netConfig.config) { inCombat = false };
-        pLinks.netConfig.CmdSetConfig(config);
-        pLinks.weapon.onShot.RemoveListener(SpawnBullet);
-
-        PlayerInput.Instance.GetAction(attackAction)?.onUp.RemoveListener(OnShootButtonUp);
-        PlayerInput.Instance.GetAction(aimAction)?.onUp.RemoveListener(OnAimButtonUp);
+        SetListeners(false);
+        input.GetAction(attackAction.action)?.onUp.RemoveListener(OnShootButtonUp);
+        input.GetAction(aimAction.action)?.onUp.RemoveListener(OnAimButtonUp);
 
         inCombat = false;
+
+        base.ExitState();
+    }
+
+    public void SetListeners(bool set)
+    {
+        if (set)
+        {
+            input.GetAction(attackAction.action)?.onDown.AddListener(OnShootButtonDown);
+            input.GetAction(aimAction.action)?.onDown.AddListener(OnAimButtonDown);
+        }
+        else
+        {
+            input.GetAction(attackAction.action)?.onDown.RemoveListener(OnShootButtonDown);
+            input.GetAction(aimAction.action)?.onDown.RemoveListener(OnAimButtonDown);
+        }
     }
 
     private void AimingAndShotingUpdate()
     {
-        pLinks.animator.SetFloat("RotX", Mathf.DeltaAngle(0, pLinks.playerCamera.eulerAngles.x));
+        l.animator.SetFloat("RotX", Mathf.DeltaAngle(0, aimingVector.value.x));
 
         // Start aiming
         if (!isAiming)
@@ -152,12 +197,12 @@ public class CombatState : State
             StartAim();
         }
 
-        // Slow down when shooting
-        pLinks.weapon.SetShooting(aimingWeight >= 0.9f && shootButtonPressed);
+        l.weapon.SetShooting(aimingWeight >= 0.9f && shootButtonPressed);
 
+        // Slow down when shooting
         if (shootButtonPressed && !isShooting)
         {
-            pLinks.movement.speedModifier /= 1.2f;
+            l.buffs.AddBuff(shootingSlowdown);
             isShooting = true;
         }
     }
@@ -180,8 +225,8 @@ public class CombatState : State
             dirWithoutSpread = aimRay.GetPoint(100) - spawnerPosition;
 
         // Add spread
-        float currentSpread = pLinks.weapon.properties.spread;
-        currentSpread *= 1 + pLinks.movement.currentSpeed / 8;
+        float currentSpread = l.weapon.properties.spread;
+        currentSpread *= 1 + l.movement.currentSpeed / 8;
 
         // if (isCrouching)
         //     currentSpread /= 1.25f;
@@ -193,7 +238,7 @@ public class CombatState : State
         ).normalized;
 
         // Spawn bullet
-        CmdSpawnBullet(spawnerPosition, dirWithSpread, pLinks.weapon.properties);
+        CmdSpawnBullet(spawnerPosition, dirWithSpread, l.weapon.properties);
 
         // mFireCD = true;
         // StartCoroutine(FireRate());
@@ -218,7 +263,7 @@ public class CombatState : State
     {
         if (!inCombat)
         {
-            pLinks.stateManager.SetState(EnumState.Combat);
+            l.stateManager.SetState(EnumState.Combat);
         }
 
         shootButtonPressed = true;
@@ -240,7 +285,7 @@ public class CombatState : State
     {
         if (!inCombat)
         {
-            pLinks.stateManager.SetState(EnumState.Combat);
+            l.stateManager.SetState(EnumState.Combat);
         }
 
         if (aimButtonClicked) // Stop aim
@@ -254,12 +299,15 @@ public class CombatState : State
         {
             aimButtonPressed = true;
 
-            zAxisSaver = pLinks.cameraController.positionOffset.z;
+            if (pLinks)
+            {
+                zAxisSaver = pLinks.cameraController.positionOffset.z;
 
-            //#if UNITY_ANDROID
-            aimFiller.SetActive(true);
-            aimFiller2.SetActive(true);
-            //#endif
+                //#if UNITY_ANDROID
+                aimFiller?.SetActive(true);
+                aimFiller2?.SetActive(true);
+                //#endif
+            }
         }
     }
 
@@ -282,23 +330,27 @@ public class CombatState : State
 
     private void StartAim()
     {
-        pLinks.movement.ActualMovement();
+        l.movement.ActualMovement();
+        l.buffs.AddBuff(aimingSlowdown);
+        l.animator.SetBool("isAiming", true);
 
-        pLinks.movement.speedModifier /= 1.4f;
-
-        crosshairAnimator.SetFloat("AnimSpeed", 1);
-        crosshairAnimator.Play("AimAppears");
-        pLinks.animator.SetBool("isAiming", true);
-
-        pLinks.cameraController.horizontalSens /= 2;
-        pLinks.cameraController.verticalSens /= 2;
-
-        pLinks.cameraController.isAiming = true;
-
-        if (!pLinks.cameraController.isFirstPerson)
+        if (pLinks)
         {
-            zAxisSaver = pLinks.cameraController.positionOffset.z;
-            pLinks.cameraController.positionOffset.z = -1.2f;
+            crosshairAnimator.GetComponent<DisabledImageAndAnimation>().moveToEnd = true;
+            crosshairAnimator.SetFloat("AnimSpeed", 1);
+            if (crosshairAnimator.isActiveAndEnabled)
+            {
+                crosshairAnimator.Play("AimAppears");
+            }
+
+            pLinks.cameraController.horizontalSens /= 2;
+            pLinks.cameraController.verticalSens /= 2;
+            pLinks.cameraController.isAiming = true;
+            if (!pLinks.cameraController.isFirstPerson)
+            {
+                zAxisSaver = pLinks.cameraController.positionOffset.z;
+                pLinks.cameraController.positionOffset.z = -1.2f;
+            }
         }
 
         isAiming = true;
@@ -309,27 +361,35 @@ public class CombatState : State
         if (!isAiming)
             return;
 
-        pLinks.movement.speedModifier *= 1.4f;
+        l.buffs.RemoveBuff(aimingSlowdown);
 
-        crosshairAnimator.SetFloat("AnimSpeed", -1);
-        crosshairAnimator.Play("AimAppears");
-        pLinks.animator.SetBool("isAiming", false);
+        l.animator.SetBool("isAiming", false);
 
-        pLinks.cameraController.horizontalSens = PlayerPrefs.GetFloat("HorizontalSensivity", 20);
-        pLinks.cameraController.verticalSens = PlayerPrefs.GetFloat("VerticalSensivity", 20);
+        if (pLinks)
+        {
+            pLinks.cameraController.horizontalSens = PlayerPrefs.GetFloat(
+                "HorizontalSensivity",
+                20
+            );
+            pLinks.cameraController.verticalSens = PlayerPrefs.GetFloat("VerticalSensivity", 20);
+            pLinks.cameraController.isAiming = pLinks.cameraController.isAiming = false;
+            if (!pLinks.cameraController.isFirstPerson)
+                pLinks.cameraController.positionOffset.z = zAxisSaver;
 
-        pLinks.cameraController.isAiming = pLinks.cameraController.isAiming = false;
+            crosshairAnimator.GetComponent<DisabledImageAndAnimation>().moveToEnd = false;
+            crosshairAnimator.SetFloat("AnimSpeed", -1);
+            if (crosshairAnimator.isActiveAndEnabled)
+            {
+                crosshairAnimator.Play("AimAppears");
+            }
 
-        if (!pLinks.cameraController.isFirstPerson)
-            pLinks.cameraController.positionOffset.z = zAxisSaver;
+            aimFiller.SetActive(false);
+            aimFiller2.SetActive(false);
+            //#endif
+        }
 
         isAiming = isAimingOrShooting = false;
-        pLinks.movement.ActualMovement();
-
-        //#if UNITY_ANDROID
-        aimFiller.SetActive(false);
-        aimFiller2.SetActive(false);
-        //#endif
+        l.movement.ActualMovement();
     }
 
     private void StopShooting()
@@ -337,9 +397,9 @@ public class CombatState : State
         if (!isShooting)
             return;
 
-        pLinks.movement.speedModifier *= 1.2f;
+        l.buffs.RemoveBuff(shootingSlowdown);
 
-        pLinks.weapon.SetShooting(false);
+        l.weapon.SetShooting(false);
 
         isShooting = false;
     }

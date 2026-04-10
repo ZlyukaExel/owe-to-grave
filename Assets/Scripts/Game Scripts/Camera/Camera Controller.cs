@@ -19,7 +19,8 @@ public class CameraController : MonoBehaviour
     private bool autoRotationEnabled,
         isRestoringCamera;
     private CharacterConfigManager characterConfig;
-    private Transform target;
+    private Transform character;
+    private int previousLayer;
     private float horAdj = 0.3f,
         vertAdj = 0.5f,
         timeWithoutCameraMovement;
@@ -33,6 +34,7 @@ public class CameraController : MonoBehaviour
     private Transform currentPivot,
         thirdPersonCameraPivot,
         firstPersonCameraPivot;
+    private Vector2Reference aimingVector;
     private Transform cameraPivot => transform.parent;
     private PlayerLinks l;
 
@@ -42,25 +44,39 @@ public class CameraController : MonoBehaviour
         PlayerInput.Instance.OnZoom += Zoom;
     }
 
-    public void Initialize(Transform character)
-    {
-        int ignoreRaycastLayer = LayerMask.NameToLayer("Ignore Raycast");
-        foreach (var collider in character.GetComponentsInChildren<Collider>())
-        {
-            collider.gameObject.layer = ignoreRaycastLayer;
-        }
-    }
-
     public void ChangeTarget(
-        Transform target,
+        Transform character,
         PlayerLinks links,
         Transform firstPersonCameraPivot,
         Transform thirdPersonCameraPivot
     )
     {
-        this.target = target;
+        // Return to the previous layer
+        if (this.character)
+        {
+            ChangeCollidersToLayer(this.character, previousLayer);
+        }
+        // Set new layer to colliders and save previous one
+        this.character = character;
+        previousLayer = this.character.Find("Armature/mixamorig:Hips").gameObject.layer;
+        int currentPlayerLayer = LayerMask.NameToLayer("Current Player");
+        ChangeCollidersToLayer(this.character, currentPlayerLayer);
+
+        aimingVector = character.GetComponent<Vector2Reference>();
         l = links;
         SetCameraPivots(firstPersonCameraPivot, thirdPersonCameraPivot);
+    }
+
+    private void ChangeCollidersToLayer(Transform character, int layerId)
+    {
+        foreach (
+            var collider in character
+                .Find("Armature/mixamorig:Hips")
+                .GetComponentsInChildren<Collider>(true)
+        )
+        {
+            collider.gameObject.layer = layerId;
+        }
     }
 
     private void LateUpdate()
@@ -147,12 +163,12 @@ public class CameraController : MonoBehaviour
                 {
                     angleX = Mathf.LerpAngle(
                         angleX,
-                        target.eulerAngles.x,
+                        character.eulerAngles.x,
                         vertAdj * Time.unscaledDeltaTime
                     );
                     angleY = Mathf.LerpAngle(
                         angleY,
-                        target.eulerAngles.y,
+                        character.eulerAngles.y,
                         horAdj * Time.unscaledDeltaTime
                     );
                 }
@@ -176,7 +192,8 @@ public class CameraController : MonoBehaviour
         cameraPivot.rotation = Quaternion.Euler(angleX, angleY, 0);
 
         l.minimap.angleY = angleY;
-        l.movement.angleY = angleY;
+        if (aimingVector)
+            aimingVector.value = new(angleX, angleY);
     }
 
     private void CameraMode_Car()
@@ -197,7 +214,7 @@ public class CameraController : MonoBehaviour
                 else if (carScript.isMoving)
                     angleY = Mathf.LerpAngle(
                         angleY,
-                        target.eulerAngles.y + (carScript.speed < -1 ? 180 : 0),
+                        character.eulerAngles.y + (carScript.speed < -1 ? 180 : 0),
                         Time.unscaledDeltaTime
                     );
             }
@@ -211,8 +228,8 @@ public class CameraController : MonoBehaviour
 
         if (isFirstPerson)
         {
-            cameraPivot.rotation = target.rotation * Quaternion.Euler(angleX, angleY, 0);
-            l.minimap.angleY = target.eulerAngles.y + angleY;
+            cameraPivot.rotation = character.rotation * Quaternion.Euler(angleX, angleY, 0);
+            l.minimap.angleY = character.eulerAngles.y + angleY;
         }
         else
         {
@@ -245,9 +262,12 @@ public class CameraController : MonoBehaviour
                     ~excudeLayers
                 )
             )
+            {
+                // print(hit.collider);
                 desiredPosition = cameraPivot.InverseTransformPoint(
                     hit.point + hit.normal * collisionRadius
                 );
+            }
 
             // Smoothly moving camera to the point of contact ignoring collision
             if (Vector3.Distance(desiredPosition, transform.localPosition) > 0.1f)
@@ -390,7 +410,7 @@ public class CameraController : MonoBehaviour
                     .gameObject.SetActive(false);
 
                 if (cameraMode == CameraMode.Car)
-                    angleY -= target.eulerAngles.y;
+                    angleY -= character.eulerAngles.y;
             }
         }
         // Switch to third person
@@ -433,10 +453,8 @@ public class CameraController : MonoBehaviour
     private void SetMaterialsAlpha(float alpha)
     {
         SetGameobjectAlpha(characterConfig.GetHead(), alpha);
-        GameObject weapon = characterConfig.GetWeapon();
-        Weapon weaponComponent = weapon.GetComponent<Weapon>();
-        SetChildGameobjectAlpha(weapon, alpha);
-        SetChildGameobjectAlpha(weaponComponent.GetHidden(), alpha);
+        SetChildGameobjectAlpha(l.weapon.gameObject, alpha);
+        SetChildGameobjectAlpha(l.weapon.GetHidden(), alpha);
         SetGameobjectAlpha(characterConfig.GetPants(), alpha);
         SetGameobjectAlpha(characterConfig.GetTop(), alpha);
         SetGameobjectAlpha(characterConfig.GetShoes(), alpha);

@@ -3,18 +3,23 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(TMP_InputField))]
 public class InputWithButtons : MonoBehaviour
 {
-    public int minValue = 0, maxValue = 1;
-    public Button increaseButton, decreaseButton;
-    private TMP_InputField inputField;
+    [SerializeField]
+    private int minValue = 0,
+        maxValue = 1;
 
+    [SerializeField]
+    private Button increaseButton,
+        decreaseButton;
+    private TMP_InputField inputField;
 
     private void Start()
     {
         inputField = GetComponent<TMP_InputField>();
-        increaseButton.onClick.AddListener(IncreaseValue);
-        decreaseButton.onClick.AddListener(DecreaseValue);
+        increaseButton?.onClick.AddListener(IncreaseValue);
+        decreaseButton?.onClick.AddListener(DecreaseValue);
         inputField.onValueChanged.AddListener(ClampValue);
         CheckValues();
     }
@@ -25,14 +30,14 @@ public class InputWithButtons : MonoBehaviour
         CheckValues();
     }
 
-    private void IncreaseValue()
+    public void IncreaseValue()
     {
         int currentValue = int.Parse(inputField.text);
         currentValue++;
         inputField.text = currentValue.ToString();
     }
 
-    private void DecreaseValue()
+    public void DecreaseValue()
     {
         int currentValue = int.Parse(inputField.text);
         currentValue--;

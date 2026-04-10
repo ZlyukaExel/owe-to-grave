@@ -1,7 +1,9 @@
-using System.Collections.Generic;
+using System;
 using System.Collections;
-using UnityEngine;
+using System.Collections.Generic;
 using TMPro;
+using UnityEngine;
+using UnityEngine.Events;
 
 namespace Mirror.Discovery
 {
@@ -9,13 +11,26 @@ namespace Mirror.Discovery
     public class CustomNetworkDiscovery : MonoBehaviour
     {
         private readonly Dictionary<long, ServerResponse> discoveredServers = new();
+        private readonly Dictionary<long, ConnectToServerButton> serverButtons = new();
+
         public NetworkDiscovery networkDiscovery { get; private set; }
-        [SerializeField] private float discoveryInterval = 3;
-        [SerializeField] private ConnectToServerButton buttonPrefab;
-        [SerializeField] private Transform buttonsContainer;
-        [SerializeField] private GameObject loadingBar;
+
+        [SerializeField]
+        private float discoveryInterval = 3;
+
+        [SerializeField]
+        private ConnectToServerButton buttonPrefab;
+
+        [SerializeField]
+        private Transform buttonsContainer;
+
+        [SerializeField]
+        private GameObject loadingBar;
         public GameObject passwordScreen;
         private Coroutine discoveryCoroutine;
+
+        [SerializeField]
+        private UnityEvent onAwaliableServersChange;
 
         private void Start()
         {
@@ -24,13 +39,17 @@ namespace Mirror.Discovery
 
         public void StartDiscovery()
         {
+            if (discoveryCoroutine != null)
+                StopCoroutine(discoveryCoroutine);
             discoveryCoroutine = StartCoroutine(Discovery());
         }
 
         public void StopDiscovery()
         {
-            StopCoroutine(discoveryCoroutine);
+            if (discoveryCoroutine != null)
+                StopCoroutine(discoveryCoroutine);
             networkDiscovery.StopDiscovery();
+            ClearButtons();
         }
 
         private IEnumerator Discovery()
@@ -40,45 +59,63 @@ namespace Mirror.Discovery
                 discoveredServers.Clear();
                 networkDiscovery.StartDiscovery();
 
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(1.0f);
 
                 UpdateButtons();
 
-                yield return new WaitForSeconds(discoveryInterval - 0.5f);
+                yield return new WaitForSeconds(discoveryInterval);
             }
         }
 
         private void UpdateButtons()
         {
-            ClearButtons();
+            List<long> idsToRemove = new();
+            foreach (var id in serverButtons.Keys)
+            {
+                if (!discoveredServers.ContainsKey(id))
+                    idsToRemove.Add(id);
+            }
 
-            // Create new buttons
+            foreach (var id in idsToRemove)
+            {
+                if (serverButtons[id] != null)
+                    Destroy(serverButtons[id].gameObject);
+                serverButtons.Remove(id);
+            }
+
             foreach (var server in discoveredServers.Values)
             {
-                ConnectToServerButton button = Instantiate(buttonPrefab, buttonsContainer);
+                if (!serverButtons.TryGetValue(server.serverId, out ConnectToServerButton button))
+                {
+                    // Создаем только если такой кнопки еще нет
+                    button = Instantiate(buttonPrefab, buttonsContainer);
+                    serverButtons.Add(server.serverId, button);
+                }
+
                 button.info = server;
                 button.customNetworkDiscovery = this;
                 button.transform.GetComponentInChildren<TMP_Text>().text = server.serverName;
-                button.transform.GetComponentInChildren<CustomToggle>().isOn = !string.IsNullOrEmpty(server.password);
+
+                var toggle = button.transform.GetComponentInChildren<CustomToggle>();
+                if (toggle != null)
+                    toggle.isOn = !string.IsNullOrEmpty(server.password);
             }
 
             if (loadingBar)
-            {
-                if (discoveredServers.Count > 0)
-                    loadingBar.SetActive(false);
-                else
-                    loadingBar.SetActive(true);
-            }
+                loadingBar.SetActive(serverButtons.Count == 0);
+
+            onAwaliableServersChange.Invoke();
         }
 
         public void ClearButtons()
         {
-            if (!buttonsContainer) return;
-            foreach (Transform child in buttonsContainer)
+            foreach (var button in serverButtons.Values)
             {
-                if (child)
-                    Destroy(child.gameObject);
+                if (button)
+                    Destroy(button.gameObject);
             }
+            serverButtons.Clear();
+            discoveredServers.Clear();
         }
 
         public void OnDiscoveredServer(ServerResponse info)

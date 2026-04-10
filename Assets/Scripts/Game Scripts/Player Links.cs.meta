@@ -1,2 +1,14 @@
 fileFormatVersion: 2
 guid: 8a373bd794242af46a19b3c03c4510ed
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - cameraPrefab: {fileID: 3208859204956351565, guid: 41ff51f06462845469921dc01635db24, type: 3}
+  - uiPrefab: {fileID: 6287158938969843256, guid: a4dc19b8f79be504da67435d649ef7e9, type: 3}
+  - minimapPrefab: {fileID: 7974011845758807737, guid: 8261bab3171a441438e986d6ee7ac120, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

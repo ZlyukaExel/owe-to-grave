@@ -11,9 +11,4 @@ public class DefaultState : State
     {
         l.movement.MovementFixedUpdate();
     }
-
-    public override void ExitState()
-    {
-        pLinks?.itemGrabber.StopDragging();
-    }
 }

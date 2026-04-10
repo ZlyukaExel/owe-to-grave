@@ -4,11 +4,11 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CombatState))]
 [RequireComponent(typeof(Links))]
+[RequireComponent(typeof(Buffs))]
+[RequireComponent(typeof(Vector2Reference))]
 public class MovementManager : MonoBehaviour
 {
     public bool canMove = true;
-    public float angleY,
-        speedModifier = 1;
 
     [SerializeField]
     private float defaultSpeed = 3,
@@ -21,7 +21,9 @@ public class MovementManager : MonoBehaviour
     public float currentSpeed { get; private set; }
     private float runButtonPressedTime;
     private float holdButtonTime = 0.15f;
-    private float noInputTimer;
+    private float noInputTimer = 0,
+        noJumpTimer = 0;
+    private Vector2Reference aimingVector;
 
     [Header("Ground ray")]
     public bool isGrounded;
@@ -32,25 +34,26 @@ public class MovementManager : MonoBehaviour
     private Animator animator;
     private Rigidbody rb;
     private CombatState combat;
+    private Buffs buffs;
     private InputManager input;
-    private InputAction jumpAction;
 
-    private void Awake()
-    {
-        jumpAction = InputSystem.actions.FindAction("Jump");
-    }
+    [SerializeField]
+    private InputActionReference jumpAction,
+        sprintAction;
 
     private void Start()
     {
         Links l = GetComponent<Links>();
         rb = GetComponent<Rigidbody>();
         combat = GetComponent<CombatState>();
+        buffs = GetComponent<Buffs>();
+        aimingVector = GetComponent<Vector2Reference>();
         animator = l.animator;
         input = l.input;
 
-        InputManagerAction sprintAction = input.GetAction(InputSystem.actions.FindAction("Sprint"));
-        sprintAction.onDown.AddListener(OnSprintButtonDown);
-        sprintAction.onUp.AddListener(OnSprintButtonUp);
+        InputManagerAction sprintInputManagerAction = input.GetAction(sprintAction.action);
+        sprintInputManagerAction.onDown.AddListener(OnSprintButtonDown);
+        sprintInputManagerAction.onUp.AddListener(OnSprintButtonUp);
     }
 
     public void MovementUpdate()
@@ -79,7 +82,9 @@ public class MovementManager : MonoBehaviour
 
         animator.SetBool("isJumping", !isGrounded);
 
-        if (input.IsPressed(jumpAction))
+        if (noJumpTimer < 0.1f)
+            noJumpTimer += Time.deltaTime;
+        else if (input.IsPressed(jumpAction))
             Jump();
     }
 
@@ -101,18 +106,19 @@ public class MovementManager : MonoBehaviour
 
     private void Jump()
     {
-        if (!isGrounded || rb.isKinematic)
+        if (!isGrounded || rb.isKinematic || noJumpTimer < 0.1f)
             return;
 
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+        noJumpTimer = 0;
     }
 
     public void ActualMovement()
     {
         Vector3 direction = new(input.Horizontal, 0, input.Vertical);
 
-        Quaternion rotation = Quaternion.Euler(0, angleY, 0);
+        Quaternion rotation = Quaternion.Euler(0, aimingVector.value.y, 0);
         Vector3 joystickWorldMovement = rotation * direction;
 
         float inputMagnitude = direction.magnitude;
@@ -133,7 +139,7 @@ public class MovementManager : MonoBehaviour
                 rb.AddForce(
                     inputMagnitude
                         * defaultSpeed
-                        * speedModifier
+                        * GetSpeedModifier()
                         * joystickWorldMovement.normalized,
                     ForceMode.VelocityChange
                 );
@@ -145,7 +151,7 @@ public class MovementManager : MonoBehaviour
         if (combat.isAimingOrShooting)
         {
             // Rotate character towards camera direction
-            Vector3 targetRotation = new(0, angleY, 0);
+            Vector3 targetRotation = new(0, aimingVector.value.y, 0);
             transform.rotation = Quaternion.Lerp(
                 transform.rotation,
                 Quaternion.Euler(targetRotation),
@@ -178,6 +184,18 @@ public class MovementManager : MonoBehaviour
                 animator.SetFloat("VelX", 0);
             }
         }
+    }
+
+    private float GetSpeedModifier()
+    {
+        float speedModifier = 1;
+        foreach (Buff buff in buffs.GetActiveBuffs())
+        {
+            if (buff is SpeedBuff speedBuff)
+                speedModifier += speedBuff.modifier;
+        }
+
+        return Mathf.Max(0, speedModifier);
     }
 
     public void OnSprintButtonDown()
@@ -232,4 +250,12 @@ public class MovementManager : MonoBehaviour
     //         animator.SetBool("isSliding", false);
     //     }
     // }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = isGrounded ? Color.green : Color.red;
+        Vector3 startPosition = transform.position + groundRayOffset;
+        Vector3 endPosition = startPosition + (-transform.up * groundRayLength);
+        Gizmos.DrawLine(startPosition, endPosition);
+    }
 }

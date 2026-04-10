@@ -1,10 +1,16 @@
 using Mirror;
+using UnityEngine;
+using UnityEngine.Events;
 
-[UnityEngine.RequireComponent(typeof(Links))]
+[RequireComponent(typeof(Links))]
 public abstract class State : NetworkBehaviour
 {
     protected Links l;
     protected PlayerLinks pLinks => l as PlayerLinks;
+
+    [HideInInspector]
+    public UnityEvent onStateEnter,
+        onStateExit;
 
     public virtual void Awake()
     {
@@ -15,7 +21,13 @@ public abstract class State : NetworkBehaviour
 
     public virtual void FixedUpdateState() { }
 
-    public virtual void EnterState() { }
+    public virtual void EnterState()
+    {
+        onStateEnter.Invoke();
+    }
 
-    public virtual void ExitState() { }
+    public virtual void ExitState()
+    {
+        onStateExit.Invoke();
+    }
 }

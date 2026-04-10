@@ -1,19 +1,28 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class SceneCloser : MonoBehaviour
 {
-    private void Update()
+    [SerializeField]
+    private InputActionReference cancelAction;
+
+    void OnEnable()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            closeScene();
-        }
+        cancelAction.action.performed += CloseScene;
     }
 
-    public void closeScene()
+    void OnDisable()
+    {
+        cancelAction.action.performed -= CloseScene;
+    }
+
+    public void CloseScene(InputAction.CallbackContext ctx)
+    {
+        CloseScene();
+    }
+
+    public void CloseScene()
     {
         SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(1));
     }

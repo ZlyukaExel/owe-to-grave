@@ -3,12 +3,13 @@ using UnityEngine;
 public class HitPoint : MonoBehaviour
 {
     [SerializeField]
-    private bool isCrit;
+    private float damageMultiplier = 1;
     private HitPointsSet hpSet = null;
 
     public void Damage(DamageInfo damageInfo)
     {
-        hpSet?.Damage(isCrit ? damageInfo.damage * damageInfo.critMultiplier : damageInfo.damage);
+        damageInfo.damage *= damageMultiplier;
+        hpSet?.Damage(damageInfo);
     }
 
     public NetworkHitpoints GetHp()

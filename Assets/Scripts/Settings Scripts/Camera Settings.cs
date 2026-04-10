@@ -1,12 +1,32 @@
+using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class CameraSettings : MonoBehaviour
 {
-    [SerializeField] private Slider horSensSlider, vertSensSlider, horAdjSlider, vertAdjSlider;
-    [SerializeField] private Toggle autoRotationToggle;
-    [SerializeField] private Button confirmButton, cancelButton;
-    [SerializeField] private GameObject saveOrGoScreen, settingsMenu;
+    [SerializeField]
+    private Slider horSensSlider,
+        vertSensSlider,
+        horAdjSlider,
+        vertAdjSlider;
+
+    [SerializeField]
+    private Toggle autoRotationToggle;
+
+    [SerializeField]
+    private Button confirmButton,
+        cancelButton;
+
+    [SerializeField]
+    private GameObject saveOrGoScreen,
+        settingsMenu;
+
+    [SerializeField]
+    private UnityEvent onExit;
+
+    [SerializeField]
+    private Selectable defaultSelectable;
 
     void Start()
     {
@@ -45,11 +65,27 @@ public class CameraSettings : MonoBehaviour
         if (confirmButton.interactable)
         {
             saveOrGoScreen.SetActive(true);
+            saveOrGoScreen.transform.Find("NoButton").GetComponent<Button>().Select();
         }
         else
         {
+            onExit.Invoke();
             gameObject.SetActive(false);
             settingsMenu.SetActive(true);
         }
+    }
+
+    public void ExitMenu()
+    {
+        ResetSettings();
+        onExit.Invoke();
+        gameObject.SetActive(false);
+        settingsMenu.SetActive(true);
+    }
+
+    public void SelectIfActive()
+    {
+        if (gameObject.activeInHierarchy)
+            defaultSelectable.Select();
     }
 }
