@@ -43,11 +43,13 @@ namespace kcp2k
         public Dictionary<int, KcpServerConnection> connections =
             new Dictionary<int, KcpServerConnection>();
 
-        public KcpServer(Action<int, IPEndPoint> OnConnected,
-                         Action<int, ArraySegment<byte>, KcpChannel> OnData,
-                         Action<int> OnDisconnected,
-                         Action<int, ErrorCode, string> OnError,
-                         KcpConfig config)
+        public KcpServer(
+            Action<int, IPEndPoint> OnConnected,
+            Action<int, ArraySegment<byte>, KcpChannel> OnData,
+            Action<int> OnDisconnected,
+            Action<int, ErrorCode, string> OnError,
+            KcpConfig config
+        )
         {
             // initialize callbacks first to ensure they can be used safely.
             this.OnConnected = OnConnected;
@@ -61,8 +63,8 @@ namespace kcp2k
 
             // create newClientEP either IPv4 or IPv6
             newClientEP = config.DualMode
-                          ? new IPEndPoint(IPAddress.IPv6Any, 0)
-                          : new IPEndPoint(IPAddress.Any,     0);
+                ? new IPEndPoint(IPAddress.IPv6Any, 0)
+                : new IPEndPoint(IPAddress.Any, 0);
         }
 
         public virtual bool IsActive() => socket != null;
@@ -72,7 +74,17 @@ namespace kcp2k
             if (DualMode)
             {
                 // IPv6 socket with DualMode @ "::" : port
-                Socket socket = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
+                Socket socket = new(
+                    AddressFamily.InterNetworkV6,
+                    SocketType.Dgram,
+                    ProtocolType.Udp
+                )
+#if UNITY_EDITOR
+                {
+                    ExclusiveAddressUse = false,
+                }
+#endif
+                ;
 
                 // enabling DualMode may throw:
                 // https://learn.microsoft.com/en-us/dotnet/api/System.Net.Sockets.Socket.DualMode?view=net-7.0
@@ -84,7 +96,9 @@ namespace kcp2k
                 }
                 catch (NotSupportedException e)
                 {
-                    Log.Warning($"[KCP] Failed to set Dual Mode, continuing with IPv6 without Dual Mode. Error: {e}");
+                    Log.Warning(
+                        $"[KCP] Failed to set Dual Mode, continuing with IPv6 without Dual Mode. Error: {e}"
+                    );
                 }
 
                 // for windows sockets, there's a rare issue where when using
@@ -140,7 +154,14 @@ namespace kcp2k
             else
             {
                 // IPv4 socket @ "0.0.0.0" : port
-                Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                Socket socket = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
+#if UNITY_EDITOR
+                {
+                    ExclusiveAddressUse = false,
+                }
+#endif
+                ;
+
                 socket.Bind(new IPEndPoint(IPAddress.Any, port));
                 return socket;
             }
@@ -202,7 +223,8 @@ namespace kcp2k
         {
             segment = default;
             connectionId = 0;
-            if (socket == null) return false;
+            if (socket == null)
+                return false;
 
             try
             {
@@ -259,13 +281,14 @@ namespace kcp2k
             // events need to be wrapped with connectionIds
             KcpServerConnection connection = new KcpServerConnection(
                 OnConnectedCallback,
-                (message,  channel) => OnData(connectionId, message, channel),
+                (message, channel) => OnData(connectionId, message, channel),
                 OnDisconnectedCallback,
                 (error, reason) => OnError(connectionId, error, reason),
                 (data) => RawSend(connectionId, data),
                 config,
                 cookie,
-                newClientEP);
+                newClientEP
+            );
 
             return connection;
 
@@ -333,7 +356,6 @@ namespace kcp2k
                 //
                 // for now, this is fine.
 
-
                 // now input the message & process received ones
                 // connected event was set up.
                 // tick will process the first message and adds the
@@ -355,6 +377,7 @@ namespace kcp2k
         // process incoming messages. should be called before updating the world.
         // virtual because relay may need to inject their own ping or similar.
         readonly HashSet<int> connectionsToRemove = new HashSet<int>();
+
         public virtual void TickIncoming()
         {
             // input all received messages into kcp

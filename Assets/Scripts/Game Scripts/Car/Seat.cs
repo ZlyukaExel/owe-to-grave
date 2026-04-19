@@ -36,8 +36,9 @@ public class Seat : InteractiveObject
     [SerializeField]
     private InputActionReference carAction;
 
-    void Awake()
+    public override void Awake()
     {
+        base.Awake();
         dummy = transform.GetChild(0).gameObject;
     }
 
@@ -47,7 +48,7 @@ public class Seat : InteractiveObject
         firstPersonCameraPivot = dummy.transform.Find("First Person Camera Pivot");
     }
 
-    public override void Interact(Transform character)
+    public override void OnInteractButtonUp(Transform character)
     {
         Sit(character);
     }
@@ -78,7 +79,7 @@ public class Seat : InteractiveObject
         {
             // Camera ignores car collision now
             int ignoreCameraLayerId = LayerMask.NameToLayer("Ignore Camera");
-            foreach (Collider collider in attachedCarScript.GetComponentsInChildren<Collider>())
+            foreach (Collider collider in attachedCarScript.GetComponentsInChildren<Collider>(true))
             {
                 if (collider == null)
                     continue;
@@ -157,7 +158,7 @@ public class Seat : InteractiveObject
                 attachedCarScript.ExitCar();
 
             // Camera doesn't ignore car anymore
-            int defaultLayerId = LayerMask.NameToLayer("Default");
+            int defaultLayerId = LayerMask.NameToLayer("Items");
             foreach (var collider in attachedCarScript.GetComponentsInChildren<Collider>())
             {
                 if (collider == null || collider.GetComponent<Camera>())
@@ -258,6 +259,4 @@ public class Seat : InteractiveObject
             standPos + Vector3.up * characterHeight - Vector3.forward * characterRadius
         );
     }
-
-    public override string InteractionText() => "Sit";
 }

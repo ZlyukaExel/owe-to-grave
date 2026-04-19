@@ -15,7 +15,7 @@ public class Ragdoll : MonoBehaviour
 #if UNITY_ANDROID
     protected FixedJoystick mJoystick;
 #endif
-    protected Trigger _back;
+    protected ColliderTrigger _back;
     protected Transform mRifle;
     protected Transform mCamera;
     public GameObject characterPref;
@@ -33,7 +33,7 @@ public class Ragdoll : MonoBehaviour
     protected void _RagdollStart()
     {
         _rb = GetComponentInChildren<Rigidbody>();
-        _back = GetComponentInChildren<Trigger>();
+        _back = GetComponentInChildren<ColliderTrigger>();
     }
 
     protected void _RagdollUpdate()

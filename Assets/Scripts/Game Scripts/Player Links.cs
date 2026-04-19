@@ -1,13 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(ItemGrabber))]
 public class PlayerLinks : Links
 {
     public Transform ui { get; private set; }
     public Minimap minimap { get; private set; }
     public CameraController cameraController { get; private set; }
-    public ItemGrabber itemGrabber { get; private set; }
+
+    public InteractableTrigger interactableTrigger { get; private set; }
     public Transform playerCamera => cameraController.transform;
     public Transform cameraPivot => playerCamera.parent;
 
@@ -19,8 +19,6 @@ public class PlayerLinks : Links
     public override void Awake()
     {
         base.Awake();
-
-        itemGrabber = GetComponent<ItemGrabber>();
     }
 
     public override void Start()
@@ -31,8 +29,14 @@ public class PlayerLinks : Links
         ui = Instantiate(uiPrefab).transform.Find("Game Ui");
         minimap = Instantiate(minimapPrefab).GetComponent<Minimap>();
         cameraController = Instantiate(cameraPrefab).GetComponentInChildren<CameraController>();
+        interactableTrigger = playerCamera.GetComponentInChildren<InteractableTrigger>();
+        interactableTrigger.SetPlayerLinks(this);
         minimap.SetTarget(transform); // TODO: change in movement
         input = PlayerInput.Instance;
+
+        ui.parent.Find("Inventory")
+            .GetComponent<InventoryUi>()
+            .SetInventory(GetComponent<Inventory>());
 
         base.Start();
 

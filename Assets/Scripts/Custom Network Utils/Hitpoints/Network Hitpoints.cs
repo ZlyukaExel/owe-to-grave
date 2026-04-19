@@ -43,6 +43,7 @@ public class NetworkHitpoints : NetworkBehaviour
     public void Damage(DamageInfo damageInfo)
     {
         // TODO: pass crit
+        // TODO: death messages
 
         // print("Damage taken: " + damageInfo.damage);
 
@@ -55,7 +56,7 @@ public class NetworkHitpoints : NetworkBehaviour
         if (currentHp <= 0)
         {
             if (player)
-                Debug.Log($"/a {player.entityName} died");
+                Debug.Log("/a " + DeathMessages.GetDeathMessage(player, damageInfo));
 
             // Items without autority die on Server
             if (connectionToClient == null)

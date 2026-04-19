@@ -21,12 +21,18 @@ public class CustomDropdown : MonoBehaviour, ISubmitHandler
 
     public void OnSubmit(BaseEventData eventData)
     {
+        if (!dropdown)
+            return;
+
         onSelectionStart.Invoke();
         cancelAction.action.performed += ctx => OnSelectionEnd();
     }
 
     public void OnSelectionEnd()
     {
+        if (!dropdown)
+            return;
+
         onSelectionEnd.Invoke();
         cancelAction.action.performed -= ctx => OnSelectionEnd();
         dropdown.Hide();

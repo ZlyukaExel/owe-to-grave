@@ -9,6 +9,7 @@ using UnityEngine;
 [RequireComponent(typeof(NetworkCharacterConfig))]
 [RequireComponent(typeof(NetworkRigidbodyReliable))]
 [RequireComponent(typeof(Buffs))]
+[RequireComponent(typeof(Inventory))]
 public class Links : NetworkBehaviour
 {
     public StateManager stateManager { get; private set; }

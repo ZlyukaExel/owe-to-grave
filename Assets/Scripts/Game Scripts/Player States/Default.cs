@@ -4,7 +4,6 @@ public class DefaultState : State
     {
         l.movement.MovementUpdate();
         l.carTrigger.CarTriggerUpdate();
-        pLinks?.itemGrabber.ItemGrabbingUpdate();
     }
 
     public override void FixedUpdateState()

@@ -137,8 +137,6 @@ public class CombatState : State
                 l.stateManager.SetState(EnumState.Default);
             }
         }
-
-        pLinks?.itemGrabber.ItemGrabbingUpdate();
     }
 
     public override void FixedUpdateState()
@@ -150,7 +148,7 @@ public class CombatState : State
     {
         if (pLinks)
         {
-            if (!pLinks.itemGrabber.itemRigidbody)
+            if (!pLinks.interactableTrigger.IsHolding())
                 pLinks.cameraController.positionOffset.x = 0;
             pLinks.animator.SetBool("inCombat", false);
             CharacterConfig config = new(pLinks.netConfig.config) { inCombat = false };
@@ -351,6 +349,7 @@ public class CombatState : State
                 zAxisSaver = pLinks.cameraController.positionOffset.z;
                 pLinks.cameraController.positionOffset.z = -1.2f;
             }
+            pLinks.interactableTrigger.SetCheckTrigger(false);
         }
 
         isAiming = true;
@@ -385,6 +384,8 @@ public class CombatState : State
 
             aimFiller.SetActive(false);
             aimFiller2.SetActive(false);
+
+            pLinks.interactableTrigger.SetCheckTrigger(true);
             //#endif
         }
 

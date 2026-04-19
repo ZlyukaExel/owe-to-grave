@@ -1,39 +1,46 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class MobileUiManager : MonoBehaviour
 {
-    [SerializeField]
-    private RectTransform[] mobileUiElements;
+    public bool isMobile = false;
 
     [SerializeField]
-    private RectTransform[] pcUiElements;
+    private UnityEvent onMobileActivated,
+        onMobileDeactivated,
+        onPcActivated,
+        onPcDeactivated;
 
-#if UNITY_EDITOR
-    [SerializeField]
-    private bool emulateMobile;
-#endif
-
-#if UNITY_EDITOR || UNITY_STANDALONE
     void Awake()
     {
 #if UNITY_EDITOR
-        SetMobileUiVisible(emulateMobile);
-#else
-        SetMobileUiVisible(false);
+        // Set in Inspector
+#elif UNITY_ANDROID
+        isMobile = true;
+#elif UNITY_STANDALONE
+        isMobile = false;
 #endif
+
+        UpdateUi();
     }
-#endif
+
+    public void UpdateUi()
+    {
+        SetMobileUiVisible(isMobile);
+    }
 
     public void SetMobileUiVisible(bool isVisible)
     {
-        foreach (var uiElement in mobileUiElements)
+        isMobile = isVisible;
+        if (isVisible)
         {
-            uiElement.gameObject.SetActive(isVisible);
+            onPcDeactivated.Invoke();
+            onMobileActivated.Invoke();
         }
-
-        foreach (var uiElement in pcUiElements)
+        else
         {
-            uiElement.gameObject.SetActive(!isVisible);
+            onMobileDeactivated.Invoke();
+            onPcActivated.Invoke();
         }
     }
 }

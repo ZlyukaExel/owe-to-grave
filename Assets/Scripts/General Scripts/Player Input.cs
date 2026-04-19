@@ -61,7 +61,7 @@ public class PlayerInput : InputManager
         MouseHorizontal = lookVector.x;
         MouseVertical = lookVector.y;
 
-        float zoomDistance = touchField.zoomDistance;
+        float zoomDistance = touchField.ZoomDelta;
 
         // Rotate camera only if not zooming
         if (zoomDistance == 0)
@@ -105,7 +105,7 @@ public class PlayerInput : InputManager
     private void GetButtons()
     {
         Transform mobileUi = transform.Find("Game Ui/Mobile Ui");
-        touchField = mobileUi.Find("Touch Field").GetComponent<TouchField>();
+        touchField = transform.Find("Touch Field").GetComponent<TouchField>();
         joystick = mobileUi.Find("Fixed Joystick").GetComponent<FixedJoystick>();
     }
 }

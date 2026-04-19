@@ -33,6 +33,6 @@ public class LanguageChanger : MonoBehaviour
         LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[locale];
         PlayerPrefs.SetInt("Language", locale);
         onLanguageChanged.Invoke();
-        print("Language changed");
+        // print("Language changed");
     }
 }

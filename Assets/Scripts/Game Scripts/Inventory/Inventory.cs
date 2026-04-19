@@ -1,22 +1,54 @@
-using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Inventory : NetworkBehaviour
 {
-    public List<InventoryItem> items = new();
+    public readonly SyncList<uint> items = new();
+    public UnityEvent<uint> onItemAdded,
+        onItemRemoved;
 
-    public void TakeIn(InventoryItem item)
+    [Command(requiresAuthority = false)]
+    public void TakeIn(uint itemId)
     {
-        items.Add(item);
+        items.Add(itemId);
     }
 
-    public void TakeOut(InventoryItem item)
+    [Command(requiresAuthority = false)]
+    public void TakeIn(NetworkIdentity item)
     {
-        GameObject prefab = NetworkManager.singleton.spawnPrefabs[item.id];
-        GameObject spawned = Instantiate(prefab, transform.position, transform.rotation);
-        NetworkServer.Spawn(spawned);
+        TakeIn(item.assetId);
+        NetworkServer.Destroy(item.gameObject);
+    }
 
-        items.Remove(item);
+    [Command(requiresAuthority = false)]
+    public void TakeOut(uint itemId)
+    {
+        if (!items.Contains(itemId))
+            return;
+
+        ItemData itemData = ItemDataManager.Instance.GetItem(itemId);
+        GameObject spawned = Instantiate(itemData.prefab, transform.position, transform.rotation);
+        NetworkServer.Spawn(spawned);
+        items.Remove(itemId);
+    }
+
+    public override void OnStartClient()
+    {
+        items.OnChange += OnItemsChanged;
+    }
+
+    private void OnItemsChanged(SyncList<uint>.Operation op, int itemIndex, uint itemId)
+    {
+        switch (op)
+        {
+            case SyncList<uint>.Operation.OP_ADD:
+                onItemAdded.Invoke(itemId);
+                break;
+
+            case SyncList<uint>.Operation.OP_REMOVEAT:
+                onItemRemoved.Invoke(itemId);
+                break;
+        }
     }
 }

@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(Animator))]
 public class MenuOpener : MonoBehaviour
 {
     private bool isOpened;
@@ -20,12 +19,14 @@ public class MenuOpener : MonoBehaviour
     {
         if (isOpened)
         {
-            animator.SetTrigger("Close");
+            if (animator)
+                animator.SetTrigger("Close");
             closeAction.Invoke();
         }
         else
         {
-            animator.SetTrigger("Open");
+            if (animator)
+                animator.SetTrigger("Open");
             openAction.Invoke();
         }
 

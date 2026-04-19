@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CameraController : MonoBehaviour
 {
@@ -36,6 +37,7 @@ public class CameraController : MonoBehaviour
         firstPersonCameraPivot;
     private Vector2Reference aimingVector;
     private Transform cameraPivot => transform.parent;
+    public UnityAction<float> OnDistChanged;
     private PlayerLinks l;
 
     private void Start()
@@ -86,20 +88,16 @@ public class CameraController : MonoBehaviour
 
         cameraPivot.position = currentPivot.position;
 
+        float distance = Vector3.Distance(transform.position, cameraPivot.position);
+        OnDistChanged.Invoke(distance);
+
         // Player visibility
-        if (!isAiming)
+        if (isFirstPerson)
+            SetMaterialsAlpha(0);
+        else if (!isAiming)
         {
-            if (isFirstPerson)
-                SetMaterialsAlpha(0);
-            else
-            {
-                float camDistFactor = Mathf.InverseLerp(
-                    0.5f,
-                    2,
-                    Vector3.Distance(transform.position, cameraPivot.position)
-                );
-                SetMaterialsAlpha(camDistFactor);
-            }
+            float camDistFactor = Mathf.InverseLerp(0.5f, 2, distance);
+            SetMaterialsAlpha(camDistFactor);
         }
 
         angleX -= PlayerInput.Instance.MouseVertical * verticalSens;
@@ -263,7 +261,6 @@ public class CameraController : MonoBehaviour
                 )
             )
             {
-                // print(hit.collider);
                 desiredPosition = cameraPivot.InverseTransformPoint(
                     hit.point + hit.normal * collisionRadius
                 );
@@ -309,35 +306,11 @@ public class CameraController : MonoBehaviour
                 )
             )
             {
+                // print(hit.collider);
                 transform.position = hit.point + hit.normal * collisionRadius;
             }
         }
     }
-
-    /*
-        private void CameraMove_CopyHeadRotation()
-        {
-            float timeElapsed = Time.unscaledDeltaTime * cameraSpeed;
-
-            // rotation
-            {
-                Quaternion initialRotation = Quaternion.Euler(angleOffset);
-                angleX = Mathf.Lerp(angleX, 0, boneRotTime);
-                cameraHolderTransform.rotation = Quaternion.Slerp(cameraHolderTransform.rotation, Quaternion.Euler(angleX, angleY, 0) * initialRotation, boneRotTime);
-            }
-
-            //position
-            {
-                if (Vector3.Distance(positionOffset, transform.localPosition) > 0.0001f)
-                    transform.localPosition = Vector3.Slerp(transform.localPosition, positionOffset + transform.up * (1 - Mathf.Clamp01(boneRotTime)), timeElapsed);
-                else
-                    transform.localPosition = positionOffset;
-            }
-
-            if (canMove || !isFirstPerson)
-                cameraType = CameraType.FollowFreeRotation;
-        }
-    */
 
     private void ChangeCurrentCameraPivot(Transform newPivot)
     {

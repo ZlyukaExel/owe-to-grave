@@ -7,89 +7,111 @@ public class TouchField : MonoBehaviour
     private RectTransform[] ignoreObjects;
 
     [SerializeField]
-    private float minDistance = 0.5f;
+    private float sensitivity = 1f;
+
+    [SerializeField]
+    private float minDistance = 0.1f;
 
     public Vector2 TouchDist { get; private set; }
-    public float zoomDistance { get; private set; }
+    public float ZoomDelta { get; private set; }
     public bool Pressed { get; private set; }
 
     private Vector2 pointerOld;
     private float lastPinchDistance;
+    private bool ignoreCurrentTouch;
 
     void Update()
     {
-        HandlePointerInput();
-        zoomDistance = GetZoom();
+        var ts = Touchscreen.current;
+
+        if (ts != null && ts.touches.Count >= 2)
+        {
+            HandlePinch(ts);
+        }
+        else
+        {
+            HandleSinglePointer();
+            lastPinchDistance = 0;
+            ZoomDelta = 0;
+        }
     }
 
-    private void HandlePointerInput()
+    private void HandleSinglePointer()
     {
         var pointer = Pointer.current;
         if (pointer == null)
             return;
 
-        bool isCurrentlyPressed = pointer.press.isPressed;
         Vector2 currentPosition = pointer.position.ReadValue();
+        bool isPressed = pointer.press.isPressed;
 
-        if (isCurrentlyPressed)
+        if (isPressed)
         {
+            // Pressed
             if (!Pressed)
             {
-                if (!IsTouchInIgnoredObject(currentPosition))
+                if (IsTouchInIgnoredObject(currentPosition))
                 {
-                    Pressed = true;
+                    ignoreCurrentTouch = true;
+                }
+                else
+                {
+                    ignoreCurrentTouch = false;
                     pointerOld = currentPosition;
                 }
+                Pressed = true;
             }
-            else
+
+            // In allowed zone
+            if (!ignoreCurrentTouch)
             {
-                Vector2 delta = (currentPosition - pointerOld) / 2f;
-                TouchDist = (delta.magnitude > minDistance) ? delta : Vector2.zero;
+                Vector2 delta = currentPosition - pointerOld;
+                TouchDist =
+                    (delta.sqrMagnitude > minDistance * minDistance)
+                        ? delta * sensitivity
+                        : Vector2.zero;
                 pointerOld = currentPosition;
             }
         }
         else
         {
             Pressed = false;
+            ignoreCurrentTouch = false;
             TouchDist = Vector2.zero;
         }
     }
 
-    private float GetZoom()
+    private void HandlePinch(Touchscreen ts)
     {
-        var ts = Touchscreen.current;
-        if (ts == null || ts.touches.Count < 2)
-        {
-            lastPinchDistance = 0;
-            return 0;
-        }
-
         var t1 = ts.touches[0];
         var t2 = ts.touches[1];
 
-        if (t1.isInProgress && t2.isInProgress)
+        if (t1.press.isPressed && t2.press.isPressed)
         {
-            Vector2 pos1 = t1.position.ReadValue();
-            Vector2 pos2 = t2.position.ReadValue();
-            float currentDistance = Vector2.Distance(pos1, pos2);
+            if (IsTouchInIgnoredObject(t1.position.ReadValue()))
+                return;
 
-            if (lastPinchDistance <= 0)
-                lastPinchDistance = currentDistance;
+            float currentDistance = Vector2.Distance(
+                t1.position.ReadValue(),
+                t2.position.ReadValue()
+            );
 
-            float deltaDistance = currentDistance - lastPinchDistance;
+            if (lastPinchDistance > 0)
+            {
+                ZoomDelta = (currentDistance - lastPinchDistance) * sensitivity;
+            }
+
             lastPinchDistance = currentDistance;
-
-            return deltaDistance * Time.unscaledDeltaTime * 10f;
+            // No rotation in zoom
+            TouchDist = Vector2.zero;
         }
-
-        lastPinchDistance = 0;
-        return 0;
     }
 
     private bool IsTouchInIgnoredObject(Vector2 screenPosition)
     {
-        foreach (var rect in ignoreObjects)
+        for (int i = 0; i < ignoreObjects.Length; i++)
         {
+            var rect = ignoreObjects[i];
             if (
                 rect != null
                 && rect.gameObject.activeInHierarchy
@@ -98,21 +120,5 @@ public class TouchField : MonoBehaviour
                 return true;
         }
         return false;
-    }
-
-    private void OnGUI()
-    {
-        if (Pressed)
-        {
-            float size = 30f;
-            Rect rect = new(
-                pointerOld.x - size / 2,
-                Screen.height - pointerOld.y - size / 2,
-                size,
-                size
-            );
-            GUI.color = Color.red;
-            GUI.Box(rect, "");
-        }
     }
 }

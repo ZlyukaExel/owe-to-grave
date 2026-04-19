@@ -66,7 +66,7 @@ public class CarDoor : InteractiveObject
 
     public override bool IsInteractable() => true;
 
-    public override void Interact(Transform character)
+    public override void OnInteractButtonUp(Transform character)
     {
         CmdInteract();
     }
@@ -139,6 +139,4 @@ public class CarDoor : InteractiveObject
     {
         gameObject.SetActive(!newVar);
     }
-
-    public override string InteractionText() => "Open";
 }
