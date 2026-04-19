@@ -22,8 +22,7 @@ public class NetworkItem : InteractiveObject
         takeButtonPressedTime;
     private InteractableTrigger interactableTrigger;
     private AnyDirectionSlider rotateField;
-    private GameObject attackButton, // TODO
-        aimButton;
+    private GameObject aimButton;
     private Image takeButtonFiller;
     private bool isHeld = false,
         isHeldCont = false;

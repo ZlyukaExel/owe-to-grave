@@ -197,15 +197,11 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   interactiveLabel: {fileID: 7066104888717358115}
-  throwingForce: 20
+  throwingForce: 5
   takeButtonPressed: 0
   holdButtonTime: 0.15
   takeButtonPressedTime: 0
   defaultIcon: {fileID: 21300000, guid: 7bbbe1eec346b844aad0ad1c9e873c02, type: 3}
-  inventoryItem:
-    itemName: Sphere
-    id: 0
-    icon: {fileID: 21300000, guid: 26b72789fc06a704b8ad121d275d3bbb, type: 3}
 --- !u!114 &8437809988211595135
 MonoBehaviour:
   m_ObjectHideFlags: 0

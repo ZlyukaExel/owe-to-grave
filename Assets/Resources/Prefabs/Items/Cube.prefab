@@ -252,15 +252,11 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   interactiveLabel: {fileID: 8196126497937900126}
-  throwingForce: 20
+  throwingForce: 5
   takeButtonPressed: 0
   holdButtonTime: 0.15
   takeButtonPressedTime: 0
   defaultIcon: {fileID: 21300000, guid: 7bbbe1eec346b844aad0ad1c9e873c02, type: 3}
-  inventoryItem:
-    itemName: Cube
-    id: 0
-    icon: {fileID: 21300000, guid: fabef10e550bcce4e9361e233613fbbd, type: 3}
 --- !u!114 &5578919143858787378
 MonoBehaviour:
   m_ObjectHideFlags: 0

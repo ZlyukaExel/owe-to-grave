@@ -233,15 +233,11 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   interactiveLabel: {fileID: 3758583251287277360}
-  throwingForce: 20
+  throwingForce: 5
   takeButtonPressed: 0
   holdButtonTime: 0.15
   takeButtonPressedTime: 0
   defaultIcon: {fileID: 21300000, guid: 7bbbe1eec346b844aad0ad1c9e873c02, type: 3}
-  inventoryItem:
-    itemName: Van Door
-    id: 0
-    icon: {fileID: 0}
 --- !u!82 &72298367221464392
 AudioSource:
   m_ObjectHideFlags: 0
