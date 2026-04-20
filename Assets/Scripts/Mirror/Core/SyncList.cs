@@ -27,7 +27,7 @@ namespace Mirror
             OP_SET,
             OP_INSERT,
             OP_REMOVEAT,
-            OP_CLEAR
+            OP_CLEAR,
         }
 
         /// <summary>
@@ -72,7 +72,8 @@ namespace Mirror
         // so we need to skip them
         int changesAhead;
 
-        public SyncList() : this(EqualityComparer<T>.Default) { }
+        public SyncList()
+            : this(EqualityComparer<T>.Default) { }
 
         public SyncList(IEqualityComparer<T> comparer)
         {
@@ -106,7 +107,7 @@ namespace Mirror
             {
                 operation = op,
                 index = itemIndex,
-                item = newItem
+                item = newItem,
             };
 
             if (IsRecording())
@@ -242,7 +243,13 @@ namespace Mirror
                             // ClientToServer needs to set dirty in server OnDeserialize.
                             // no access check: server OnDeserialize can always
                             // write, even for ClientToServer (for broadcasting).
-                            AddOperation(Operation.OP_ADD, objects.Count - 1, default, newItem, false);
+                            AddOperation(
+                                Operation.OP_ADD,
+                                objects.Count - 1,
+                                default,
+                                newItem,
+                                false
+                            );
                         }
                         break;
 
@@ -466,7 +473,9 @@ namespace Mirror
             }
 
             public void Reset() => index = -1;
+
             object IEnumerator.Current => Current;
+
             public void Dispose() { }
         }
     }

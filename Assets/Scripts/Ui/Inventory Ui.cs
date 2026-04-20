@@ -3,59 +3,60 @@ using UnityEngine;
 public class InventoryUi : MonoBehaviour
 {
     private Inventory inventory;
+    private InventoryCell[] inventoryCells;
 
     public void SetInventory(Inventory inventory)
     {
         this.inventory = inventory;
-    }
 
-    void OnEnable()
-    {
-        if (!inventory)
-        {
-            Debug.LogError("Inventory is not set to Inventory Ui");
-            return;
-        }
+        inventoryCells = GetComponentsInChildren<InventoryCell>(true);
+
+        // Listeners for new items
+        inventory.onItemChanged.AddListener(AddItem);
 
         // Add all icons
-        foreach (var itemId in inventory.items)
+        for (int i = 0; i < inventory.items.Count; i++)
         {
-            AddIcon(itemId);
+            AddItem(inventory.items[i]);
         }
-
-        // Listeners for new items
-        inventory.onItemAdded.AddListener(AddIcon);
-        inventory.onItemAdded.AddListener(DeleteIcon);
     }
 
-    void OnDisable()
+    void OnDestroy()
     {
-        if (!inventory)
+        if (inventory)
         {
-            Debug.LogError("Inventory is not set to Inventory Ui");
+            inventory.onItemChanged.RemoveListener(AddItem);
+        }
+    }
+
+    private void AddItem(InventoryItem item)
+    {
+        if (GetInventoryCell(item.itemId) is InventoryCell cell)
+        {
+            cell.SetItem(item);
             return;
         }
 
-        // Remove all icons
-        foreach (var itemId in inventory.items)
+        foreach (var loopCell in inventoryCells)
         {
-            DeleteIcon(itemId);
+            if (loopCell.currentItem == null)
+            {
+                loopCell.SetItem(item);
+                return;
+            }
+        }
+    }
+
+    private InventoryCell GetInventoryCell(uint itemId)
+    {
+        foreach (var cell in inventoryCells)
+        {
+            if (cell.currentItem && cell.currentItem.id == itemId)
+            {
+                return cell;
+            }
         }
 
-        // Listeners for new items
-        inventory.onItemAdded.RemoveListener(AddIcon);
-        inventory.onItemAdded.RemoveListener(DeleteIcon);
-    }
-
-    private void AddIcon(uint itemId)
-    {
-        // TODO: add icons
-        Debug.Log("Adding object: " + ItemDataManager.Instance.GetItem(itemId).itemName);
-    }
-
-    private void DeleteIcon(uint itemId)
-    {
-        // TODO: remove icons
-        Debug.Log("Removing object: " + ItemDataManager.Instance.GetItem(itemId).itemName);
+        return null;
     }
 }
