@@ -6,30 +6,32 @@ using Unity.Properties;
 
 [Serializable, GeneratePropertyBag]
 [NodeDescription(
-    name: "Change Marker",
-    story: "Set [Target] to new Marker",
+    name: "ChangeMarker",
+    story: "Set [Target] to random Marker",
     category: "Action",
-    id: "8ad4b260037899a2b385a7d2f5dd825d"
+    id: "ccc2c38876308038049f1a513f4671ee"
 )]
 public partial class ChangeMarkerAction : Action
 {
-    [SerializeReference]
-    public BlackboardVariable<Marker> Target;
+    [SerializeReference] public BlackboardVariable<Transform> Target;
 
-    [SerializeReference]
-    public BlackboardVariable<Marker> currentMarker;
-
-    protected override void OnEnd()
+    protected override Status OnStart()
     {
-        if (currentMarker == null || currentMarker.neighbors.Length == 0)
-        {
-            return Status.Failed;
-        }
-        Marker targetMarker = currentMarker.neighbors[Random.Range(0, currentMarker.neighbors.Length)];
-        currentMarker = Target;
-        Target = targetMarker;
+        if (Target == null) return Status.Failure;
 
-        return Status.Success;
+        var markers = GameObject.FindGameObjectsWithTag("Marker");
+
+        if (markers.Length > 0)
+        {
+            int randomIndex = UnityEngine.Random.Range(0, markers.Length);
+            Target.Value = markers[randomIndex].transform;
+            return Status.Success;
+        }
+
+        Debug.LogWarning("ChangeMarkerAction: Маркеры не найдены!");
+        return Status.Failure;
     }
+
+    protected override Status OnUpdate() => Status.Success;
 }
 
