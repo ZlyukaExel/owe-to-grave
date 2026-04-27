@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f263504ad6586804eb63215b12dc849c
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - chat: {instanceID: 0}
+  - inputField: {instanceID: 0}
+  - submitAction: {fileID: -4249438309254388020, guid: cdba55201852797459211659e79fcd0d, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

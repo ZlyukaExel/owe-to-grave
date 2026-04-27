@@ -1,0 +1,1 @@
+D:\Programming\GitProjects\Project Necropolis\Library\Bee\Android\Prj\Mono2x\Gradle\unityLibrary\build\intermediates\cxx\RelWithDebInfo\3z4v736o\obj\armeabi-v7a

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 62919487d5dbbb34487f837b9f114551
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - currentCharacter: {instanceID: 0}
+  - attachedCarScript: {instanceID: 0}
+  - thirdPersonCameraPivot: {instanceID: 0}
+  - carAction: {fileID: 1462341527435286764, guid: cdba55201852797459211659e79fcd0d, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
