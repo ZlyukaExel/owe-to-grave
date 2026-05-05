@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class CharacterConfigManager : MonoBehaviour
@@ -12,25 +13,25 @@ public class CharacterConfigManager : MonoBehaviour
     private Weapon[] weapons = new Weapon[0];
 
     [SerializeField]
-    private GameObject[] pants = new GameObject[0];
+    private Clothing[] pants = new Clothing[0];
 
     [SerializeField]
-    private GameObject[] tops = new GameObject[0];
+    private Clothing[] tops = new Clothing[0];
 
     [SerializeField]
-    private GameObject[] shoes = new GameObject[0];
+    private Clothing[] shoes = new Clothing[0];
 
     [SerializeField]
-    private GameObject[] gloves = new GameObject[0];
+    private Clothing[] gloves = new Clothing[0];
 
     [SerializeField]
-    private GameObject[] hats = new GameObject[0];
+    private Clothing[] hats = new Clothing[0];
 
     [SerializeField]
-    private GameObject[] hair = new GameObject[0];
+    private Clothing[] hair = new Clothing[0];
 
     [SerializeField]
-    private GameObject[] masks = new GameObject[0];
+    private Clothing[] masks = new Clothing[0];
 
     public void SetConfig(CharacterConfig config)
     {
@@ -48,38 +49,38 @@ public class CharacterConfigManager : MonoBehaviour
 
         if (currentConfig.pantsId != config.pantsId)
         {
-            SetActiveIfNotNull(pants[currentConfig.pantsId], false);
-            SetActiveIfNotNull(pants[config.pantsId], true);
+            SetActiveIfNotNull(pants[currentConfig.pantsId].gameObject, false);
+            SetActiveIfNotNull(pants[config.pantsId].gameObject, true);
         }
 
         if (currentConfig.topId != config.topId)
         {
-            SetActiveIfNotNull(tops[currentConfig.topId], false);
-            SetActiveIfNotNull(tops[config.topId], true);
+            SetActiveIfNotNull(tops[currentConfig.topId].gameObject, false);
+            SetActiveIfNotNull(tops[config.topId].gameObject, true);
         }
 
         if (currentConfig.shoesId != config.shoesId)
         {
-            SetActiveIfNotNull(shoes[currentConfig.shoesId], false);
-            SetActiveIfNotNull(shoes[config.shoesId], true);
+            SetActiveIfNotNull(shoes[currentConfig.shoesId].gameObject, false);
+            SetActiveIfNotNull(shoes[config.shoesId].gameObject, true);
         }
 
         if (currentConfig.glovesId != config.glovesId)
         {
-            SetActiveIfNotNull(gloves[currentConfig.glovesId], false);
-            SetActiveIfNotNull(gloves[config.glovesId], true);
+            SetActiveIfNotNull(gloves[currentConfig.glovesId].gameObject, false);
+            SetActiveIfNotNull(gloves[config.glovesId].gameObject, true);
         }
 
         if (currentConfig.hatId != config.hatId)
         {
-            SetActiveIfNotNull(hats[currentConfig.hatId], false);
-            SetActiveIfNotNull(hats[config.hatId], true);
+            SetActiveIfNotNull(hats[currentConfig.hatId].gameObject, false);
+            SetActiveIfNotNull(hats[config.hatId].gameObject, true);
         }
 
         if (currentConfig.maskId != config.maskId)
         {
-            SetActiveIfNotNull(masks[currentConfig.maskId], false);
-            SetActiveIfNotNull(masks[config.maskId], true);
+            SetActiveIfNotNull(masks[currentConfig.maskId].gameObject, false);
+            SetActiveIfNotNull(masks[config.maskId].gameObject, true);
         }
 
         currentConfig = config;
@@ -115,17 +116,42 @@ public class CharacterConfigManager : MonoBehaviour
 
     public Weapon GetWeapon() => weapons[currentConfig.weaponId];
 
-    public GameObject GetPants() => pants[currentConfig.pantsId];
+    public Clothing GetPants() => pants[currentConfig.pantsId];
 
-    public GameObject GetTop() => tops[currentConfig.topId];
+    public Clothing GetTop() => tops[currentConfig.topId];
 
-    public GameObject GetShoes() => shoes[currentConfig.shoesId];
+    public Clothing GetShoes() => shoes[currentConfig.shoesId];
 
-    public GameObject GetGloves() => gloves[currentConfig.glovesId];
+    public Clothing GetGloves() => gloves[currentConfig.glovesId];
 
-    public GameObject GetHat() => hats[currentConfig.hatId];
+    public Clothing GetHat() => hats[currentConfig.hatId];
 
-    public GameObject GetHair() => hair[currentConfig.hairId];
+    public Clothing GetHair() => hair[currentConfig.hairId];
 
-    public GameObject GetMask() => masks[currentConfig.maskId];
+    public Clothing GetMask() => masks[currentConfig.maskId];
+
+    public int GetClothingIdByItem(InventoryItem item)
+    {
+        if (item.itemId == 0)
+            return -1;
+
+        if (ItemDataManager.Instance.GetItem(item.itemId) is not ClothingData clothingData)
+            return -1;
+
+        var targetArray = clothingData.clothingType switch
+        {
+            ClothingType.Pants => pants,
+            ClothingType.Top => tops,
+            ClothingType.Shoes => shoes,
+            ClothingType.Gloves => gloves,
+            ClothingType.Hat => hats,
+            ClothingType.Mask => masks,
+            _ => null,
+        };
+
+        if (targetArray == null)
+            return -1;
+
+        return Array.FindIndex(targetArray, x => x?.data?.id == clothingData.id);
+    }
 }

@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(NetworkAudioSource))]
+[RequireComponent(typeof(NetworkIdentity))]
 public class NetworkItem : InteractiveObject
 {
     [SyncVar]
@@ -26,9 +27,6 @@ public class NetworkItem : InteractiveObject
     private Image takeButtonFiller;
     private bool isHeld = false,
         isHeldCont = false;
-
-    [SerializeField]
-    private Sprite defaultIcon;
 
     void Start()
     {

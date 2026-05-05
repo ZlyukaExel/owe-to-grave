@@ -4,6 +4,8 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.Events;
 
+[RequireComponent(typeof(CharacterConfigManager))]
+[RequireComponent(typeof(NetworkCharacterConfig))]
 public class Inventory : NetworkBehaviour
 {
     public int inventorySize = 64;
@@ -12,9 +14,15 @@ public class Inventory : NetworkBehaviour
     public readonly SyncList<InventoryItem> items = new();
     public UnityEvent<int, InventoryItem> onItemChanged;
     private Transform targetDirection;
+    private CharacterConfigManager characterConfig;
+    private NetworkCharacterConfig networkCharacterConfig;
+    public List<InventoryItem> initialItems = new();
 
     public override void OnStartServer()
     {
+        characterConfig = GetComponent<CharacterConfigManager>();
+        networkCharacterConfig = GetComponent<NetworkCharacterConfig>();
+
         equipmentSlots = slotDefinitions.Count;
 
         // Filling list with empty
@@ -29,6 +37,11 @@ public class Inventory : NetworkBehaviour
         {
             slotDefinitions.Add(new SlotDefinition());
         }
+
+        for (int i = 0; i < initialItems.Count; i++)
+        {
+            items[i] = initialItems[i];
+        }
     }
 
     private int GetItemInventoryIndex(uint itemId, int quantity)
@@ -40,7 +53,7 @@ public class Inventory : NetworkBehaviour
         {
             var item = items[i];
             var def = slotDefinitions[i];
-            if (item.itemId == itemId && def.CanAcceptItem(itemData.type, quantity, item.quantity))
+            if (item.itemId == itemId && def.CanAcceptItem(itemData, quantity, item.quantity))
                 return i;
         }
 
@@ -48,7 +61,7 @@ public class Inventory : NetworkBehaviour
         return GetEmptyIndex(itemId, quantity);
     }
 
-    private int GetEmptyIndex(uint itemId, int quantity)
+    public int GetEmptyIndex(uint itemId, int quantity)
     {
         ItemData itemData = ItemDataManager.Instance.GetItem(itemId);
 
@@ -57,7 +70,7 @@ public class Inventory : NetworkBehaviour
         {
             var item = items[i];
             var def = slotDefinitions[i];
-            if (item.itemId == 0 && def.CanAcceptItem(itemData.type, quantity, item.quantity))
+            if (item.itemId == 0 && def.CanAcceptItem(itemData, quantity, item.quantity))
                 return i;
         }
 
@@ -85,7 +98,10 @@ public class Inventory : NetworkBehaviour
 
         int itemIndex = GetItemInventoryIndex(item.assetId, 1);
         if (itemIndex == -1) // Not enough space
+        {
+            Debug.Log("Not enough space in the inventory");
             return;
+        }
 
         // Increase quantity and update
         int itemQuantity = items[itemIndex].quantity;
@@ -186,11 +202,11 @@ public class Inventory : NetworkBehaviour
         // Stack items
         if (toItem.itemId == fromItem.itemId && toItem.itemId != 0)
         {
-            if (toSlotDef.CanAcceptItem(fromItemData.type, fromItem.quantity, toItem.quantity))
+            if (toSlotDef.CanAcceptItem(fromItemData, fromItem.quantity, toItem.quantity))
             {
                 int newQuantity = toItem.quantity + fromItem.quantity;
                 items[toSlotIndex] = new InventoryItem(toItem.itemId, newQuantity);
-                items[fromSlotIndex] = new InventoryItem(0, 0);
+                items[fromSlotIndex] = default;
             }
             return;
         }
@@ -204,8 +220,8 @@ public class Inventory : NetworkBehaviour
             if (
                 toItemData != null
                 && fromItemData != null
-                && fromSlotDef.CanAcceptItem(toItemData.type, toItem.quantity, 0)
-                && toSlotDef.CanAcceptItem(fromItemData.type, fromItem.quantity, 0)
+                && fromSlotDef.CanAcceptItem(toItemData, toItem.quantity, 0)
+                && toSlotDef.CanAcceptItem(fromItemData, fromItem.quantity, 0)
             )
             {
                 items[fromSlotIndex] = new InventoryItem(toItem.itemId, toItem.quantity);
@@ -215,13 +231,10 @@ public class Inventory : NetworkBehaviour
         }
 
         // Move to empty
-        if (
-            fromItemData != null
-            && toSlotDef.CanAcceptItem(fromItemData.type, fromItem.quantity, 0)
-        )
+        if (fromItemData != null && toSlotDef.CanAcceptItem(fromItemData, fromItem.quantity, 0))
         {
             items[toSlotIndex] = new InventoryItem(fromItem.itemId, fromItem.quantity);
-            items[fromSlotIndex] = new InventoryItem(0, 0);
+            items[fromSlotIndex] = default;
         }
     }
 
@@ -240,6 +253,73 @@ public class Inventory : NetworkBehaviour
                 NetworkServer.Spawn(spawned);
             }
         }
+    }
+
+    public int EquipClothing(int slotIndex)
+    {
+        InventoryItem item = items[slotIndex];
+        if (item.itemId == 0 || item.quantity < 1)
+            return -1;
+
+        ItemData itemData = ItemDataManager.Instance.GetItem(item.itemId);
+        ClothingData clothingData = itemData as ClothingData;
+
+        if (clothingData == null)
+            return -1;
+
+        switch (clothingData.clothingType)
+        {
+            case ClothingType.Hat:
+                MoveItemBetweenSlots(slotIndex, 2);
+                return 2;
+            case ClothingType.Top:
+                MoveItemBetweenSlots(slotIndex, 3);
+                return 3;
+            case ClothingType.Pants:
+                MoveItemBetweenSlots(slotIndex, 4);
+                return 4;
+            case ClothingType.Mask:
+                MoveItemBetweenSlots(slotIndex, 5);
+                return 5;
+            case ClothingType.Gloves:
+                MoveItemBetweenSlots(slotIndex, 6);
+                return 6;
+            case ClothingType.Shoes:
+                MoveItemBetweenSlots(slotIndex, 7);
+                return 7;
+            default:
+                return -1;
+        }
+    }
+
+    public int EquipWeapon(int slotIndex, bool primary = true)
+    {
+        InventoryItem item = items[slotIndex];
+        if (item.itemId == 0 || item.quantity < 1)
+            return -1;
+
+        ItemData itemData = ItemDataManager.Instance.GetItem(item.itemId);
+        if (itemData is not WeaponData)
+            return -1;
+
+        int moveToSlotIndex = primary ? 0 : 1;
+        MoveItemBetweenSlots(slotIndex, moveToSlotIndex);
+        return moveToSlotIndex;
+    }
+
+    public int Unequip(int slotIndex)
+    {
+        if (!(slotIndex >= 0 && slotIndex < equipmentSlots))
+            return -1;
+
+        InventoryItem item = items[slotIndex];
+        if (item.itemId == 0 || item.quantity < 1 || !HasSpace(item.itemId, item.quantity))
+            return -1;
+
+        int movedTo = GetItemInventoryIndex(item.itemId, item.quantity);
+        TakeIn(item.itemId, item.quantity);
+        items[slotIndex] = default;
+        return movedTo;
     }
 
     public int GetItemQuantity(uint itemId)
@@ -295,6 +375,44 @@ public class Inventory : NetworkBehaviour
         }
 
         onItemChanged.Invoke(itemIndex, updatedItem);
+
+        OnEquipmentChanged(updatedItem, itemIndex);
+    }
+
+    private void OnEquipmentChanged(InventoryItem item, int inventoryIndex)
+    {
+        if (inventoryIndex < 2 || inventoryIndex > 7)
+            return;
+
+        int clothingId = item.quantity > 0 ? characterConfig.GetClothingIdByItem(item) : 0;
+        if (clothingId == -1)
+            return;
+
+        var config = new CharacterConfig(characterConfig.GetConfig());
+
+        switch (inventoryIndex)
+        {
+            case 2:
+                config.hatId = clothingId;
+                break;
+            case 3:
+                config.topId = clothingId;
+                break;
+            case 4:
+                config.pantsId = clothingId;
+                break;
+            case 5:
+                config.maskId = clothingId;
+                break;
+            case 6:
+                config.glovesId = clothingId;
+                break;
+            case 7:
+                config.shoesId = clothingId;
+                break;
+        }
+
+        networkCharacterConfig.CmdSetConfig(config);
     }
 }
 

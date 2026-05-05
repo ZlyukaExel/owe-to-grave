@@ -32,7 +32,7 @@ public partial class MoveToTargetAction : Action
         if (direction.magnitude <= MinDistanceToTarget)
             return Status.Success;
 
-        Input.Value.SetMovementVector(new(direction.x, direction.z));
+        Input.Value.SetMovementVector(new Vector2(direction.x, direction.z).normalized * 0.2f);
         return Status.Running;
     }
 

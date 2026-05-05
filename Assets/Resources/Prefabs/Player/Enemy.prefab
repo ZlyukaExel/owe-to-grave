@@ -1187,7 +1187,6 @@ MonoBehaviour:
   - rid: 6210247767420305479
   - rid: 6210247769226215589
   - rid: 368166279296582265
-  - rid: 7920556813652590857
   m_OriginalGraph: {fileID: 0}
   m_IsInitialised: 0
   m_IsStarted: 0
@@ -1218,14 +1217,6 @@ MonoBehaviour:
           m_Value1: 8823873971456654041
         Name: Input
         m_Value: {fileID: 6950187555586301682}
-    - rid: 7920556813652590857
-      type: {class: 'BlackboardVariable`1[[NPCController, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 16411042755410114217
-          m_Value1: 10679229190682508756
-        Name: Controller
-        m_Value: {fileID: 0}
 --- !u!114 &3075185711589992650
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1319,9 +1310,45 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   inventorySize: 39
+  slotDefinitions:
+  - maxQuantity: 1
+    allowedCategory: 2
+    allowedClotherType: 0
+  - maxQuantity: 1
+    allowedCategory: 2
+    allowedClotherType: 0
+  - maxQuantity: 1
+    allowedCategory: 3
+    allowedClotherType: 1
+  - maxQuantity: 1
+    allowedCategory: 3
+    allowedClotherType: 3
+  - maxQuantity: 1
+    allowedCategory: 3
+    allowedClotherType: 6
+  - maxQuantity: 1
+    allowedCategory: 3
+    allowedClotherType: 2
+  - maxQuantity: 1
+    allowedCategory: 3
+    allowedClotherType: 4
+  - maxQuantity: 1
+    allowedCategory: 3
+    allowedClotherType: 5
   onItemChanged:
     m_PersistentCalls:
       m_Calls: []
+  initialItems:
+  - itemId: 0
+    quantity: 0
+  - itemId: 0
+    quantity: 0
+  - itemId: 0
+    quantity: 0
+  - itemId: 0
+    quantity: 0
+  - itemId: 514824844
+    quantity: 1
 --- !u!1 &5489449613937681701 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3877606035874751649, guid: dbe1828e08b32754489dc7d494784b47, type: 3}

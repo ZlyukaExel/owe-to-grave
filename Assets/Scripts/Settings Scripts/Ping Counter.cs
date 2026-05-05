@@ -1,15 +1,20 @@
-using TMPro;
-using UnityEngine;
 using System;
 using Mirror;
+using TMPro;
+using UnityEngine;
 
+[RequireComponent(typeof(TMP_Text))]
 public class PingCounter : MonoBehaviour
 {
     private TMP_Text textField;
 
     private void Start()
     {
-        if (NetworkServer.active) { Destroy(this); return; }
+        if (NetworkServer.active)
+        {
+            Destroy(this);
+            return;
+        }
 
         textField = GetComponent<TMP_Text>();
     }

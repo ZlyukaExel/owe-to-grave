@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Slider))]
 public class ChangeTextBySlider : MonoBehaviour
 {
     public TMP_InputField inputField;

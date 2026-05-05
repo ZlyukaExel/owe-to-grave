@@ -104,6 +104,9 @@ public class CarDoor : InteractiveObject
 
     private void OnCollisionStay(Collision collision)
     {
+        if (!isServer)
+            return;
+
         timeOpened = 5;
         isInteracting = false;
 
@@ -129,6 +132,9 @@ public class CarDoor : InteractiveObject
     [Command(requiresAuthority = false)]
     public void SetDestroyed(bool isDestroyed)
     {
+        if (this.isDestroyed == isDestroyed)
+            return;
+
         this.isDestroyed = isDestroyed;
         GameObject door = Instantiate(doorPrefab, transform.position, transform.rotation);
         door.GetComponent<Rigidbody>().linearVelocity = GetComponent<Rigidbody>().linearVelocity;

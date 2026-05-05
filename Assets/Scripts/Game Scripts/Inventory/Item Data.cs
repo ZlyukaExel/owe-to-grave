@@ -6,7 +6,6 @@ public class ItemData : ScriptableObject
 {
     public uint id;
     public string itemName;
-    public ItemType type;
 
     [TextArea]
     public string description;
@@ -24,12 +23,8 @@ public class ItemData : ScriptableObject
     {
         return $"Item Data of {itemName}, item id = {id}";
     }
-}
 
-public enum ItemType
-{
-    Any,
-    Weapon,
-    Clother,
-    Misc,
+    public bool isEquipable => this is ClothingData || this is WeaponData;
+
+    public virtual string GetItemTypeString() => "Misc";
 }

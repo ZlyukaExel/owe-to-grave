@@ -13,7 +13,7 @@ public class InventoryCell : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     [SerializeField]
     private Image itemIcon;
     private TMP_Text quantityLabel;
-    public int slotIndex { get; private set; } = -1;
+    public int id { get; private set; } = -1;
     public Canvas canvas;
     public RectTransform rectTransform { get; private set; }
     private CanvasGroup canvasGroup;
@@ -26,7 +26,10 @@ public class InventoryCell : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     {
         Init();
         this.inventoryUi = inventoryUi;
-        slotIndex = index;
+        id = index;
+        var selectable = GetComponentInParent<CustomSelectable>(true);
+        selectable.onDeselect.AddListener(OnDeselect);
+        selectable.onSelect.AddListener(OnSelect);
     }
 
     public void SetItem(ItemData item, int quantity)
@@ -44,6 +47,8 @@ public class InventoryCell : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         this.quantity = quantity;
         if (quantityLabel)
             quantityLabel.text = quantity > 1 ? quantity.ToString() : string.Empty;
+
+        inventoryUi.UpdatePopup();
     }
 
     private void Init()
@@ -86,6 +91,7 @@ public class InventoryCell : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         transform.SetParent(canvas.transform);
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 0.6f;
+        inventoryUi.HidePopup();
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -109,6 +115,7 @@ public class InventoryCell : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         if (transform.parent == canvas.transform)
         {
             ResetPosition(originalParent);
+            inventoryUi.UpdatePopup();
         }
     }
 
@@ -137,6 +144,12 @@ public class InventoryCell : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public void OnSelect()
     {
-        inventoryUi.MoveCurrentCell(this);
+        inventoryUi.selectedCell = EventSystem.current.currentSelectedGameObject;
+        inventoryUi.OnCellSelected(this);
+    }
+
+    public void OnDeselect()
+    {
+        inventoryUi.DelayedDeselect();
     }
 }

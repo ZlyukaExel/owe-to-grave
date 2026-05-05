@@ -129,7 +129,7 @@ public class MovementManager : MonoBehaviour
             if (inputMagnitude > 0.66f)
                 inputMagnitude = 1;
             else
-                inputMagnitude = 0.5f;
+                inputMagnitude = 0.6f;
 
             if (isRunning && !combat.isAimingOrShooting)
                 inputMagnitude = 2;

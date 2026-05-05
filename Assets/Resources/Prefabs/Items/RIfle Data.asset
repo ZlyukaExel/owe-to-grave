@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 452b16543d481de40a4f3e11fbd07840, type: 3}
+  m_Name: RIfle Data
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponData
+  id: 1652348828
+  itemName: Rifle
+  description: The most popular assault rifle. Very simple and reliable.
+  price: 750
+  icon: {fileID: 21300000, guid: 364b00aa76bdd4445b341acd8c1c2e11, type: 3}
+  prefab: {fileID: 1008226685848504892, guid: f5a273532f8551f4699679a9231d536f, type: 3}
+  properties:
+    damage: 20
+    bulletSpeed: 10
+    spread: 1
+    piercing: 0

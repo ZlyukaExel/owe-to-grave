@@ -33,7 +33,24 @@ public class PlayerCommandHandler : NetworkBehaviour
         commands.Add("/help", CommandHelp);
     }
 
-    public bool TryProcessCommand(string input)
+    public bool ProcessCommands(string input)
+    {
+        if (string.IsNullOrWhiteSpace(input))
+            return false;
+
+        var commandLines = input.Split(';', StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (var line in commandLines)
+        {
+            string trimmedLine = line.Trim();
+            if (!ProcessCommand(trimmedLine))
+                return false;
+        }
+
+        return true;
+    }
+
+    public bool ProcessCommand(string input)
     {
         if (string.IsNullOrWhiteSpace(input) || !input.StartsWith("/"))
             return false;

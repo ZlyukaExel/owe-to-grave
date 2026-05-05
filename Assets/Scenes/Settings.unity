@@ -1266,7 +1266,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Toggle
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -1275,10 +1275,10 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_HighlightedColor: {r: 0.5686275, g: 0.5686275, b: 1, a: 1}
+    m_PressedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_SelectedColor: {r: 0.5686275, g: 0.5686275, b: 1, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 1, b: 1, a: 0.39215687}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -5485,8 +5485,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -5503,8 +5503,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 60
-  m_fontSizeBase: 60
+  m_fontSize: 50
+  m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -5913,7 +5913,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Toggle
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -5922,10 +5922,10 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_HighlightedColor: {r: 0.5686275, g: 0.5686275, b: 1, a: 1}
+    m_PressedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_SelectedColor: {r: 0.5686275, g: 0.5686275, b: 1, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 1, b: 1, a: 0.39215687}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -9685,11 +9685,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd376b284a189b54e957b7aed27b1acc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  saveButton: {fileID: 0}
+  cancelButton: {fileID: 890765289}
   graphicsQualityText: {fileID: 962974707}
   shadowsQualityText: {fileID: 164273700}
   fpsLockText: {fileID: 578436328}
-  confirmButton: {fileID: 1406686166}
-  cancelButton: {fileID: 890765289}
+  resolutionDropdown: {fileID: 0}
+  windowModeDropdown: {fileID: 0}
   saveOrGoScreen: {fileID: 2062710792}
   settingsMenu: {fileID: 84516436}
   onExit:
@@ -12514,13 +12516,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2469be10866ccb449ba36b61b00e518, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  saveButton: {fileID: 0}
+  cancelButton: {fileID: 622124929}
   horSensSlider: {fileID: 1818916594}
   vertSensSlider: {fileID: 1379387986}
   horAdjSlider: {fileID: 975131626}
   vertAdjSlider: {fileID: 661257721}
-  autoRotationToggle: {fileID: 661318282}
-  confirmButton: {fileID: 1747149451}
-  cancelButton: {fileID: 622124929}
+  autoRotationList: {fileID: 0}
   saveOrGoScreen: {fileID: 2062710792}
   settingsMenu: {fileID: 84516436}
   onExit:
@@ -18319,11 +18321,11 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.42452824, g: 0.42452824, b: 1, a: 1}
-    m_HighlightedColor: {r: 0, g: 0, b: 1, a: 1}
-    m_PressedColor: {r: 0.42352942, g: 0.42352942, b: 1, a: 1}
-    m_SelectedColor: {r: 0, g: 0, b: 1, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.5686275, g: 0.5686275, b: 1, a: 1}
+    m_PressedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_SelectedColor: {r: 0.5686275, g: 0.5686275, b: 1, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 1, b: 1, a: 0.39215687}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -21567,13 +21569,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 014077d72ca42f542a544fd6dba4d1a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  saveButton: {fileID: 0}
+  cancelButton: {fileID: 1050724774}
   masterVolumeSlider: {fileID: 952068180}
   musicVolumeSlider: {fileID: 230839583}
   soundsVolumeSlider: {fileID: 4083847}
   voicesVolumeSlider: {fileID: 173380054}
   audioMixer: {fileID: 24100000, guid: 13a7e4109f517874f97c9fa1d41c697c, type: 2}
-  confirmButton: {fileID: 1675838629}
-  cancelButton: {fileID: 1050724774}
   settingsMenu: {fileID: 84516436}
   saveOrGoScreen: {fileID: 2062710792}
   onExit:

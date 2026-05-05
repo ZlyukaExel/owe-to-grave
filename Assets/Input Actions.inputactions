@@ -77,15 +77,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "Pause",
-                    "type": "Button",
-                    "id": "7a4b2cb8-8d9e-4eb7-9738-48c2523ddc2e",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -308,28 +299,6 @@
                     "action": "Aim",
                     "isComposite": false,
                     "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "0a7d0630-3acd-4dbb-9043-f2c0873192e4",
-                    "path": "<Gamepad>/start",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Pause",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "5d8410ea-7198-4590-ad92-68e7c3189c73",
-                    "path": "<Keyboard>/escape",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Pause",
-                    "isComposite": false,
-                    "isPartOfComposite": false
                 }
             ]
         },
@@ -428,9 +397,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Equip Item",
+                    "name": "Equip Primary",
                     "type": "Button",
                     "id": "903dfe66-ff81-4da5-ac88-befe295c2bb0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Equip Secondary",
+                    "type": "Button",
+                    "id": "5ebab096-050a-430c-8f6b-793d7ee302ed",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -449,6 +427,15 @@
                     "name": "Drag",
                     "type": "Button",
                     "id": "59f2f5d9-966c-4e51-be0a-985486c53347",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "a37bac63-e3d6-483e-8580-669d752136b8",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -826,25 +813,25 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Equip Item",
+                    "action": "Equip Primary",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "80d0ef5c-c699-41d8-a882-178024f593e4",
-                    "path": "<Gamepad>/buttonNorth",
+                    "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Equip Item",
+                    "action": "Equip Primary",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "187d9945-5e27-4c02-8cb2-2fd95eb9ff0f",
-                    "path": "<Gamepad>/leftShoulder",
+                    "path": "<Gamepad>/rightShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -882,6 +869,50 @@
                     "processors": "",
                     "groups": "",
                     "action": "Drag",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5ae5e410-b037-4a16-93cf-05c0ecf068e5",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "af0db38b-9d5a-4b25-b340-5921e7a1692c",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3285c861-a7c9-4d44-b5bc-95a8e06c7b78",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Equip Secondary",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "307da41d-0a50-43be-8937-58a6ccca7d30",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Equip Secondary",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

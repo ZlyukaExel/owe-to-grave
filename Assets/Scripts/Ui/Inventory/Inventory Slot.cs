@@ -1,17 +1,15 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class InventorySlot : Selectable, IDropHandler, ISelectHandler
+public class InventorySlot : Selectable, IDropHandler
 {
     public int slotIndex { private set; get; }
     private Inventory inventory;
-    private InventoryCell cell;
 
     public void Initialize(Inventory inventory, int index)
     {
         this.inventory = inventory;
         slotIndex = index;
-        cell = GetComponentInChildren<InventoryCell>(true);
     }
 
     public void OnDrop(PointerEventData eventData)
@@ -21,7 +19,7 @@ public class InventorySlot : Selectable, IDropHandler, ISelectHandler
         if (draggedItem == null || draggedItem.currentItem == null)
             return;
 
-        int fromIndex = draggedItem.slotIndex;
+        int fromIndex = draggedItem.id;
         int toIndex = slotIndex;
 
         if (fromIndex < 0 || toIndex < 0 || fromIndex == toIndex)
@@ -33,34 +31,59 @@ public class InventorySlot : Selectable, IDropHandler, ISelectHandler
         oldSlot?.OnPointerExit(new PointerEventData(EventSystem.current));
         Select();
     }
-
-    public override void OnSelect(BaseEventData eventData)
-    {
-        base.OnSelect(eventData);
-        cell.OnSelect();
-    }
 }
 
 [System.Serializable]
 public struct SlotDefinition
 {
     public int maxQuantity;
-    public ItemType allowedType;
+    public ItemCategory allowedCategory;
+    public ClothingType allowedClotherType;
 
-    public SlotDefinition(int maxQuantity = 0, ItemType allowedType = ItemType.Any)
+    public SlotDefinition(
+        int maxQuantity = 0,
+        ItemCategory allowedCategory = ItemCategory.Any,
+        ClothingType allowedClotherType = ClothingType.Any
+    )
     {
         this.maxQuantity = maxQuantity;
-        this.allowedType = allowedType;
+        this.allowedCategory = allowedCategory;
+        this.allowedClotherType = allowedClotherType;
     }
 
-    public readonly bool CanAcceptItem(ItemType itemType, int quantity, int currentQuantity)
+    public readonly bool CanAcceptItem(ItemData itemData, int quantity, int currentQuantity)
     {
-        if (allowedType != ItemType.Any && itemType != allowedType)
-            return false;
-
         if (maxQuantity > 0 && currentQuantity + quantity > maxQuantity)
             return false;
 
+        if (allowedCategory != ItemCategory.Any)
+        {
+            bool categoryMatches = allowedCategory switch
+            {
+                ItemCategory.Weapon => itemData is WeaponData,
+                ItemCategory.Clother => itemData is ClothingData,
+                ItemCategory.Misc => itemData is not WeaponData && itemData is not ClothingData,
+                _ => true,
+            };
+
+            if (!categoryMatches)
+                return false;
+        }
+
+        if (itemData is ClothingData clother && allowedClotherType != ClothingType.Any)
+        {
+            if (clother.clothingType != allowedClotherType)
+                return false;
+        }
+
         return true;
     }
+}
+
+public enum ItemCategory
+{
+    Any,
+    Misc,
+    Weapon,
+    Clother,
 }
