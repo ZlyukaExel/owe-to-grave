@@ -15,23 +15,15 @@ public partial class ChangeMarkerAction : Action
 {
     [SerializeReference]
     public BlackboardVariable<Transform> Target;
+    NPCController npcController = GetComponent<NPCController>();
 
     protected override Status OnStart()
     {
+        Target = npcController.ChooseRandomTarget(Target);
         if (Target == null)
-            return Status.Failure;
-
-        var markers = GameObject.FindGameObjectsWithTag("Marker");
-
-        if (markers.Length > 0)
         {
-            int randomIndex = UnityEngine.Random.Range(0, markers.Length);
-            Target.Value = markers[randomIndex].transform;
-            return Status.Success;
+            Target = npcController.FindInitialMarker(5.0, 20.0, 5.0);
         }
-
-        Debug.LogWarning("ChangeMarkerAction: Маркеры не найдены!");
-        return Status.Failure;
     }
 
     protected override Status OnUpdate() => Status.Success;
