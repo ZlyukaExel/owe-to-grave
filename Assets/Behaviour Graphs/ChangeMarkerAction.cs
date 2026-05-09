@@ -29,7 +29,7 @@ public partial class ChangeMarkerAction : Action
         {
             return Status.Failure;
         }
-        Target = TargetMarker;
+        Target = TargetMarker.transform;
     }
 
     protected override Status OnUpdate() => Status.Success;

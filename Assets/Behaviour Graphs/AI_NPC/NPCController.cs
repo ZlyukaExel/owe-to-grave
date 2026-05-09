@@ -80,7 +80,6 @@ public class NPCController : MonoBehaviour
     public Marker ChooseRandomTarget(Marker currentMarker)
     {
         if (currentMarker == null || currentMarker.neighbors.Length == 0)
-<<<<<<< HEAD
         {
             return null;
         }
@@ -97,23 +96,6 @@ public class NPCController : MonoBehaviour
     //     }
     // }
 
-=======
-            return null;
-
-        return currentMarker.neighbors[Random.Range(0, currentMarker.neighbors.Length)];
-    }
-
-    // void FleeFormThreat()
-    // {
-    //     Marker escapeMarker = FindEscapeMarker(fleeDirection);
-    //     if (escapeMarker != null)
-    //     {
-    //         targetMarker = escapeMarker;
-    //         // isFleeing = false;
-    //     }
-    // }
-
->>>>>>> fc0c03f43b6b70cb2f46163c595c1ca5ff973080
     public Marker FindEscapeMarker(Vector3 direction, float detectionRadius, float maxDetectionRadius, float detectionStep, Marker currentMarker)
     {
         float radius = detectionRadius;
