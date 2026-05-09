@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecf01b99f03dff2429a64237bbd30e59, type: 3}
+  m_Name: Right Front Van Door
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  id: 2827111182
+  itemName: Van door
+  itemType: 8
+  description: 'Right front van door
+
+'
+  price: 75
+  icon: {fileID: 21300000, guid: 9b847972bc133a64ca41927d68630866, type: 3}
+  prefab: {fileID: 1939690949214914412, guid: d0799a5a9c6169f4f8895b2fcdc4543e, type: 3}

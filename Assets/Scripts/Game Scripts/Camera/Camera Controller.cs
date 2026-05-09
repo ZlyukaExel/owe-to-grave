@@ -428,13 +428,20 @@ public class CameraController : MonoBehaviour
         SetGameobjectAlpha(characterConfig.GetHead(), alpha);
         SetChildGameobjectAlpha(l.weapon.gameObject, alpha);
         SetChildGameobjectAlpha(l.weapon.GetHidden(), alpha);
-        SetGameobjectAlpha(characterConfig.GetPants(), alpha);
-        SetGameobjectAlpha(characterConfig.GetTop(), alpha);
-        SetGameobjectAlpha(characterConfig.GetShoes(), alpha);
-        SetGameobjectAlpha(characterConfig.GetGloves(), alpha);
-        SetGameobjectAlpha(characterConfig.GetHat(), alpha);
-        SetGameobjectAlpha(characterConfig.GetHair(), alpha);
-        SetGameobjectAlpha(characterConfig.GetMask(), alpha);
+        if (characterConfig.GetPants())
+            SetGameobjectAlpha(characterConfig.GetPants().gameObject, alpha);
+        if (characterConfig.GetTop())
+            SetGameobjectAlpha(characterConfig.GetTop().gameObject, alpha);
+        if (characterConfig.GetShoes())
+            SetGameobjectAlpha(characterConfig.GetShoes().gameObject, alpha);
+        if (characterConfig.GetGloves())
+            SetGameobjectAlpha(characterConfig.GetGloves().gameObject, alpha);
+        if (characterConfig.GetHat())
+            SetGameobjectAlpha(characterConfig.GetHat().gameObject, alpha);
+        if (characterConfig.GetHair())
+            SetGameobjectAlpha(characterConfig.GetHair().gameObject, alpha);
+        if (characterConfig.GetMask())
+            SetGameobjectAlpha(characterConfig.GetMask().gameObject, alpha);
     }
 
     private void SetGameobjectAlpha(GameObject obj, float alpha)

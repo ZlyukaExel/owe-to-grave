@@ -54,7 +54,7 @@ public class Weapon : MonoBehaviour
     public void DeactivateBoth()
     {
         hidden.SetActive(false);
-        gameObject.SetActive(false);
+        GetComponent<ObjectDisable>().SetActive(false);
     }
 }
 

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Inventory))]
 public class PlayerLinks : Links
 {
     public Transform ui { get; private set; }
@@ -34,9 +35,11 @@ public class PlayerLinks : Links
         minimap.SetTarget(transform); // TODO: change in movement
         input = PlayerInput.Instance;
 
-        ui.parent.Find("Inventory")
+        Inventory inventory = GetComponent<Inventory>();
+        ui.parent.Find("Inventory/Horizontal/Player Inventory")
             .GetComponent<InventoryUi>()
-            .SetInventory(GetComponent<Inventory>());
+            .SetInventory(inventory);
+        inventory.SetTarget(cameraPivot);
 
         base.Start();
 

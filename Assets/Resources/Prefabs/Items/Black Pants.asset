@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d04eb92f37bf89644a2513e0cc053e6f, type: 3}
+  m_Name: Black Pants
+  m_EditorClassIdentifier: Assembly-CSharp::ClothingData
+  id: 514824844
+  itemName: Pants
+  description: Simple black pants
+  price: 1
+  icon: {fileID: 21300000, guid: 2926115d429d9c54fa2c1ec545b677c6, type: 3}
+  prefab: {fileID: 3666368156083296970, guid: 9428250ee50b45e448e5830fc1bfe0c0, type: 3}
+  clothingType: 6
+  damageReduction: 0

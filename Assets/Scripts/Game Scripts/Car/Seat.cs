@@ -61,11 +61,13 @@ public class Seat : InteractiveObject
         CmdSetCharacter(character.GetComponent<NetworkIdentity>());
 
         // Change dummy config
-        CharacterConfig dummyCfg = new(character.GetComponent<NetworkCharacterConfig>().config)
-        {
-            inCombat = false,
-        };
-        dummy.GetComponent<NetworkCharacterConfig>().CmdSetConfig(dummyCfg);
+        NetworkCharacterConfig dummyNetworkConfig = dummy.GetComponent<NetworkCharacterConfig>();
+        NetworkCharacterConfig characterNetworkConfig =
+            character.GetComponent<NetworkCharacterConfig>();
+        CharacterConfig dummyCfg = characterNetworkConfig.syncConfig;
+        dummyCfg.inCombat = false;
+        dummyNetworkConfig.CmdSetConfig(dummyCfg);
+        characterNetworkConfig.OnConfigChanged.AddListener(dummyNetworkConfig.CmdSetConfig);
 
         Links l = character.GetComponent<Links>();
         PlayerLinks pLinks = l as PlayerLinks;
@@ -135,7 +137,7 @@ public class Seat : InteractiveObject
 
         l.hitpoints.ChangeHitPoints(dummy.GetComponent<HitPointsSet>());
 
-        character.GetComponent<NetworkDisable>().SetEnabled(false);
+        characterNetworkConfig.CmdSetActive(false);
     }
 
     private void Stand()
@@ -143,7 +145,11 @@ public class Seat : InteractiveObject
         if (!currentCharacter)
             return;
 
-        currentCharacter.GetComponent<NetworkDisable>().SetEnabled(true);
+        NetworkCharacterConfig characterNetworkConfig =
+            currentCharacter.GetComponent<NetworkCharacterConfig>();
+        NetworkCharacterConfig dummyNetworkConfig = dummy.GetComponent<NetworkCharacterConfig>();
+        characterNetworkConfig.OnConfigChanged.RemoveListener(dummyNetworkConfig.CmdSetConfig);
+        characterNetworkConfig.CmdSetActive(true);
 
         Links l = currentCharacter.GetComponent<Links>();
         PlayerLinks pLinks = l as PlayerLinks;

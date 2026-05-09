@@ -20,16 +20,19 @@ public partial class MoveToTargetAction : Action
     public BlackboardVariable<Transform> Target;
 
     [SerializeReference]
+    public BlackboardVariable<float> MinDistanceToTarget;
+
+    [SerializeReference]
     public BlackboardVariable<CustomNavMeshAgent> CustomNavMeshAgent;
 
     protected override Status OnUpdate()
     {
         Vector3 direction = CustomNavMeshAgent.Value.GetDirection(Target.Value.position);
 
-        if (direction.magnitude <= 0.1f)
+        if (direction.magnitude <= MinDistanceToTarget)
             return Status.Success;
 
-        Input.Value.SetMovementVector(new(direction.x, direction.z));
+        Input.Value.SetMovementVector(new Vector2(direction.x, direction.z).normalized * 0.2f);
         return Status.Running;
     }
 

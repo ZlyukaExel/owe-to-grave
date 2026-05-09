@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 public class ActionByNavigation : MonoBehaviour, ISelectHandler, IDeselectHandler
 {
     private Vector2 navigationVector = new();
-
+    public bool mustBeSelected = false;
     private bool isSelected = false;
 
     [SerializeField]
@@ -15,15 +15,15 @@ public class ActionByNavigation : MonoBehaviour, ISelectHandler, IDeselectHandle
 
     [SerializeField]
     private InputActionReference navigateAction;
-
-    [SerializeField]
-    private UnityEvent onNavUp,
+    public UnityEvent onNavUp,
         onNavDown,
         onNavRight,
         onNavLeft;
+    public UnityEvent<Vector2> onNavigate;
 
     [SerializeField]
     private float maxDelay = 0.3f,
+        minDelay = 0,
         acceleration = 0.1f;
 
     private float currentDelay = 0.3f,
@@ -31,7 +31,7 @@ public class ActionByNavigation : MonoBehaviour, ISelectHandler, IDeselectHandle
 
     void Update()
     {
-        if (!isSelected || navigationVector == Vector2.zero)
+        if (mustBeSelected && !isSelected || navigationVector == Vector2.zero)
             return;
 
         timeElapsed += Time.unscaledDeltaTime;
@@ -53,8 +53,10 @@ public class ActionByNavigation : MonoBehaviour, ISelectHandler, IDeselectHandle
                     onNavDown.Invoke();
             }
 
+            onNavigate.Invoke(navigationVector);
+
             timeElapsed = 0;
-            currentDelay = Mathf.Max(0, currentDelay - acceleration);
+            currentDelay = Mathf.Max(minDelay, currentDelay - acceleration);
         }
     }
 

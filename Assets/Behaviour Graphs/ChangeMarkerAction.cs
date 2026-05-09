@@ -1,8 +1,8 @@
 using System;
 using Unity.Behavior;
+using Unity.Properties;
 using UnityEngine;
 using Action = Unity.Behavior.Action;
-using Unity.Properties;
 
 [Serializable, GeneratePropertyBag]
 [NodeDescription(
@@ -13,11 +13,13 @@ using Unity.Properties;
 )]
 public partial class ChangeMarkerAction : Action
 {
-    [SerializeReference] public BlackboardVariable<Transform> Target;
+    [SerializeReference]
+    public BlackboardVariable<Transform> Target;
 
     protected override Status OnStart()
     {
-        if (Target == null) return Status.Failure;
+        if (Target == null)
+            return Status.Failure;
 
         var markers = GameObject.FindGameObjectsWithTag("Marker");
 
@@ -34,4 +36,3 @@ public partial class ChangeMarkerAction : Action
 
     protected override Status OnUpdate() => Status.Success;
 }
-

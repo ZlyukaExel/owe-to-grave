@@ -6,7 +6,6 @@ public class ItemData : ScriptableObject
 {
     public uint id;
     public string itemName;
-    public ItemType type;
 
     [TextArea]
     public string description;
@@ -19,11 +18,13 @@ public class ItemData : ScriptableObject
         if (prefab)
             id = prefab.GetComponent<NetworkIdentity>().assetId;
     }
-}
 
-public enum ItemType
-{
-    Weapon,
-    Clother,
-    Misc,
+    public override string ToString()
+    {
+        return $"Item Data of {itemName}, item id = {id}";
+    }
+
+    public bool isEquipable => this is ClothingData || this is WeaponData;
+
+    public virtual string GetItemTypeString() => "Misc";
 }

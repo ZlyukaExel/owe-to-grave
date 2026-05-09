@@ -3,20 +3,18 @@ using UnityEngine.Audio;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class AudioSettingsScript : MonoBehaviour
+public class AudioSettings : BaseSettingsPanel
 {
+    [Header("Audio UI")]
     [SerializeField]
     private Slider masterVolumeSlider,
         musicVolumeSlider,
         soundsVolumeSlider,
         voicesVolumeSlider;
 
+    [Header("References")]
     [SerializeField]
     private AudioMixer audioMixer;
-
-    [SerializeField]
-    private Button confirmButton,
-        cancelButton;
 
     [SerializeField]
     private GameObject settingsMenu,
@@ -28,37 +26,65 @@ public class AudioSettingsScript : MonoBehaviour
     [SerializeField]
     private Selectable defaultSelectable;
 
-    void Start()
+    private bool isInitializing = false;
+
+    protected override void Awake()
     {
-        ResetSettings();
+        base.Awake();
+
+        masterVolumeSlider.onValueChanged.AddListener(value => OnSettingChanged());
+        musicVolumeSlider.onValueChanged.AddListener(value => OnSettingChanged());
+        soundsVolumeSlider.onValueChanged.AddListener(value => OnSettingChanged());
+        voicesVolumeSlider.onValueChanged.AddListener(value => OnSettingChanged());
     }
 
-    public void ConfirmSettings()
+    private void Start()
     {
-        // Slider changes volume instantly, so saving only PlayerPrefs
-        PlayerPrefs.SetFloat("MasterVolume", masterVolumeSlider.value);
-        PlayerPrefs.SetFloat("MusicVolume", musicVolumeSlider.value);
-        PlayerPrefs.SetFloat("SoundsVolume", soundsVolumeSlider.value);
-        PlayerPrefs.SetFloat("VoicesVolume", voicesVolumeSlider.value);
-
-        confirmButton.interactable = false;
-        cancelButton.interactable = false;
+        LoadSettings();
     }
 
-    public void ResetSettings()
+    private void OnSettingChanged()
     {
+        if (!isInitializing)
+            MarkAsChanged();
+    }
+
+    public override void LoadSettings()
+    {
+        isInitializing = true;
+
         masterVolumeSlider.value = PlayerPrefs.GetFloat("MasterVolume", 20);
         musicVolumeSlider.value = PlayerPrefs.GetFloat("MusicVolume", -55);
         soundsVolumeSlider.value = PlayerPrefs.GetFloat("SoundsVolume", -55);
         voicesVolumeSlider.value = PlayerPrefs.GetFloat("VoicesVolume", -55);
 
-        confirmButton.interactable = false;
-        cancelButton.interactable = false;
+        if (saveButton != null)
+            saveButton.interactable = false;
+        if (cancelButton != null)
+            cancelButton.interactable = false;
+
+        isInitializing = false;
+    }
+
+    public override void SaveSettings()
+    {
+        PlayerPrefs.SetFloat("MasterVolume", masterVolumeSlider.value);
+        PlayerPrefs.SetFloat("MusicVolume", musicVolumeSlider.value);
+        PlayerPrefs.SetFloat("SoundsVolume", soundsVolumeSlider.value);
+        PlayerPrefs.SetFloat("VoicesVolume", voicesVolumeSlider.value);
+
+        if (saveButton != null)
+            saveButton.interactable = false;
+    }
+
+    public override void ResetSettings()
+    {
+        LoadSettings();
     }
 
     public void GoBack()
     {
-        if (confirmButton.interactable)
+        if (saveButton != null && saveButton.interactable)
         {
             saveOrGoScreen.SetActive(true);
             saveOrGoScreen.transform.Find("NoButton").GetComponent<Button>().Select();
@@ -73,7 +99,7 @@ public class AudioSettingsScript : MonoBehaviour
 
     public void ExitMenu()
     {
-        ResetSettings();
+        LoadSettings();
         onExit.Invoke();
         gameObject.SetActive(false);
         settingsMenu.SetActive(true);

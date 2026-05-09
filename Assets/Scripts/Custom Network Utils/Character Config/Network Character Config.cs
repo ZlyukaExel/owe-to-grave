@@ -1,31 +1,55 @@
 using Mirror;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(CharacterConfigManager))]
 public class NetworkCharacterConfig : NetworkBehaviour
 {
-    [HideInInspector]
-    [SyncVar(hook = nameof(OnConfigChanged))]
-    public CharacterConfig config;
+    [SyncVar(hook = nameof(OnConfigChangedHook))]
+    public CharacterConfig syncConfig;
     public CharacterConfigManager configManager { get; private set; }
+    public UnityEvent<CharacterConfig> OnConfigChanged = new();
 
-    public void Start()
+    [SyncVar(hook = nameof(OnActiveChangedHook))]
+    public bool isActive = true;
+
+    private void Awake()
     {
         configManager = GetComponent<CharacterConfigManager>();
-        base.OnStartServer();
-        CmdSetConfig(configManager.GetConfig());
+        OnConfigChanged.AddListener(configManager.SetConfig);
     }
 
-    [Command(requiresAuthority = false)]
-    public void CmdSetConfig(CharacterConfig config)
-    {
-        this.config = config;
-    }
-
-    private void OnConfigChanged(CharacterConfig oldVal, CharacterConfig newVal)
+    public override void OnStartServer()
     {
         if (!configManager)
             configManager = GetComponent<CharacterConfigManager>();
-        configManager.SetConfig(newVal);
+        syncConfig = configManager.GetConfig();
+    }
+
+    public override void OnStartAuthority()
+    {
+        configManager.OnConfigChanged.AddListener(CmdSetConfig);
+    }
+
+    [Command(requiresAuthority = false)]
+    public void CmdSetConfig(CharacterConfig newConfig)
+    {
+        syncConfig = newConfig;
+    }
+
+    [Command(requiresAuthority = false)]
+    public void CmdSetActive(bool active)
+    {
+        isActive = active;
+    }
+
+    private void OnConfigChangedHook(CharacterConfig oldVal, CharacterConfig newVal)
+    {
+        OnConfigChanged.Invoke(newVal);
+    }
+
+    private void OnActiveChangedHook(bool oldVal, bool newVal)
+    {
+        configManager.SetActive(newVal);
     }
 }

@@ -1,4 +1,7 @@
+using System;
+using Mirror;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CharacterConfigManager : MonoBehaviour
 {
@@ -12,120 +15,153 @@ public class CharacterConfigManager : MonoBehaviour
     private Weapon[] weapons = new Weapon[0];
 
     [SerializeField]
-    private GameObject[] pants = new GameObject[0];
+    private Clothing[] pants = new Clothing[0];
 
     [SerializeField]
-    private GameObject[] tops = new GameObject[0];
+    private Clothing[] tops = new Clothing[0];
 
     [SerializeField]
-    private GameObject[] shoes = new GameObject[0];
+    private Clothing[] shoes = new Clothing[0];
 
     [SerializeField]
-    private GameObject[] gloves = new GameObject[0];
+    private Clothing[] gloves = new Clothing[0];
 
     [SerializeField]
-    private GameObject[] hats = new GameObject[0];
+    private Clothing[] hats = new Clothing[0];
 
     [SerializeField]
-    private GameObject[] hair = new GameObject[0];
+    private Clothing[] hair = new Clothing[0];
 
     [SerializeField]
-    private GameObject[] masks = new GameObject[0];
+    private Clothing[] masks = new Clothing[0];
 
-    public void SetConfig(CharacterConfig config)
+    public UnityEvent<CharacterConfig> OnConfigChanged = new();
+
+    public void SetConfig(CharacterConfig newConfig)
     {
-        if (currentConfig.weaponId != config.weaponId)
-        {
-            Weapon currentWeapon = weapons[currentConfig.weaponId];
-            weapons[config.weaponId].DeactivateBoth();
-            weapons[currentConfig.weaponId].Activate(config.inCombat);
+        if (isActive)
+            SetObjectsActive(false);
 
-            weapons[config.weaponId].onShot = currentWeapon.onShot;
-        }
+        currentConfig = newConfig;
 
-        if (currentConfig.inCombat != config.inCombat)
-            weapons[config.weaponId].Activate(config.inCombat);
-
-        if (currentConfig.pantsId != config.pantsId)
-        {
-            SetActiveIfNotNull(pants[currentConfig.pantsId], false);
-            SetActiveIfNotNull(pants[config.pantsId], true);
-        }
-
-        if (currentConfig.topId != config.topId)
-        {
-            SetActiveIfNotNull(tops[currentConfig.topId], false);
-            SetActiveIfNotNull(tops[config.topId], true);
-        }
-
-        if (currentConfig.shoesId != config.shoesId)
-        {
-            SetActiveIfNotNull(shoes[currentConfig.shoesId], false);
-            SetActiveIfNotNull(shoes[config.shoesId], true);
-        }
-
-        if (currentConfig.glovesId != config.glovesId)
-        {
-            SetActiveIfNotNull(gloves[currentConfig.glovesId], false);
-            SetActiveIfNotNull(gloves[config.glovesId], true);
-        }
-
-        if (currentConfig.hatId != config.hatId)
-        {
-            SetActiveIfNotNull(hats[currentConfig.hatId], false);
-            SetActiveIfNotNull(hats[config.hatId], true);
-        }
-
-        if (currentConfig.maskId != config.maskId)
-        {
-            SetActiveIfNotNull(masks[currentConfig.maskId], false);
-            SetActiveIfNotNull(masks[config.maskId], true);
-        }
-
-        currentConfig = config;
+        if (isActive)
+            SetObjectsActive(true);
     }
 
     public CharacterConfig GetConfig() => currentConfig;
-
-    // private void DisableAll()
-    // {
-    //     foreach (var weapon in weapons)
-    //         SetActiveIfNotNull(weapon, false);
-    //     foreach (var pant in pants)
-    //         SetActiveIfNotNull(pant, false);
-    //     foreach (var top in tops)
-    //         SetActiveIfNotNull(top, false);
-    //     foreach (var shoe in shoes)
-    //         SetActiveIfNotNull(shoe, false);
-    //     foreach (var glove in gloves)
-    //         SetActiveIfNotNull(glove, false);
-    //     foreach (var hat in hats)
-    //         SetActiveIfNotNull(hat, false);
-    //     foreach (var mask in masks)
-    //         SetActiveIfNotNull(mask, false);
-    // }
-
-    private void SetActiveIfNotNull(GameObject gameObject, bool isActive)
-    {
-        if (gameObject)
-            gameObject.SetActive(isActive);
-    }
 
     public GameObject GetHead() => head;
 
     public Weapon GetWeapon() => weapons[currentConfig.weaponId];
 
-    public GameObject GetPants() => pants[currentConfig.pantsId];
+    public Clothing GetPants() => pants[currentConfig.pantsId];
 
-    public GameObject GetTop() => tops[currentConfig.topId];
+    public Clothing GetTop() => tops[currentConfig.topId];
 
-    public GameObject GetShoes() => shoes[currentConfig.shoesId];
+    public Clothing GetShoes() => shoes[currentConfig.shoesId];
 
-    public GameObject GetGloves() => gloves[currentConfig.glovesId];
+    public Clothing GetGloves() => gloves[currentConfig.glovesId];
 
-    public GameObject GetHat() => hats[currentConfig.hatId];
+    public Clothing GetHat() => hats[currentConfig.hatId];
 
-    public GameObject GetHair() => hair[currentConfig.hairId];
+    public Clothing GetHair() => hair[currentConfig.hairId];
 
-    public GameObject GetMask() => masks[currentConfig.maskId];
+    public Clothing GetMask() => masks[currentConfig.maskId];
+
+    public int GetClothingId(ClothingData clothingData)
+    {
+        if (!clothingData)
+            return -1;
+
+        var targetArray = clothingData.clothingType switch
+        {
+            ClothingType.Pants => pants,
+            ClothingType.Top => tops,
+            ClothingType.Shoes => shoes,
+            ClothingType.Gloves => gloves,
+            ClothingType.Hat => hats,
+            ClothingType.Mask => masks,
+            _ => null,
+        };
+
+        if (targetArray == null)
+            return -1;
+
+        return Array.FindIndex(targetArray, x => x?.data?.id == clothingData.id);
+    }
+
+    public void Equip(InventoryItem item, ClothingType clothingType)
+    {
+        int clothingId;
+        if (item.quantity <= 0 || item.itemId == 0)
+            clothingId = 0;
+        else
+            clothingId = GetClothingId(
+                ItemDataManager.Instance.GetItem(item.itemId) as ClothingData
+            );
+        if (clothingId == -1)
+            return;
+
+        CharacterConfig newConfig = currentConfig;
+
+        switch (clothingType)
+        {
+            case ClothingType.Pants:
+                newConfig.pantsId = clothingId;
+                break;
+            case ClothingType.Top:
+                newConfig.topId = clothingId;
+                break;
+            case ClothingType.Shoes:
+                newConfig.shoesId = clothingId;
+                break;
+            case ClothingType.Gloves:
+                newConfig.glovesId = clothingId;
+                break;
+            case ClothingType.Hat:
+                newConfig.hatId = clothingId;
+                break;
+            case ClothingType.Mask:
+                newConfig.maskId = clothingId;
+                break;
+        }
+
+        SetConfig(newConfig); // To save changes locally
+        OnConfigChanged.Invoke(newConfig);
+    }
+
+    public bool isActive = true;
+
+    public void SetActive(bool active)
+    {
+        isActive = active;
+        foreach (var collider in GetComponentsInChildren<Collider>())
+        {
+            collider.enabled = active;
+        }
+
+        if (TryGetComponent(out NetworkRigidbodyReliable reliableRigidbody))
+            reliableRigidbody.isKinematic = !active;
+
+        if (TryGetComponent(out NetworkRigidbodyUnreliable unreliableRigidbody))
+            unreliableRigidbody.isKinematic = !active;
+
+        SetObjectsActive(active);
+    }
+
+    private void SetObjectsActive(bool active)
+    {
+        if (active)
+            GetWeapon().Activate(currentConfig.inCombat);
+        else
+            GetWeapon().DeactivateBoth();
+        GetHat()?.gameObject.SetActive(active);
+        GetTop()?.gameObject.SetActive(active);
+        GetPants()?.gameObject.SetActive(active);
+        GetMask()?.gameObject.SetActive(active);
+        GetGloves()?.gameObject.SetActive(active);
+        GetShoes()?.gameObject.SetActive(active);
+        GetHair()?.gameObject.SetActive(active);
+        GetHead()?.gameObject.SetActive(active);
+    }
 }

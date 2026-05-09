@@ -473,9 +473,6 @@ PrefabInstance:
       addedObject: {fileID: 8688307967062232664}
     - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7361965475878069996}
-    - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 3352224732228020004}
     - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
@@ -528,6 +525,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7161231950732534754}
+    - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1651060533390213120}
     - targetCorrespondingSourceObject: {fileID: 6745089949999026420, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4128742238520580748}
@@ -856,35 +856,20 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  config:
+  syncConfig:
     weaponId: 0
+    inCombat: 0
     pantsId: 0
     topId: 0
     shoesId: 0
     glovesId: 0
     hatId: 0
-    hairId: 0
     maskId: 0
-    inCombat: 0
---- !u!114 &7361965475878069996
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5260740160240455966}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62599eea83f0b534884ef3b4f9dc3f2b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMethod: 0
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  isEnabled: 1
-  ownerComponents:
-  - {fileID: 4546414353998530309}
+    hairId: 0
+  OnConfigChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  isActive: 1
 --- !u!114 &3352224732228020004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1290,6 +1275,62 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5058f5cb17fc2bc41889ae42fa12a2ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomNavMeshAgent
+--- !u!114 &1651060533390213120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5260740160240455966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3dc9c049e9f2d4747b76f0325600af19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Inventory
+  syncMethod: 0
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  inventorySize: 39
+  slotDefinitions:
+  - maxQuantity: 1
+    allowedCategory: 2
+    allowedClotherType: 0
+  - maxQuantity: 1
+    allowedCategory: 2
+    allowedClotherType: 0
+  - maxQuantity: 1
+    allowedCategory: 3
+    allowedClotherType: 1
+  - maxQuantity: 1
+    allowedCategory: 3
+    allowedClotherType: 3
+  - maxQuantity: 1
+    allowedCategory: 3
+    allowedClotherType: 6
+  - maxQuantity: 1
+    allowedCategory: 3
+    allowedClotherType: 2
+  - maxQuantity: 1
+    allowedCategory: 3
+    allowedClotherType: 4
+  - maxQuantity: 1
+    allowedCategory: 3
+    allowedClotherType: 5
+  onItemChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  initialItems:
+  - itemId: 0
+    quantity: 0
+  - itemId: 0
+    quantity: 0
+  - itemId: 0
+    quantity: 0
+  - itemId: 0
+    quantity: 0
+  - itemId: 0
+    quantity: 0
 --- !u!1 &5489449613937681701 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3877606035874751649, guid: dbe1828e08b32754489dc7d494784b47, type: 3}

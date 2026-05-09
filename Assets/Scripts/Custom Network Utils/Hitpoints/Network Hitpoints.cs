@@ -42,9 +42,6 @@ public class NetworkHitpoints : NetworkBehaviour
     [Command(requiresAuthority = false)]
     public void Damage(DamageInfo damageInfo)
     {
-        // TODO: pass crit
-        // TODO: death messages
-
         // print("Damage taken: " + damageInfo.damage);
 
         // Ignore if already dead
@@ -64,6 +61,15 @@ public class NetworkHitpoints : NetworkBehaviour
             else
                 TargetDie();
         }
+    }
+
+    [Server]
+    public void Heal(float amount)
+    {
+        if (!isVulnerable || currentHp <= 0)
+            return;
+
+        currentHp = Mathf.Min(maxHp, currentHp + amount);
     }
 
     public void ChangeHitPoints(HitPointsSet hitPoints)
@@ -131,4 +137,5 @@ public enum DamageType
     Bullet,
     Item,
     Fall,
+    Insult,
 }

@@ -35,10 +35,9 @@ public class MenuOpener : MonoBehaviour
 
     public void OpenMenu(bool open)
     {
-        if (open && isOpened)
+        if (open == isOpened)
             return;
-        if (!open && !isOpened)
-            return;
+
         OpenMenu();
     }
 }

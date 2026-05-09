@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(NetworkAudioSource))]
+[RequireComponent(typeof(NetworkIdentity))]
 public class NetworkItem : InteractiveObject
 {
     [SyncVar]
@@ -26,9 +27,6 @@ public class NetworkItem : InteractiveObject
     private Image takeButtonFiller;
     private bool isHeld = false,
         isHeldCont = false;
-
-    [SerializeField]
-    private Sprite defaultIcon;
 
     void Start()
     {
@@ -186,7 +184,9 @@ public class NetworkItem : InteractiveObject
                     if (!pLinks.stateManager.combatState.isAimingOrShooting)
                         pLinks.cameraController.positionOffset.x = 0;
 
-                    CleanUpUi();
+                    SetInteractable(true);
+
+                    StopHolding();
                     character.GetComponent<Inventory>().TakeIn(netIdentity);
                 }
                 // Continious holding
@@ -198,7 +198,7 @@ public class NetworkItem : InteractiveObject
         }
     }
 
-    private void CleanUpUi()
+    public void StopHolding()
     {
         if (!interactableTrigger)
             return;
@@ -213,11 +213,7 @@ public class NetworkItem : InteractiveObject
         takeButtonFiller = null;
 
         takeButtonPressed = isHeld = isHeldCont = false;
-    }
 
-    public void StopHolding()
-    {
-        CleanUpUi();
         if (this != null && netIdentity != null && NetworkClient.active)
             SetInteractable(true);
     }

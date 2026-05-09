@@ -85,7 +85,8 @@ public class CombatState : State
 
         l.animator.SetBool("inCombat", true);
 
-        CharacterConfig config = new(l.netConfig.config) { inCombat = true };
+        CharacterConfig config = l.netConfig.syncConfig;
+        config.inCombat = true;
         l.netConfig.CmdSetConfig(config);
 
         l.weapon.onShot.AddListener(SpawnBullet);
@@ -150,11 +151,13 @@ public class CombatState : State
         {
             if (!pLinks.interactableTrigger.IsHolding())
                 pLinks.cameraController.positionOffset.x = 0;
-            pLinks.animator.SetBool("inCombat", false);
-            CharacterConfig config = new(pLinks.netConfig.config) { inCombat = false };
-            pLinks.netConfig.CmdSetConfig(config);
-            pLinks.weapon.onShot.RemoveListener(SpawnBullet);
         }
+
+        l.animator.SetBool("inCombat", false);
+        CharacterConfig config = l.netConfig.syncConfig;
+        config.inCombat = false;
+        l.netConfig.CmdSetConfig(config);
+        l.weapon.onShot.RemoveListener(SpawnBullet);
 
         aimButtonClicked = aimButtonPressed = false;
         StopAim();

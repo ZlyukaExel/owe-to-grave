@@ -114,4 +114,6 @@ public class NPCController : MonoBehaviour
         }
         return null;
     }
+
+    public void OnBulletNear() { }
 }

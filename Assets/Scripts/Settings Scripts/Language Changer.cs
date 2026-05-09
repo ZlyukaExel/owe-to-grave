@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Localization.Settings;
 
+[RequireComponent(typeof(TMP_Dropdown))]
 public class LanguageChanger : MonoBehaviour
 {
     private TMP_Dropdown dropdown;

@@ -1,10 +1,10 @@
-using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class CameraSettings : MonoBehaviour
+public class CameraSettings : BaseSettingsPanel
 {
+    [Header("Camera UI")]
     [SerializeField]
     private Slider horSensSlider,
         vertSensSlider,
@@ -12,12 +12,9 @@ public class CameraSettings : MonoBehaviour
         vertAdjSlider;
 
     [SerializeField]
-    private Toggle autoRotationToggle;
+    private UiList autoRotationList;
 
-    [SerializeField]
-    private Button confirmButton,
-        cancelButton;
-
+    [Header("References")]
     [SerializeField]
     private GameObject saveOrGoScreen,
         settingsMenu;
@@ -28,41 +25,86 @@ public class CameraSettings : MonoBehaviour
     [SerializeField]
     private Selectable defaultSelectable;
 
-    void Start()
+    private bool isInitializing = false;
+
+    protected override void Awake()
     {
-        ResetSettings();
+        base.Awake();
+
+        horSensSlider.onValueChanged.AddListener(value => OnSettingChanged());
+        vertSensSlider.onValueChanged.AddListener(value => OnSettingChanged());
+        horAdjSlider.onValueChanged.AddListener(value => OnSettingChanged());
+        vertAdjSlider.onValueChanged.AddListener(value => OnSettingChanged());
+
+        if (autoRotationList != null)
+            autoRotationList.onValueChanged.AddListener(OnSettingChanged);
     }
 
-    public void ConfirmSettings()
+    private void Start()
+    {
+        LoadSettings();
+    }
+
+    private void OnSettingChanged()
+    {
+        if (!isInitializing)
+            MarkAsChanged();
+    }
+
+    public override void LoadSettings()
+    {
+        isInitializing = true;
+
+        horSensSlider.value = PlayerPrefs.GetFloat("HorizontalSensivity", 20);
+        vertSensSlider.value = PlayerPrefs.GetFloat("VerticalSensivity", 20);
+        horAdjSlider.value = PlayerPrefs.GetFloat("HorizontalAdjustment", 10);
+        vertAdjSlider.value = PlayerPrefs.GetFloat("VerticalAdjustment", 10);
+
+        if (autoRotationList != null)
+        {
+            int autoRot = PlayerPrefs.GetInt("AutoRotationEnabled", 1);
+            autoRotationList.SetValue(autoRot);
+        }
+
+        if (saveButton != null)
+            saveButton.interactable = false;
+        if (cancelButton != null)
+            cancelButton.interactable = false;
+
+        isInitializing = false;
+    }
+
+    public override void SaveSettings()
     {
         PlayerPrefs.SetFloat("HorizontalSensivity", horSensSlider.value);
         PlayerPrefs.SetFloat("VerticalSensivity", vertSensSlider.value);
         PlayerPrefs.SetFloat("HorizontalAdjustment", horAdjSlider.value);
         PlayerPrefs.SetFloat("VerticalAdjustment", vertAdjSlider.value);
-        PlayerPrefs.SetInt("AutoRotationEnabled", autoRotationToggle.isOn ? 1 : 0);
 
-        FindFirstObjectByType<CameraController>().UpdateSettings();
+        if (autoRotationList != null)
+        {
+            string val = autoRotationList.GetValue();
+            PlayerPrefs.SetInt("AutoRotationEnabled", val == "Включена" ? 1 : 0);
+        }
 
-        confirmButton.interactable = cancelButton.interactable = false;
+        CameraController camController = FindFirstObjectByType<CameraController>();
+        if (camController != null)
+        {
+            camController.UpdateSettings();
+        }
+
+        if (saveButton != null)
+            saveButton.interactable = false;
     }
 
-    public void ResetSettings()
+    public override void ResetSettings()
     {
-        horSensSlider.value = PlayerPrefs.GetFloat("HorizontalSensivity", 20);
-        vertSensSlider.value = PlayerPrefs.GetFloat("VerticalSensivity", 20);
-        horAdjSlider.value = PlayerPrefs.GetFloat("HorizontalAdjustment", 10);
-        vertAdjSlider.value = PlayerPrefs.GetFloat("VerticalAdjustment", 10);
-        if (PlayerPrefs.GetInt("AutoRotationEnabled", 1) == 1)
-            autoRotationToggle.isOn = true;
-        else
-            autoRotationToggle.isOn = false;
-
-        confirmButton.interactable = cancelButton.interactable = false;
+        LoadSettings();
     }
 
     public void GoBack()
     {
-        if (confirmButton.interactable)
+        if (saveButton != null && saveButton.interactable)
         {
             saveOrGoScreen.SetActive(true);
             saveOrGoScreen.transform.Find("NoButton").GetComponent<Button>().Select();
@@ -77,7 +119,7 @@ public class CameraSettings : MonoBehaviour
 
     public void ExitMenu()
     {
-        ResetSettings();
+        LoadSettings();
         onExit.Invoke();
         gameObject.SetActive(false);
         settingsMenu.SetActive(true);

@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 
+[RequireComponent(typeof(TMP_Text))]
 public class FpsCounter : MonoBehaviour
 {
     private TMP_Text textField;
