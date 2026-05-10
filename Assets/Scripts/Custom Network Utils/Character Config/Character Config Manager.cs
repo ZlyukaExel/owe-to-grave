@@ -37,8 +37,18 @@ public class CharacterConfigManager : MonoBehaviour
 
     public UnityEvent<CharacterConfig> OnConfigChanged = new();
 
+    private Animator animator;
+
+    void Awake()
+    {
+        animator = GetComponentInChildren<Animator>();
+    }
+
     public void SetConfig(CharacterConfig newConfig)
     {
+        Weapon oldPrimary = GetPrimary(),
+            oldSecondary = GetSecondary();
+
         if (isActive)
             SetObjectsActive(false);
 
@@ -46,13 +56,21 @@ public class CharacterConfigManager : MonoBehaviour
 
         if (isActive)
             SetObjectsActive(true);
+
+        if (GetPrimary() && oldPrimary)
+            GetPrimary().onShot = oldPrimary.onShot;
+
+        if (GetSecondary() && oldSecondary)
+            GetSecondary().onShot = oldSecondary.onShot;
     }
 
     public CharacterConfig GetConfig() => currentConfig;
 
     public GameObject GetHead() => head;
 
-    public Weapon GetWeapon() => weapons[currentConfig.weaponId];
+    public Weapon GetPrimary() => weapons[currentConfig.primaryWeaponId];
+
+    public Weapon GetSecondary() => weapons[currentConfig.secondaryWeaponId];
 
     public Clothing GetPants() => pants[currentConfig.pantsId];
 
@@ -90,7 +108,15 @@ public class CharacterConfigManager : MonoBehaviour
         return Array.FindIndex(targetArray, x => x?.data?.id == clothingData.id);
     }
 
-    public void Equip(InventoryItem item, ClothingType clothingType)
+    public int GetWeaponId(WeaponData weaponData)
+    {
+        if (!weaponData)
+            return -1;
+
+        return Array.FindIndex(weapons, x => x?.data.id == weaponData.id);
+    }
+
+    public void EquipClothing(InventoryItem item, ClothingType clothingType)
     {
         int clothingId;
         if (item.quantity <= 0 || item.itemId == 0)
@@ -130,6 +156,29 @@ public class CharacterConfigManager : MonoBehaviour
         OnConfigChanged.Invoke(newConfig);
     }
 
+    public void EquipWeapon(InventoryItem item, bool primary)
+    {
+        int weaponId;
+        if (item.quantity <= 0 || item.itemId == 0)
+            weaponId = 0;
+        else
+            weaponId = GetWeaponId(ItemDataManager.Instance.GetItem(item.itemId) as WeaponData);
+        if (weaponId == -1)
+            return;
+
+        CharacterConfig newConfig = currentConfig;
+        if (primary)
+        {
+            newConfig.primaryWeaponId = weaponId;
+            animator.SetInteger("weaponId", weaponId);
+        }
+        else
+            newConfig.secondaryWeaponId = weaponId;
+
+        SetConfig(newConfig); // To save changes locally
+        OnConfigChanged.Invoke(newConfig);
+    }
+
     public bool isActive = true;
 
     public void SetActive(bool active)
@@ -152,9 +201,15 @@ public class CharacterConfigManager : MonoBehaviour
     private void SetObjectsActive(bool active)
     {
         if (active)
-            GetWeapon().Activate(currentConfig.inCombat);
+        {
+            GetPrimary()?.Activate(currentConfig.inCombat);
+            GetSecondary()?.Activate(false);
+        }
         else
-            GetWeapon().DeactivateBoth();
+        {
+            GetPrimary()?.DeactivateBoth();
+            GetSecondary()?.DeactivateBoth();
+        }
         GetHat()?.gameObject.SetActive(active);
         GetTop()?.gameObject.SetActive(active);
         GetPants()?.gameObject.SetActive(active);

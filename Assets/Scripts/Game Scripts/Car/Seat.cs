@@ -66,8 +66,8 @@ public class Seat : InteractiveObject
             character.GetComponent<NetworkCharacterConfig>();
         CharacterConfig dummyCfg = characterNetworkConfig.syncConfig;
         dummyCfg.inCombat = false;
-        dummyNetworkConfig.CmdSetConfig(dummyCfg);
-        characterNetworkConfig.OnConfigChanged.AddListener(dummyNetworkConfig.CmdSetConfig);
+        dummyNetworkConfig.RequestConfigChange(dummyCfg);
+        characterNetworkConfig.OnConfigChanged.AddListener(dummyNetworkConfig.RequestConfigChange);
 
         Links l = character.GetComponent<Links>();
         PlayerLinks pLinks = l as PlayerLinks;
@@ -148,7 +148,9 @@ public class Seat : InteractiveObject
         NetworkCharacterConfig characterNetworkConfig =
             currentCharacter.GetComponent<NetworkCharacterConfig>();
         NetworkCharacterConfig dummyNetworkConfig = dummy.GetComponent<NetworkCharacterConfig>();
-        characterNetworkConfig.OnConfigChanged.RemoveListener(dummyNetworkConfig.CmdSetConfig);
+        characterNetworkConfig.OnConfigChanged.RemoveListener(
+            dummyNetworkConfig.RequestConfigChange
+        );
         characterNetworkConfig.CmdSetActive(true);
 
         Links l = currentCharacter.GetComponent<Links>();

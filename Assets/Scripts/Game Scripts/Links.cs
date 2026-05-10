@@ -19,7 +19,8 @@ public class Links : NetworkBehaviour
     public NetworkHitpoints hitpoints { get; private set; }
     public InputManager input { get; protected set; }
     public Buffs buffs { get; private set; }
-    public Weapon weapon => netConfig.configManager.GetWeapon();
+    public Weapon primaryWeapon => netConfig.configManager.GetPrimary();
+    public Weapon secondaryWeapon => netConfig.configManager.GetSecondary();
     public NetworkCharacterConfig netConfig { get; private set; }
 
     [SerializeField]

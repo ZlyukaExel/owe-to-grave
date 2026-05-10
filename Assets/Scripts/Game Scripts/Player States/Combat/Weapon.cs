@@ -21,6 +21,8 @@ public class Weapon : MonoBehaviour
     private ObjectDisable current;
     public UnityEvent<Vector3> onShot;
 
+    public WeaponData data;
+
     void Awake()
     {
         current = GetComponent<ObjectDisable>();

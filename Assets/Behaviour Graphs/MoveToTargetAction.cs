@@ -27,11 +27,15 @@ public partial class MoveToTargetAction : Action
 
     protected override Status OnUpdate()
     {
+        if (!Target.Value)
+            return Status.Failure;
+
         Vector3 direction = CustomNavMeshAgent.Value.GetDirection(Target.Value.position);
 
         if (direction.magnitude <= MinDistanceToTarget)
+        {
             return Status.Success;
-
+        }
         Input.Value.SetMovementVector(new Vector2(direction.x, direction.z).normalized * 0.2f);
         return Status.Running;
     }

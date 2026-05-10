@@ -377,8 +377,8 @@ public class CameraController : MonoBehaviour
                 UpdateCameraPivot();
 
                 characterConfig
-                    .GetWeapon()
-                    .GetComponent<Weapon>()
+                    .GetPrimary()
+                    ?.GetComponent<Weapon>()
                     .GetFlash()
                     .gameObject.SetActive(false);
 
@@ -393,8 +393,8 @@ public class CameraController : MonoBehaviour
             UpdateCameraPivot();
 
             characterConfig
-                .GetWeapon()
-                .GetComponent<Weapon>()
+                .GetPrimary()
+                ?.GetComponent<Weapon>()
                 .GetFlash()
                 .gameObject.SetActive(true);
 
@@ -426,8 +426,16 @@ public class CameraController : MonoBehaviour
     private void SetMaterialsAlpha(float alpha)
     {
         SetGameobjectAlpha(characterConfig.GetHead(), alpha);
-        SetChildGameobjectAlpha(l.weapon.gameObject, alpha);
-        SetChildGameobjectAlpha(l.weapon.GetHidden(), alpha);
+        if (l.primaryWeapon)
+        {
+            SetChildGameobjectAlpha(l.primaryWeapon.gameObject, alpha);
+            SetChildGameobjectAlpha(l.primaryWeapon.GetHidden(), alpha);
+        }
+        if (l.secondaryWeapon)
+        {
+            SetChildGameobjectAlpha(l.secondaryWeapon.gameObject, alpha);
+            SetChildGameobjectAlpha(l.secondaryWeapon.GetHidden(), alpha);
+        }
         if (characterConfig.GetPants())
             SetGameobjectAlpha(characterConfig.GetPants().gameObject, alpha);
         if (characterConfig.GetTop())

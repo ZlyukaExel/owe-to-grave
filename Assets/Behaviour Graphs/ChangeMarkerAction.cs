@@ -7,30 +7,29 @@ using Action = Unity.Behavior.Action;
 [Serializable, GeneratePropertyBag]
 [NodeDescription(
     name: "ChangeMarker",
-    story: "Set [Target] to random Marker",
+    story: "Set [Target] to random Marker via [NpcController]",
     category: "Action",
     id: "ccc2c38876308038049f1a513f4671ee"
 )]
 public partial class ChangeMarkerAction : Action
 {
     [SerializeReference]
-    public BlackboardVariable<Transform> Target;
-    public BlackboardVariable<Marker> TargetMarker;
-    NPCController npcController = GetComponent<NPCController>();
+    public BlackboardVariable<Marker> Target;
+
+    [SerializeReference]
+    public BlackboardVariable<NPCController> NpcController;
 
     protected override Status OnStart()
     {
-        if (TargetMarker == null)
+        if (Target.Value == null)
         {
-            return Status.Failure;
+            Target.Value = NpcController.Value.FindInitialMarker();
         }
-        TargetMarker = npcController.ChooseRandomTarget(TargetMarker);
-        if (TargetMarker == null)
+        else
         {
-            return Status.Failure;
+            Target.Value = NpcController.Value.ChooseRandomTarget(Target.Value);
         }
-        Target = TargetMarker.transform;
-    }
 
-    protected override Status OnUpdate() => Status.Success;
+        return Status.Success;
+    }
 }

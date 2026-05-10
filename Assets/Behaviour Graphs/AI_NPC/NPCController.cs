@@ -3,11 +3,10 @@ using UnityEngine;
 
 public class NPCController : MonoBehaviour
 {
-    // [SerializeField]
-    // private float moveSpeed = 3f,
-    //     detectionRadius = 5f,
-    //     maxDetectionRadius = 20f,
-    //     detectionStep = 5f;
+    [SerializeField]
+    private float detectionRadius = 5f,
+        maxDetectionRadius = 20f,
+        detectionStep = 5f;
 
     // private Marker currentMarker,
     //     targetMarker;
@@ -58,7 +57,7 @@ public class NPCController : MonoBehaviour
         // }
     }
 
-    public Marker FindInitialMarker(float detectionRadius, float maxDetectionRadius, float detectionStep)
+    public Marker FindInitialMarker()
     {
         float radius = detectionRadius;
         while (radius <= maxDetectionRadius)
@@ -80,9 +79,8 @@ public class NPCController : MonoBehaviour
     public Marker ChooseRandomTarget(Marker currentMarker)
     {
         if (currentMarker == null || currentMarker.neighbors.Length == 0)
-        {
             return null;
-        }
+
         return currentMarker.neighbors[Random.Range(0, currentMarker.neighbors.Length)];
     }
 
@@ -96,7 +94,13 @@ public class NPCController : MonoBehaviour
     //     }
     // }
 
-    public Marker FindEscapeMarker(Vector3 direction, float detectionRadius, float maxDetectionRadius, float detectionStep, Marker currentMarker)
+    public Marker FindEscapeMarker(
+        Vector3 direction,
+        float detectionRadius,
+        float maxDetectionRadius,
+        float detectionStep,
+        Marker currentMarker
+    )
     {
         float radius = detectionRadius;
         while (radius <= maxDetectionRadius)

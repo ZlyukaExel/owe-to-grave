@@ -301,7 +301,6 @@ public class Inventory : NetworkBehaviour
 
     public int EquipClothing(int slotIndex)
     {
-        // TODO: check if items swap
         InventoryItem item = items[slotIndex];
         if (item.itemId == 0 || item.quantity < 1)
             return -1;
@@ -426,31 +425,36 @@ public class Inventory : NetworkBehaviour
 
     private void OnEquipmentChanged(InventoryItem item, int inventoryIndex)
     {
-        if (inventoryIndex < 2 || inventoryIndex > 7)
+        if (inventoryIndex < 0 || inventoryIndex > 7)
             return;
 
         switch (inventoryIndex)
         {
+            case 0:
+                characterConfig.EquipWeapon(item, true);
+                break;
+            case 1:
+                characterConfig.EquipWeapon(item, false);
+                break;
             case 2:
-                characterConfig.Equip(item, ClothingType.Hat);
+                characterConfig.EquipClothing(item, ClothingType.Hat);
                 break;
             case 3:
-                characterConfig.Equip(item, ClothingType.Top);
+                characterConfig.EquipClothing(item, ClothingType.Top);
                 break;
             case 4:
-                characterConfig.Equip(item, ClothingType.Pants);
+                characterConfig.EquipClothing(item, ClothingType.Pants);
                 break;
             case 5:
-                characterConfig.Equip(item, ClothingType.Mask);
+                characterConfig.EquipClothing(item, ClothingType.Mask);
                 break;
             case 6:
-                characterConfig.Equip(item, ClothingType.Gloves);
+                characterConfig.EquipClothing(item, ClothingType.Gloves);
                 break;
             case 7:
-                characterConfig.Equip(item, ClothingType.Shoes);
+                characterConfig.EquipClothing(item, ClothingType.Shoes);
                 break;
         }
-        //characterConfig.Equip(item);
     }
 }
 

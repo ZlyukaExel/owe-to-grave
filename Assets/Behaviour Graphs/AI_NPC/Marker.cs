@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Collider))]
 public class Marker : MonoBehaviour
 {
     public Marker[] neighbors;

@@ -16,7 +16,6 @@ public class NetworkCharacterConfig : NetworkBehaviour
     private void Awake()
     {
         configManager = GetComponent<CharacterConfigManager>();
-        OnConfigChanged.AddListener(configManager.SetConfig);
     }
 
     public override void OnStartServer()
@@ -24,15 +23,23 @@ public class NetworkCharacterConfig : NetworkBehaviour
         if (!configManager)
             configManager = GetComponent<CharacterConfigManager>();
         syncConfig = configManager.GetConfig();
+
+        configManager.OnConfigChanged.AddListener(RequestConfigChange);
     }
 
-    public override void OnStartAuthority()
+    public void RequestConfigChange(CharacterConfig newConfig)
     {
-        configManager.OnConfigChanged.AddListener(CmdSetConfig);
+        if (isServer)
+        {
+            syncConfig = newConfig;
+            configManager.SetConfig(newConfig);
+        }
+        else
+            CmdSetConfig(newConfig);
     }
 
     [Command(requiresAuthority = false)]
-    public void CmdSetConfig(CharacterConfig newConfig)
+    private void CmdSetConfig(CharacterConfig newConfig)
     {
         syncConfig = newConfig;
     }
