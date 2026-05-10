@@ -32,8 +32,13 @@ MonoBehaviour:
           rid: 6210247767420306062
         BlackboardGroupReferences: []
         Root:
+<<<<<<< HEAD
           rid: 7633778637732839431
         m_VersionTimestamp: 639140607352944625
+=======
+          rid: 7633778631336525965
+        m_VersionTimestamp: 639140473539713596
+>>>>>>> f877b6f679afa46e6e023537cf3ab32e30f3e11a
     - rid: 6210247767420306062
       type: {class: BlackboardReference, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -51,6 +56,17 @@ MonoBehaviour:
         - rid: 7633778631336525952
         - rid: 7633778631336525953
         - rid: 7633778631336525954
+<<<<<<< HEAD
+=======
+    - rid: 7633778631336525945
+      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: 0.5
+>>>>>>> f877b6f679afa46e6e023537cf3ab32e30f3e11a
     - rid: 7633778631336525948
       type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -107,6 +123,7 @@ MonoBehaviour:
           m_Value1: 7285940538449071478
         Name: NPC Controller
         m_Value: {fileID: 0}
+<<<<<<< HEAD
     - rid: 7633778637732839430
       type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -116,6 +133,9 @@ MonoBehaviour:
         Name: 
         m_Value: 0.5
     - rid: 7633778637732839431
+=======
+    - rid: 7633778631336525965
+>>>>>>> f877b6f679afa46e6e023537cf3ab32e30f3e11a
       type: {class: Start, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         ID:
@@ -126,10 +146,17 @@ MonoBehaviour:
         m_Parent:
           rid: -2
         m_Child:
+<<<<<<< HEAD
           rid: 7633778637732839432
         Repeat: 1
         AllowMultipleRepeatsPerTick: 0
     - rid: 7633778637732839432
+=======
+          rid: 7633778631336525966
+        Repeat: 1
+        AllowMultipleRepeatsPerTick: 0
+    - rid: 7633778631336525966
+>>>>>>> f877b6f679afa46e6e023537cf3ab32e30f3e11a
       type: {class: AnyResultSequence, ns: , asm: Assembly-CSharp}
       data:
         ID:
@@ -138,6 +165,7 @@ MonoBehaviour:
         Graph:
           rid: 6210247767420306061
         m_Parent:
+<<<<<<< HEAD
           rid: 7633778637732839431
         m_Children:
         - rid: 7633778637732839433
@@ -159,6 +187,15 @@ MonoBehaviour:
         NpcController:
           rid: 7633778631336525954
     - rid: 7633778637732839434
+=======
+          rid: 7633778631336525965
+        m_Children:
+        - rid: 7633778631336525967
+        - rid: 7633778631336525968
+        - rid: 7633778631336525969
+        m_RegisteredObservers: []
+    - rid: 7633778631336525967
+>>>>>>> f877b6f679afa46e6e023537cf3ab32e30f3e11a
       type: {class: MoveToTargetAction, ns: , asm: Assembly-CSharp}
       data:
         ID:
@@ -167,6 +204,7 @@ MonoBehaviour:
         Graph:
           rid: 6210247767420306061
         m_Parent:
+<<<<<<< HEAD
           rid: 7633778637732839432
         Input:
           rid: 7633778631336525949
@@ -177,6 +215,18 @@ MonoBehaviour:
         CustomNavMeshAgent:
           rid: 7633778631336525950
     - rid: 7633778637732839435
+=======
+          rid: 7633778631336525966
+        Input:
+          rid: 7633778631336525949
+        Target:
+          rid: 7633778631336525970
+        MinDistanceToTarget:
+          rid: 7633778631336525945
+        CustomNavMeshAgent:
+          rid: 7633778631336525950
+    - rid: 7633778631336525968
+>>>>>>> f877b6f679afa46e6e023537cf3ab32e30f3e11a
       type: {class: WaitAction, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         ID:
@@ -185,10 +235,31 @@ MonoBehaviour:
         Graph:
           rid: 6210247767420306061
         m_Parent:
+<<<<<<< HEAD
           rid: 7633778637732839432
         SecondsToWait:
           rid: 7633778631336525951
     - rid: 7633778637732839436
+=======
+          rid: 7633778631336525966
+        SecondsToWait:
+          rid: 7633778631336525951
+    - rid: 7633778631336525969
+      type: {class: ChangeMarkerAction, ns: , asm: Assembly-CSharp}
+      data:
+        ID:
+          m_Value0: 3043063577296877269
+          m_Value1: 9696811726810896784
+        Graph:
+          rid: 6210247767420306061
+        m_Parent:
+          rid: 7633778631336525966
+        Target:
+          rid: 7633778631336525953
+        NpcController:
+          rid: 7633778631336525954
+    - rid: 7633778631336525970
+>>>>>>> f877b6f679afa46e6e023537cf3ab32e30f3e11a
       type: {class: 'ComponentToComponentBlackboardVariable`2[[Marker, Assembly-CSharp],[UnityEngine.Transform, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         GUID:
@@ -318,7 +389,11 @@ MonoBehaviour:
   - rid: 3522124363598921818
   - rid: 7920556813652590675
   - rid: 4151108504610406931
+<<<<<<< HEAD
   m_VersionTimestamp: 639140607352944625
+=======
+  m_VersionTimestamp: 639140473539713596
+>>>>>>> f877b6f679afa46e6e023537cf3ab32e30f3e11a
   m_SerializedVersion: 2
   m_DebugInfo: {fileID: 5688044747610103594}
   m_RuntimeGraph: {fileID: -2891917606125137337}
@@ -530,7 +605,11 @@ MonoBehaviour:
     - rid: 3522124363598921818
       type: {class: ActionNodeModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
       data:
+<<<<<<< HEAD
         Position: {x: -473.43332, y: 408.7759}
+=======
+        Position: {x: 47.593273, y: 408.77594}
+>>>>>>> f877b6f679afa46e6e023537cf3ab32e30f3e11a
         ID:
           m_Value0: 3043063577296877269
           m_Value1: 9696811726810896784
@@ -693,6 +772,10 @@ MonoBehaviour:
         - rid: 3522124363598921819
         - rid: 368166279296582208
         - rid: 7920556813652590676
+<<<<<<< HEAD
+=======
+        - rid: 3522124363598921819
+>>>>>>> f877b6f679afa46e6e023537cf3ab32e30f3e11a
     - rid: 6210247767420306067
       type: {class: StartNodeModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
       data:
@@ -725,7 +808,11 @@ MonoBehaviour:
     - rid: 7920556813652590675
       type: {class: ActionNodeModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
       data:
+<<<<<<< HEAD
         Position: {x: 62.058144, y: 405.9024}
+=======
+        Position: {x: -241.75171, y: 411.03925}
+>>>>>>> f877b6f679afa46e6e023537cf3ab32e30f3e11a
         ID:
           m_Value0: 4124724813105754501
           m_Value1: 2253206630590770062
