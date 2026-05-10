@@ -3835,7 +3835,7 @@ GameObject:
   - component: {fileID: 1011154313}
   - component: {fileID: 1011154314}
   m_Layer: 0
-  m_Name: NavMesh Marker
+  m_Name: NavMesh Marker (0)
   m_TagString: Marker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3869,8 +3869,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Marker
   neighbors:
-  - {fileID: 1035756798}
-  - {fileID: 1378690193}
   - {fileID: 530489590}
 --- !u!65 &1011154314
 BoxCollider:
@@ -3999,8 +3997,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Marker
   neighbors:
-  - {fileID: 1666184828}
-  - {fileID: 1011154313}
   - {fileID: 657944230}
 --- !u!4 &1035756799
 Transform:
@@ -4653,8 +4649,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Marker
   neighbors:
-  - {fileID: 1011154313}
-  - {fileID: 1666184828}
   - {fileID: 88115947}
 --- !u!4 &1378690194
 Transform:
@@ -4885,8 +4879,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Marker
   neighbors:
-  - {fileID: 1035756798}
-  - {fileID: 1378690193}
   - {fileID: 1279414809}
 --- !u!4 &1666184829
 Transform:
