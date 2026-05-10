@@ -19,7 +19,7 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 364b00aa76bdd4445b341acd8c1c2e11, type: 3}
   prefab: {fileID: 1008226685848504892, guid: f5a273532f8551f4699679a9231d536f, type: 3}
   properties:
-    damage: 20
-    bulletSpeed: 10
+    damage: 10
+    bulletSpeed: 15
     spread: 1
     piercing: 0

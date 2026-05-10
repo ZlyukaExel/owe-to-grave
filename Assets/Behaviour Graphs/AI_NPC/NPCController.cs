@@ -13,49 +13,49 @@ public class NPCController : MonoBehaviour
     // private bool isFleeing = false;
     // private Vector3 fleeDirection;
 
-    void Start()
-    {
-        // FindInitialMarker();
-        // ChooseRandomTarget();
-    }
+    // void Start()
+    // {
+    //     // FindInitialMarker();
+    //     // ChooseRandomTarget();
+    // }
 
-    void Update()
-    {
-        // if (targetMarker == null)
-        // {
-        //     ChooseRandomTarget();
-        //     return;
-        // }
+    // void Update()
+    // {
+    //     // if (targetMarker == null)
+    //     // {
+    //     //     ChooseRandomTarget();
+    //     //     return;
+    //     // }
 
-        // transform.position = Vector3.MoveTowards(
-        //     transform.position,
-        //     targetMarker.transform.position,
-        //     moveSpeed * Time.deltaTime
-        // );
+    //     // transform.position = Vector3.MoveTowards(
+    //     //     transform.position,
+    //     //     targetMarker.transform.position,
+    //     //     moveSpeed * Time.deltaTime
+    //     // );
 
-        // if (Vector3.Distance(transform.position, targetMarker.transform.position) < 0.1f)
-        // {
-        //     currentMarker = targetMarker;
-        //     ChooseRandomTarget();
-        // }
+    //     // if (Vector3.Distance(transform.position, targetMarker.transform.position) < 0.1f)
+    //     // {
+    //     //     currentMarker = targetMarker;
+    //     //     ChooseRandomTarget();
+    //     // }
 
-        // Collider[] threats = Physics.OverlapSphere(transform.position, detectionRadius);
-        // foreach (var threat in threats)
-        // {
-        //     if (threat.CompareTag("Bullet"))
-        //     {
-        //         isFleeing = true;
-        //         fleeDirection = (transform.position - threat.transform.position).normalized;
-        //         FleeFormThreat();
-        //         break;
-        //     }
-        // }
+    //     // Collider[] threats = Physics.OverlapSphere(transform.position, detectionRadius);
+    //     // foreach (var threat in threats)
+    //     // {
+    //     //     if (threat.CompareTag("Bullet"))
+    //     //     {
+    //     //         isFleeing = true;
+    //     //         fleeDirection = (transform.position - threat.transform.position).normalized;
+    //     //         FleeFormThreat();
+    //     //         break;
+    //     //     }
+    //     // }
 
-        // if (isFleeing)
-        // {
-        //     FleeFormThreat();
-        // }
-    }
+    //     // if (isFleeing)
+    //     // {
+    //     //     FleeFormThreat();
+    //     // }
+    // }
 
     public Marker FindInitialMarker()
     {
@@ -67,6 +67,7 @@ public class NPCController : MonoBehaviour
             {
                 if (hit.TryGetComponent(out Marker marker))
                 {
+                    Debug.LogWarning("NpcGoToMarker: " + marker);
                     return marker;
                 }
             }
@@ -81,7 +82,9 @@ public class NPCController : MonoBehaviour
         if (currentMarker == null || currentMarker.neighbors.Length == 0)
             return null;
 
-        return currentMarker.neighbors[Random.Range(0, currentMarker.neighbors.Length)];
+        Marker curMarker = currentMarker.neighbors[Random.Range(0, currentMarker.neighbors.Length)];
+        Debug.LogWarning("NpcGoToMarker: " + curMarker);
+        return curMarker;
     }
 
     // void FleeFormThreat()

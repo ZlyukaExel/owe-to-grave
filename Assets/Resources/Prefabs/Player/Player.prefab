@@ -72,6 +72,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4048935957731440095, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
+      propertyPath: properties.damage
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4048935957731440095, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
+      propertyPath: properties.bulletSpeed
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 4131505230461416472, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -773,6 +781,7 @@ MonoBehaviour:
   isShooting: 0
   isAimingOrShooting: 0
   currentSet: 0
+  outOfCombatTime: 3
   aimingWeight: 0
   aimingWeightSpeedModifier: 3
   combatLayers:
