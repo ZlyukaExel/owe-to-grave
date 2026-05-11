@@ -7,6 +7,7 @@ using UnityEngine;
 public class Bullet : NetworkBehaviour
 {
     private WeaponProperties weapon;
+    private DamageInfo damageInfo;
     private NetworkIdentity shooter;
 
     [HideInInspector]
@@ -102,7 +103,7 @@ public class Bullet : NetworkBehaviour
             alreadyTriggeredNpc.Add(hit.transform);
 
             if (hit.transform.TryGetComponent(out NPCController controller))
-                controller.OnBulletNear();
+                controller.OnBulletNear(damageInfo);
         }
 
         // Move bullet if not destroyed
@@ -114,6 +115,7 @@ public class Bullet : NetworkBehaviour
     {
         weapon = properties;
         ignorePlayers.Add(shooter.netId);
+        damageInfo = new(weapon.damage, DamageType.Bullet, shooter);
     }
 
     private void HandleHit(RaycastHit hit)
@@ -133,7 +135,6 @@ public class Bullet : NetworkBehaviour
                 return;
             ignorePlayers.Add(playerId);
 
-            DamageInfo damageInfo = new(weapon.damage, DamageType.Bullet, shooter);
             hp.Damage(damageInfo);
 
             // Destroying bullet

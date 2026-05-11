@@ -205,9 +205,13 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4048935957731440095, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
-      propertyPath: hidden
-      value: 
-      objectReference: {fileID: 2987024210083461297}
+      propertyPath: properties.damage
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4048935957731440095, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
+      propertyPath: properties.bulletSpeed
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 4213446245039002759, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       propertyPath: m_Layer
       value: 10
@@ -416,10 +420,6 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 10
       objectReference: {fileID: 0}
-    - target: {fileID: 8294678543708455394, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8506797149811921722, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       propertyPath: m_Layer
       value: 0
@@ -471,9 +471,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8688307967062232664}
-    - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7361965475878069996}
     - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3352224732228020004}
@@ -531,6 +528,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1651060533390213120}
+    - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1865134388612172175}
     - targetCorrespondingSourceObject: {fileID: 6745089949999026420, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4128742238520580748}
@@ -726,17 +726,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
---- !u!114 &2987024210083461297 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5803589344976746805, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
-  m_PrefabInstance: {fileID: 8790594861701038468}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee3306f5b89328045b90d0e31386b808, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ObjectDisable
 --- !u!4 &4776691794294590372 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4302134543082801696, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
@@ -859,35 +848,21 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  config:
-    weaponId: 0
+  syncConfig:
+    primaryWeaponId: 0
+    secondaryWeaponId: 0
+    inCombat: 0
     pantsId: 0
     topId: 0
     shoesId: 0
     glovesId: 0
     hatId: 0
-    hairId: 0
     maskId: 0
-    inCombat: 0
---- !u!114 &7361965475878069996
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5260740160240455966}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62599eea83f0b534884ef3b4f9dc3f2b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMethod: 0
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  isEnabled: 1
-  ownerComponents:
-  - {fileID: 4546414353998530309}
+    hairId: 0
+  OnConfigChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  isActive: 1
 --- !u!114 &3352224732228020004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -901,7 +876,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
   sceneId: 0
-  _assetId: 3010024149
+  _assetId: 642975168
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
@@ -1046,6 +1021,7 @@ MonoBehaviour:
   isShooting: 0
   isAimingOrShooting: 0
   currentSet: 0
+  outOfCombatTime: 3
   aimingWeight: 0
   aimingWeightSpeedModifier: 3
   combatLayers:
@@ -1182,26 +1158,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Behavior::Unity.Behavior.BehaviorGraphAgent
-  m_Graph: {fileID: -2891917606125137337, guid: e75a3348ee276b340b3e2982280d241d, type: 2}
+  m_Graph: {fileID: -2891917606125137337, guid: 6a8ab032c82f44f4c8443bf6e042af98, type: 2}
   m_BlackboardVariableOverridesList:
-  - rid: 6210247767420305479
-  - rid: 6210247769226215589
-  - rid: 368166279296582265
+  - rid: 4151108504610406843
+  - rid: 4151108504610406844
+  - rid: 4151108504610406845
+  - rid: 4151108504610406846
+  - rid: 4151108504610406979
   m_OriginalGraph: {fileID: 0}
   m_IsInitialised: 0
   m_IsStarted: 0
   references:
     version: 2
     RefIds:
-    - rid: 368166279296582265
-      type: {class: 'BlackboardVariable`1[[CustomNavMeshAgent, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 12440321789204156034
-          m_Value1: 7110805146561421856
-        Name: NavMesh
-        m_Value: {fileID: 7161231950732534754}
-    - rid: 6210247767420305479
+    - rid: 4151108504610406843
       type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         GUID:
@@ -1209,7 +1179,7 @@ MonoBehaviour:
           m_Value1: 0
         Name: Self
         m_Value: {fileID: 5260740160240455966}
-    - rid: 6210247769226215589
+    - rid: 4151108504610406844
       type: {class: 'BlackboardVariable`1[[InputManager, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         GUID:
@@ -1217,6 +1187,30 @@ MonoBehaviour:
           m_Value1: 8823873971456654041
         Name: Input
         m_Value: {fileID: 6950187555586301682}
+    - rid: 4151108504610406845
+      type: {class: 'BlackboardVariable`1[[CustomNavMeshAgent, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 12440321789204156034
+          m_Value1: 7110805146561421856
+        Name: NavMesh
+        m_Value: {fileID: 7161231950732534754}
+    - rid: 4151108504610406846
+      type: {class: 'BlackboardVariable`1[[NPCController, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 9573136644949835443
+          m_Value1: 7285940538449071478
+        Name: NPC Controller
+        m_Value: {fileID: 1865134388612172175}
+    - rid: 4151108504610406979
+      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 10522454347927989936
+          m_Value1: 4805204087058103665
+        Name: Waiting Seconds
+        m_Value: 0
 --- !u!114 &3075185711589992650
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1339,8 +1333,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   initialItems:
-  - itemId: 0
-    quantity: 0
+  - itemId: 1652348828
+    quantity: 1
   - itemId: 0
     quantity: 0
   - itemId: 0
@@ -1349,6 +1343,21 @@ MonoBehaviour:
     quantity: 0
   - itemId: 514824844
     quantity: 1
+--- !u!114 &1865134388612172175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5260740160240455966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfe917bb79087c24a96f43a0eba9e6d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NPCController
+  detectionRadius: 20
+  maxDetectionRadius: 100
+  detectionStep: 20
 --- !u!1 &5489449613937681701 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3877606035874751649, guid: dbe1828e08b32754489dc7d494784b47, type: 3}

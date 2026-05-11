@@ -21,6 +21,8 @@ public class Weapon : MonoBehaviour
     private ObjectDisable current;
     public UnityEvent<Vector3> onShot;
 
+    public WeaponData data;
+
     void Awake()
     {
         current = GetComponent<ObjectDisable>();
@@ -54,15 +56,15 @@ public class Weapon : MonoBehaviour
     public void DeactivateBoth()
     {
         hidden.SetActive(false);
-        gameObject.SetActive(false);
+        GetComponent<ObjectDisable>().SetActive(false);
     }
 }
 
 [System.Serializable]
 public class WeaponProperties
 {
-    public float damage = 20,
-        bulletSpeed = 10,
+    public float damage = 10,
+        bulletSpeed = 30,
         spread = 1;
     public int piercing = 0;
 }

@@ -15,13 +15,11 @@ public class Inventory : NetworkBehaviour
     public UnityEvent<int, InventoryItem> onItemChanged;
     private Transform targetDirection;
     private CharacterConfigManager characterConfig;
-    private NetworkCharacterConfig networkCharacterConfig;
     public List<InventoryItem> initialItems = new();
 
     public override void OnStartServer()
     {
         characterConfig = GetComponent<CharacterConfigManager>();
-        networkCharacterConfig = GetComponent<NetworkCharacterConfig>();
 
         equipmentSlots = slotDefinitions.Count;
 
@@ -38,9 +36,11 @@ public class Inventory : NetworkBehaviour
             slotDefinitions.Add(new SlotDefinition());
         }
 
+        // Filling initial inventory
         for (int i = 0; i < initialItems.Count; i++)
         {
             items[i] = initialItems[i];
+            OnEquipmentChanged(items[i], i);
         }
     }
 
@@ -53,8 +53,12 @@ public class Inventory : NetworkBehaviour
         {
             var item = items[i];
             var def = slotDefinitions[i];
-            if (item.itemId == itemId && def.CanAcceptItem(itemData, quantity, item.quantity))
-                return i;
+
+            if (item.itemId == itemId)
+            {
+                if (def.GetAcceptableQuantity(itemData, quantity, item.quantity) == quantity)
+                    return i;
+            }
         }
 
         // Get empty if no such item yet
@@ -70,8 +74,12 @@ public class Inventory : NetworkBehaviour
         {
             var item = items[i];
             var def = slotDefinitions[i];
-            if (item.itemId == 0 && def.CanAcceptItem(itemData, quantity, item.quantity))
-                return i;
+
+            if (item.itemId == 0)
+            {
+                if (def.GetAcceptableQuantity(itemData, quantity, 0) == quantity)
+                    return i;
+            }
         }
 
         return -1;
@@ -202,11 +210,26 @@ public class Inventory : NetworkBehaviour
         // Stack items
         if (toItem.itemId == fromItem.itemId && toItem.itemId != 0)
         {
-            if (toSlotDef.CanAcceptItem(fromItemData, fromItem.quantity, toItem.quantity))
+            int amountToAdd = toSlotDef.GetAcceptableQuantity(
+                fromItemData,
+                fromItem.quantity,
+                toItem.quantity
+            );
+
+            if (amountToAdd > 0)
             {
-                int newQuantity = toItem.quantity + fromItem.quantity;
-                items[toSlotIndex] = new InventoryItem(toItem.itemId, newQuantity);
-                items[fromSlotIndex] = default;
+                if (amountToAdd == fromItem.quantity)
+                    items[fromSlotIndex] = default;
+                else
+                    items[fromSlotIndex] = new InventoryItem(
+                        fromItem.itemId,
+                        fromItem.quantity - amountToAdd
+                    );
+
+                items[toSlotIndex] = new InventoryItem(
+                    toItem.itemId,
+                    toItem.quantity + amountToAdd
+                );
             }
             return;
         }
@@ -217,24 +240,45 @@ public class Inventory : NetworkBehaviour
             ItemData toItemData = ItemDataManager.Instance.GetItem(toItem.itemId);
             var fromSlotDef = slotDefinitions[fromSlotIndex];
 
-            if (
-                toItemData != null
-                && fromItemData != null
-                && fromSlotDef.CanAcceptItem(toItemData, toItem.quantity, 0)
-                && toSlotDef.CanAcceptItem(fromItemData, fromItem.quantity, 0)
-            )
+            if (toItemData != null && fromItemData != null)
             {
-                items[fromSlotIndex] = new InventoryItem(toItem.itemId, toItem.quantity);
-                items[toSlotIndex] = new InventoryItem(fromItem.itemId, fromItem.quantity);
+                int canTakeTo = toSlotDef.GetAcceptableQuantity(fromItemData, fromItem.quantity, 0);
+                int canTakeFrom = fromSlotDef.GetAcceptableQuantity(toItemData, toItem.quantity, 0);
+
+                if (canTakeTo == fromItem.quantity && canTakeFrom == toItem.quantity)
+                {
+                    items[fromSlotIndex] = new InventoryItem(toItem.itemId, toItem.quantity);
+                    items[toSlotIndex] = new InventoryItem(fromItem.itemId, fromItem.quantity);
+                }
             }
             return;
         }
 
         // Move to empty
-        if (fromItemData != null && toSlotDef.CanAcceptItem(fromItemData, fromItem.quantity, 0))
+        if (fromItemData != null)
         {
-            items[toSlotIndex] = new InventoryItem(fromItem.itemId, fromItem.quantity);
-            items[fromSlotIndex] = default;
+            int acceptableQuantity = toSlotDef.GetAcceptableQuantity(
+                fromItemData,
+                fromItem.quantity,
+                0
+            );
+
+            if (acceptableQuantity > 0)
+            {
+                if (acceptableQuantity == fromItem.quantity)
+                {
+                    items[fromSlotIndex] = default;
+                }
+                else
+                {
+                    items[fromSlotIndex] = new InventoryItem(
+                        fromItem.itemId,
+                        fromItem.quantity - acceptableQuantity
+                    );
+                }
+
+                items[toSlotIndex] = new InventoryItem(fromItem.itemId, acceptableQuantity);
+            }
         }
     }
 
@@ -381,38 +425,36 @@ public class Inventory : NetworkBehaviour
 
     private void OnEquipmentChanged(InventoryItem item, int inventoryIndex)
     {
-        if (inventoryIndex < 2 || inventoryIndex > 7)
+        if (inventoryIndex < 0 || inventoryIndex > 7)
             return;
-
-        int clothingId = item.quantity > 0 ? characterConfig.GetClothingIdByItem(item) : 0;
-        if (clothingId == -1)
-            return;
-
-        var config = new CharacterConfig(characterConfig.GetConfig());
 
         switch (inventoryIndex)
         {
+            case 0:
+                characterConfig.EquipWeapon(item, true);
+                break;
+            case 1:
+                characterConfig.EquipWeapon(item, false);
+                break;
             case 2:
-                config.hatId = clothingId;
+                characterConfig.EquipClothing(item, ClothingType.Hat);
                 break;
             case 3:
-                config.topId = clothingId;
+                characterConfig.EquipClothing(item, ClothingType.Top);
                 break;
             case 4:
-                config.pantsId = clothingId;
+                characterConfig.EquipClothing(item, ClothingType.Pants);
                 break;
             case 5:
-                config.maskId = clothingId;
+                characterConfig.EquipClothing(item, ClothingType.Mask);
                 break;
             case 6:
-                config.glovesId = clothingId;
+                characterConfig.EquipClothing(item, ClothingType.Gloves);
                 break;
             case 7:
-                config.shoesId = clothingId;
+                characterConfig.EquipClothing(item, ClothingType.Shoes);
                 break;
         }
-
-        networkCharacterConfig.CmdSetConfig(config);
     }
 }
 

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -33,7 +34,7 @@ public class InventorySlot : Selectable, IDropHandler
     }
 }
 
-[System.Serializable]
+[Serializable]
 public struct SlotDefinition
 {
     public int maxQuantity;
@@ -51,11 +52,8 @@ public struct SlotDefinition
         this.allowedClotherType = allowedClotherType;
     }
 
-    public readonly bool CanAcceptItem(ItemData itemData, int quantity, int currentQuantity)
+    public readonly int GetAcceptableQuantity(ItemData itemData, int quantity, int currentQuantity)
     {
-        if (maxQuantity > 0 && currentQuantity + quantity > maxQuantity)
-            return false;
-
         if (allowedCategory != ItemCategory.Any)
         {
             bool categoryMatches = allowedCategory switch
@@ -67,16 +65,24 @@ public struct SlotDefinition
             };
 
             if (!categoryMatches)
-                return false;
+                return 0;
         }
 
-        if (itemData is ClothingData clother && allowedClotherType != ClothingType.Any)
+        if (itemData is ClothingData clothing && allowedClotherType != ClothingType.Any)
         {
-            if (clother.clothingType != allowedClotherType)
-                return false;
+            if (clothing.clothingType != allowedClotherType)
+                return 0;
         }
 
-        return true;
+        if (maxQuantity <= 0)
+            return quantity;
+
+        int spaceLeft = maxQuantity - currentQuantity;
+
+        if (spaceLeft <= 0)
+            return 0;
+
+        return Math.Min(quantity, spaceLeft);
     }
 }
 

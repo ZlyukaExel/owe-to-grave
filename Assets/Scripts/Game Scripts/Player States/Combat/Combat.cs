@@ -1,7 +1,6 @@
 using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
 
 [RequireComponent(typeof(DefaultState))]
 [RequireComponent(typeof(Vector2Reference))]
@@ -13,6 +12,7 @@ public class CombatState : State
         isShooting,
         isAimingOrShooting;
     public int currentSet;
+    public float outOfCombatTime = 3;
     private bool shootButtonPressed,
         aimButtonPressed,
         aimButtonClicked;
@@ -85,10 +85,11 @@ public class CombatState : State
 
         l.animator.SetBool("inCombat", true);
 
-        CharacterConfig config = new(l.netConfig.config) { inCombat = true };
-        l.netConfig.CmdSetConfig(config);
+        CharacterConfig config = l.netConfig.syncConfig;
+        config.inCombat = true;
+        l.netConfig.RequestConfigChange(config);
 
-        l.weapon.onShot.AddListener(SpawnBullet);
+        l.primaryWeapon?.onShot.AddListener(SpawnBullet);
 
         currentSet = 1;
 
@@ -132,7 +133,7 @@ public class CombatState : State
 
             // Exit combat after 5 seconds
             notInCombatTime += Time.deltaTime;
-            if (notInCombatTime > 5)
+            if (notInCombatTime > outOfCombatTime)
             {
                 l.stateManager.SetState(EnumState.Default);
             }
@@ -150,11 +151,13 @@ public class CombatState : State
         {
             if (!pLinks.interactableTrigger.IsHolding())
                 pLinks.cameraController.positionOffset.x = 0;
-            pLinks.animator.SetBool("inCombat", false);
-            CharacterConfig config = new(pLinks.netConfig.config) { inCombat = false };
-            pLinks.netConfig.CmdSetConfig(config);
-            pLinks.weapon.onShot.RemoveListener(SpawnBullet);
         }
+
+        l.animator.SetBool("inCombat", false);
+        CharacterConfig config = l.netConfig.syncConfig;
+        config.inCombat = false;
+        l.netConfig.RequestConfigChange(config);
+        l.primaryWeapon?.onShot.RemoveListener(SpawnBullet);
 
         aimButtonClicked = aimButtonPressed = false;
         StopAim();
@@ -195,7 +198,8 @@ public class CombatState : State
             StartAim();
         }
 
-        l.weapon.SetShooting(aimingWeight >= 0.9f && shootButtonPressed);
+        l.primaryWeapon?.SetShooting(aimingWeight >= 0.9f && shootButtonPressed);
+        l.animator.SetBool("isAttacking", aimingWeight >= 0.9f && shootButtonPressed);
 
         // Slow down when shooting
         if (shootButtonPressed && !isShooting)
@@ -223,7 +227,7 @@ public class CombatState : State
             dirWithoutSpread = aimRay.GetPoint(100) - spawnerPosition;
 
         // Add spread
-        float currentSpread = l.weapon.properties.spread;
+        float currentSpread = l.primaryWeapon.properties.spread;
         currentSpread *= 1 + l.movement.currentSpeed / 8;
 
         // if (isCrouching)
@@ -236,14 +240,14 @@ public class CombatState : State
         ).normalized;
 
         // Spawn bullet
-        CmdSpawnBullet(spawnerPosition, dirWithSpread, l.weapon.properties);
+        CmdSpawnBullet(spawnerPosition, dirWithSpread, l.primaryWeapon.properties);
 
         // mFireCD = true;
         // StartCoroutine(FireRate());
 
         // Not automatic pLinks.weapon makes a single shot
         // if (!isAutomatic)
-        //     weaponAnim.SetBool("isShooting", false);
+        //     weaponAnim.SetBool("isAttacking", false);
     }
 
     [Command]
@@ -400,7 +404,8 @@ public class CombatState : State
 
         l.buffs.RemoveBuff(shootingSlowdown);
 
-        l.weapon.SetShooting(false);
+        l.primaryWeapon?.SetShooting(false);
+        l.animator.SetBool("isAttacking", false);
 
         isShooting = false;
     }

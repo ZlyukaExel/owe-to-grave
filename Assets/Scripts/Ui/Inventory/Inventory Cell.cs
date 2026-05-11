@@ -21,12 +21,14 @@ public class InventoryCell : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     private InventoryUi inventoryUi;
     public bool isKeyboardDragging;
     public GameObject fallbackImage;
+    public InventorySlot slot;
 
     public void SetSlotIndex(InventoryUi inventoryUi, int index)
     {
         Init();
         this.inventoryUi = inventoryUi;
         id = index;
+        slot = GetComponentInParent<InventorySlot>(true);
         var selectable = GetComponentInParent<CustomSelectable>(true);
         selectable.onDeselect.AddListener(OnDeselect);
         selectable.onSelect.AddListener(OnSelect);
@@ -34,6 +36,7 @@ public class InventoryCell : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public void SetItem(ItemData item, int quantity)
     {
+        currentItem = item;
         bool isValid = item != null && item.id > 0 && quantity > 0;
         gameObject.SetActive(isValid);
         if (fallbackImage)
@@ -42,7 +45,6 @@ public class InventoryCell : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         if (!isValid)
             return;
 
-        currentItem = item;
         itemIcon.sprite = item.icon;
         this.quantity = quantity;
         if (quantityLabel)
@@ -61,8 +63,9 @@ public class InventoryCell : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public void SetItem(uint itemId, int quantity)
     {
-        if (itemId == 0)
+        if (itemId == 0 || quantity <= 0)
         {
+            currentItem = null;
             gameObject.SetActive(false);
             if (fallbackImage)
                 fallbackImage.SetActive(true);

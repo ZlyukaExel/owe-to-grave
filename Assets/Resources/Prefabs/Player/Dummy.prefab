@@ -1927,6 +1927,7 @@ MonoBehaviour:
   onShot:
     m_PersistentCalls:
       m_Calls: []
+  data: {fileID: 11400000, guid: d7a999ccfc1b65a4bbc1c45ce4a58496, type: 2}
 --- !u!82 &7586599240457687106
 AudioSource:
   m_ObjectHideFlags: 0
@@ -3701,17 +3702,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentConfig:
-    weaponId: 0
+    primaryWeaponId: 1
+    secondaryWeaponId: 0
+    inCombat: 0
     pantsId: 1
     topId: 0
     shoesId: 0
     glovesId: 0
     hatId: 0
-    hairId: 1
     maskId: 0
-    inCombat: 0
+    hairId: 1
   head: {fileID: 4637191790117640679}
   weapons:
+  - {fileID: 0}
   - {fileID: 4048935957731440095}
   pants:
   - {fileID: 4980228480436541077}
@@ -3729,6 +3732,10 @@ MonoBehaviour:
   - {fileID: 4795444020751800964}
   masks:
   - {fileID: 0}
+  OnConfigChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  isActive: 1
 --- !u!1 &3690584798624282464 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -8139853090755257685, guid: b88319f50b65a7e489c96afc40d189fa, type: 3}

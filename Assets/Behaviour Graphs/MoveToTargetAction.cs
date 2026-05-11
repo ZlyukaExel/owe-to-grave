@@ -20,19 +20,46 @@ public partial class MoveToTargetAction : Action
     public BlackboardVariable<Transform> Target;
 
     [SerializeReference]
-    public BlackboardVariable<float> MinDistanceToTarget;
+    public BlackboardVariable<float> Speed = new(0.2f);
 
     [SerializeReference]
     public BlackboardVariable<CustomNavMeshAgent> CustomNavMeshAgent;
+    private float timeElapsed = 0;
+
+    protected override Status OnStart()
+    {
+        if (!Target.Value)
+            return Status.Failure;
+
+        timeElapsed = 0;
+        CustomNavMeshAgent.Value.SetTarget(Target.Value.position);
+        return Status.Running;
+    }
 
     protected override Status OnUpdate()
     {
-        Vector3 direction = CustomNavMeshAgent.Value.GetDirection(Target.Value.position);
+        if (!Target.Value)
+            return Status.Failure;
 
-        if (direction.magnitude <= MinDistanceToTarget)
+        if (timeElapsed > 0.2f)
+        {
+            timeElapsed = 0;
+            CustomNavMeshAgent.Value.SetTarget(Target.Value.position);
+        }
+        else
+            timeElapsed += Time.deltaTime;
+
+        // If destination reached
+        if (CustomNavMeshAgent.Value.ReachedDestination)
+        {
             return Status.Success;
+        }
 
-        Input.Value.SetMovementVector(new Vector2(direction.x, direction.z).normalized * 0.2f);
+        // Move to destination
+        Vector3 direction = CustomNavMeshAgent.Value.GetDirection();
+        Input.Value.SetMovementVector(
+            new Vector2(direction.x, direction.z).normalized * Speed.Value
+        );
         return Status.Running;
     }
 

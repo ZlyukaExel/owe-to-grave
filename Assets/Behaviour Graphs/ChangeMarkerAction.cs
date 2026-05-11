@@ -7,32 +7,29 @@ using Action = Unity.Behavior.Action;
 [Serializable, GeneratePropertyBag]
 [NodeDescription(
     name: "ChangeMarker",
-    story: "Set [Target] to random Marker",
+    story: "Set [Target] to random Marker via [NpcController]",
     category: "Action",
     id: "ccc2c38876308038049f1a513f4671ee"
 )]
 public partial class ChangeMarkerAction : Action
 {
     [SerializeReference]
-    public BlackboardVariable<Transform> Target;
+    public BlackboardVariable<Marker> Target;
+
+    [SerializeReference]
+    public BlackboardVariable<NPCController> NpcController;
 
     protected override Status OnStart()
     {
-        if (Target == null)
-            return Status.Failure;
-
-        var markers = GameObject.FindGameObjectsWithTag("Marker");
-
-        if (markers.Length > 0)
+        if (Target.Value == null)
         {
-            int randomIndex = UnityEngine.Random.Range(0, markers.Length);
-            Target.Value = markers[randomIndex].transform;
-            return Status.Success;
+            Target.Value = NpcController.Value.FindInitialMarker();
+        }
+        else
+        {
+            Target.Value = NpcController.Value.ChooseRandomTarget(Target.Value);
         }
 
-        Debug.LogWarning("ChangeMarkerAction: Маркеры не найдены!");
-        return Status.Failure;
+        return Status.Success;
     }
-
-    protected override Status OnUpdate() => Status.Success;
 }

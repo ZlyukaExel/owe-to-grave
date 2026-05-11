@@ -31,6 +31,11 @@ public class InventoryUi : MonoBehaviour
 
     public GameObject selectedCell;
 
+    [Header("Filtering")]
+    public ItemCategory filterCategory = ItemCategory.Any;
+    public float activeFilterAlpha = 1,
+        inactiveFilterAlpha = 0.6f;
+
     public void SetInventory(Inventory inventory)
     {
         if (this.inventory != null)
@@ -380,6 +385,7 @@ public class InventoryUi : MonoBehaviour
         LayoutRebuilder.ForceRebuildLayoutImmediate(popup);
         LayoutRebuilder.ForceRebuildLayoutImmediate(popup);
         MovePopup(cell);
+        FilterBy(filterCategory);
     }
 
     public void HidePopup() => popup.gameObject.SetActive(false);
@@ -393,7 +399,7 @@ public class InventoryUi : MonoBehaviour
 
     private IEnumerator DelayedDeselectCoroutine()
     {
-        yield return new WaitForSecondsRealtime(0.1f);
+        yield return new WaitForSecondsRealtime(0.3f);
         selectedCell = null;
         HidePopup();
         delayedDeselect = null;
@@ -413,5 +419,47 @@ public class InventoryUi : MonoBehaviour
             return;
 
         selectedCell.GetComponent<InventorySlot>().Select();
+    }
+
+    public void FilterBy(ItemCategory filterCategory)
+    {
+        for (int i = 0; i < inventory.items.Count; i++)
+        {
+            bool categoryMatches;
+            // Equipment slots are highlighted if slot category matches
+            if (i < inventory.equipmentSlots)
+            {
+                ItemCategory allowedCategory = inventory.slotDefinitions[i].allowedCategory;
+                categoryMatches =
+                    filterCategory == ItemCategory.Any || allowedCategory == filterCategory;
+            }
+            // Inventory slots are highlighted only if item category in slot matches
+            else
+            {
+                InventoryCell inventoryCell = inventoryCells[i];
+                ItemData itemData = inventoryCells[i].currentItem;
+                if (itemData && inventoryCell.quantity > 0)
+                {
+                    categoryMatches = filterCategory switch
+                    {
+                        ItemCategory.Weapon => itemData is WeaponData,
+                        ItemCategory.Clother => itemData is ClothingData,
+                        ItemCategory.Misc => itemData is not WeaponData
+                            && itemData is not ClothingData,
+                        _ => true,
+                    };
+                }
+                else
+                {
+                    categoryMatches = filterCategory == ItemCategory.Any;
+                }
+            }
+
+            inventoryCells[i].slot.GetComponent<CanvasGroup>().alpha = categoryMatches
+                ? activeFilterAlpha
+                : inactiveFilterAlpha;
+        }
+
+        this.filterCategory = filterCategory;
     }
 }
