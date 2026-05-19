@@ -16,6 +16,6 @@ public partial class IfNoEnemiesCondition : Condition
 
     public override bool IsTrue()
     {
-        return Enemy_Detector.Value.GetClosestEnemy() == null;
+        return Enemy_Detector.Value.GetClosestEnemy() != null;
     }
 }

@@ -16,55 +16,6 @@ public class NPCController : MonoBehaviour
         enemyDetector = GetComponent<EnemyDetector>();
     }
 
-    // private Marker currentMarker,
-    //     targetMarker;
-    // private bool isFleeing = false;
-    // private Vector3 fleeDirection;
-
-    // void Start()
-    // {
-    //     // FindInitialMarker();
-    //     // ChooseRandomTarget();
-    // }
-
-    // void Update()
-    // {
-    //     // if (targetMarker == null)
-    //     // {
-    //     //     ChooseRandomTarget();
-    //     //     return;
-    //     // }
-
-    //     // transform.position = Vector3.MoveTowards(
-    //     //     transform.position,
-    //     //     targetMarker.transform.position,
-    //     //     moveSpeed * Time.deltaTime
-    //     // );
-
-    //     // if (Vector3.Distance(transform.position, targetMarker.transform.position) < 0.1f)
-    //     // {
-    //     //     currentMarker = targetMarker;
-    //     //     ChooseRandomTarget();
-    //     // }
-
-    //     // Collider[] threats = Physics.OverlapSphere(transform.position, detectionRadius);
-    //     // foreach (var threat in threats)
-    //     // {
-    //     //     if (threat.CompareTag("Bullet"))
-    //     //     {
-    //     //         isFleeing = true;
-    //     //         fleeDirection = (transform.position - threat.transform.position).normalized;
-    //     //         FleeFormThreat();
-    //     //         break;
-    //     //     }
-    //     // }
-
-    //     // if (isFleeing)
-    //     // {
-    //     //     FleeFormThreat();
-    //     // }
-    // }
-
     public Marker FindInitialMarker()
     {
         float radius = detectionRadius;
@@ -91,8 +42,7 @@ public class NPCController : MonoBehaviour
             currentMarker == null
             || currentMarker.neighbors == null
             || currentMarker.neighbors.Length == 0
-        )
-            return null;
+        ) return null;
 
         Marker nextMarker = currentMarker.neighbors[
             Random.Range(0, currentMarker.neighbors.Length)
@@ -100,16 +50,6 @@ public class NPCController : MonoBehaviour
 
         return nextMarker;
     }
-
-    // void FleeFormThreat()
-    // {
-    //     Marker escapeMarker = FindEscapeMarker(fleeDirection);
-    //     if (escapeMarker != null)
-    //     {
-    //         targetMarker = escapeMarker;
-    //         // isFleeing = false;
-    //     }
-    // }
 
     public Marker FindEscapeMarker(
         NetworkIdentity threat,
@@ -120,23 +60,6 @@ public class NPCController : MonoBehaviour
     )
     {
         Vector3 direction = (transform.position - threat.transform.position).normalized;
-        // float radius = detectionRadius;
-        // while (radius <= maxDetectionRadius)
-        // {
-        //     Collider[] hits = Physics.OverlapSphere(transform.position, radius);
-        //     foreach (var hit in hits)
-        //     {
-        //         if (hit.TryGetComponent(out Marker marker))
-        //         {
-        //             Vector3 toMarker = (marker.transform.position - transform.position).normalized;
-        //             if (Vector3.Dot(toMarker, direction) > 0.5f)
-        //                 return marker;
-        //         }
-        //     }
-        //     radius += detectionStep;
-        // }
-        // return null;
-
         if (
             currentMarker == null
             || currentMarker.neighbors == null

@@ -76,12 +76,6 @@ public partial class FleeAction : Action
         }
         else timeElapsed += Time.deltaTime;
 
-        // If destination reached
-        // if (CustomNavMeshAgent.Value.ReachedDestination)
-        // {
-        //     return Status.Success;
-        // }
-
         // Move to destination
         Vector3 direction = CustomNavMeshAgent.Value.GetDirection();
         Input.Value.SetMovementVector(
