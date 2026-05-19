@@ -8,7 +8,7 @@ public class NetworkCharacterConfig : NetworkBehaviour
     [SyncVar(hook = nameof(OnConfigChangedHook))]
     public CharacterConfig syncConfig;
     public CharacterConfigManager configManager { get; private set; }
-    public UnityEvent<CharacterConfig> OnConfigChanged = new();
+    public UnityEvent<CharacterConfig, CharacterConfig> OnConfigChanged = new();
 
     [SyncVar(hook = nameof(OnActiveChangedHook))]
     public bool isActive = true;
@@ -52,7 +52,7 @@ public class NetworkCharacterConfig : NetworkBehaviour
 
     private void OnConfigChangedHook(CharacterConfig oldVal, CharacterConfig newVal)
     {
-        OnConfigChanged.Invoke(newVal);
+        OnConfigChanged.Invoke(oldVal, newVal);
     }
 
     private void OnActiveChangedHook(bool oldVal, bool newVal)

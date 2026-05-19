@@ -210,7 +210,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4048935957731440095, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       propertyPath: properties.bulletSpeed
-      value: 15
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 4213446245039002759, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       propertyPath: m_Layer
@@ -531,6 +531,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1865134388612172175}
+    - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8159872408946350322}
     - targetCorrespondingSourceObject: {fileID: 6745089949999026420, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4128742238520580748}
@@ -1029,7 +1032,8 @@ MonoBehaviour:
     m_Bits: 1097
   bulletPrefab: {fileID: 7945427853545958378, guid: 96d0daf231887f84baa571ec5ea2cd06, type: 3}
   attackAction: {fileID: 8995299064858073144, guid: cdba55201852797459211659e79fcd0d, type: 3}
-  aimAction: {fileID: -1952729956975435768, guid: cdba55201852797459211659e79fcd0d, type: 3}
+  swapWeaponsAction: {fileID: 0}
+  isMelee: 0
 --- !u!114 &1506279612592297479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1164,6 +1168,8 @@ MonoBehaviour:
   - rid: 4151108504610406844
   - rid: 4151108504610406845
   - rid: 4151108504610406846
+  - rid: 4151108504610406978
+  - rid: 8705241800303706666
   m_OriginalGraph: {fileID: 0}
   m_IsInitialised: 0
   m_IsStarted: 0
@@ -1202,6 +1208,22 @@ MonoBehaviour:
           m_Value1: 7285940538449071478
         Name: NPC Controller
         m_Value: {fileID: 1865134388612172175}
+    - rid: 4151108504610406978
+      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 10522454347927989936
+          m_Value1: 4805204087058103665
+        Name: Waiting Seconds
+        m_Value: 0
+    - rid: 8705241800303706666
+      type: {class: 'BlackboardVariable`1[[EnemyDetector, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 16548286320828918699
+          m_Value1: 16415463621683206634
+        Name: Enemy Detector
+        m_Value: {fileID: 8159872408946350322}
 --- !u!114 &3075185711589992650
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1294,7 +1316,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  inventorySize: 39
+  inventorySize: 36
   slotDefinitions:
   - maxQuantity: 1
     allowedCategory: 2
@@ -1346,9 +1368,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfe917bb79087c24a96f43a0eba9e6d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCController
-  detectionRadius: 5
-  maxDetectionRadius: 20
-  detectionStep: 5
+  detectionRadius: 20
+  maxDetectionRadius: 100
+  detectionStep: 20
+--- !u!114 &8159872408946350322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5260740160240455966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3e3a8826ed5734498ef2c1f7d78a7c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ListEnemyDetector
 --- !u!1 &5489449613937681701 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3877606035874751649, guid: dbe1828e08b32754489dc7d494784b47, type: 3}

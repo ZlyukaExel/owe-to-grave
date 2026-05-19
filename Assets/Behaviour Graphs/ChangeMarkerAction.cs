@@ -27,7 +27,7 @@ public partial class ChangeMarkerAction : Action
         }
         else
         {
-            Target.Value = NpcController.Value.ChooseRandomTarget(Target.Value);
+            Target.Value = NpcController.Value.ChooseRandomNeighbor(Target.Value);
         }
 
         return Status.Success;

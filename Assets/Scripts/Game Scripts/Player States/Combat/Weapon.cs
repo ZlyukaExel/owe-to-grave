@@ -4,8 +4,6 @@ using UnityEngine.Events;
 [RequireComponent(typeof(ObjectDisable))]
 public class Weapon : MonoBehaviour
 {
-    public WeaponProperties properties;
-
     [SerializeField]
     private Transform bulletSpawnTransform;
     public Animator animator;
@@ -22,6 +20,7 @@ public class Weapon : MonoBehaviour
     public UnityEvent<Vector3> onShot;
 
     public WeaponData data;
+    public WeaponProperties properties => data.properties;
 
     void Awake()
     {
@@ -58,13 +57,4 @@ public class Weapon : MonoBehaviour
         hidden.SetActive(false);
         GetComponent<ObjectDisable>().SetActive(false);
     }
-}
-
-[System.Serializable]
-public class WeaponProperties
-{
-    public float damage = 20,
-        bulletSpeed = 10,
-        spread = 1;
-    public int piercing = 0;
 }

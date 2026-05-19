@@ -2382,6 +2382,7 @@ MonoBehaviour:
   - {fileID: 8777154716100300863}
   - {fileID: 6813495118342770100}
   - {fileID: 5570526412455594309}
+  inputSmoothing: 3
   handBrakeAction: {fileID: 4461874679068748308, guid: cdba55201852797459211659e79fcd0d, type: 3}
 --- !u!54 &8354681184896240276
 Rigidbody:
@@ -11549,16 +11550,21 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  config:
-    weaponId: 0
+  syncConfig:
+    primaryWeaponId: 0
+    secondaryWeaponId: 0
+    inCombat: 0
     pantsId: 0
     topId: 0
     shoesId: 0
     glovesId: 0
     hatId: 0
-    hairId: 0
     maskId: 0
-    inCombat: 0
+    hairId: 0
+  OnConfigChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  isActive: 1
 --- !u!4 &1914391432765071639 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4302134543082801696, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
@@ -12090,16 +12096,21 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  config:
-    weaponId: 0
+  syncConfig:
+    primaryWeaponId: 0
+    secondaryWeaponId: 0
+    inCombat: 0
     pantsId: 0
     topId: 0
     shoesId: 0
     glovesId: 0
     hatId: 0
-    hairId: 0
     maskId: 0
-    inCombat: 0
+    hairId: 0
+  OnConfigChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  isActive: 1
 --- !u!1001 &6892666011308064356
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12799,16 +12810,21 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  config:
-    weaponId: 0
+  syncConfig:
+    primaryWeaponId: 0
+    secondaryWeaponId: 0
+    inCombat: 0
     pantsId: 0
     topId: 0
     shoesId: 0
     glovesId: 0
     hatId: 0
-    hairId: 0
     maskId: 0
-    inCombat: 0
+    hairId: 0
+  OnConfigChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  isActive: 1
 --- !u!1 &8497019981801523923 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3048041465969243319, guid: dbe1828e08b32754489dc7d494784b47, type: 3}

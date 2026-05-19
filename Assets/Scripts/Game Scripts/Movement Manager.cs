@@ -36,6 +36,10 @@ public class MovementManager : MonoBehaviour
     private CombatState combat;
     private Buffs buffs;
     private InputManager input;
+    private Vector2 smoothedVector = Vector2.zero;
+
+    [SerializeField]
+    private float animationSmoothingSpeed = 3;
 
     [SerializeField]
     private InputActionReference jumpAction,
@@ -58,6 +62,12 @@ public class MovementManager : MonoBehaviour
 
     public void MovementUpdate()
     {
+        smoothedVector = Vector2.MoveTowards(
+            smoothedVector,
+            input.movementVector,
+            Time.deltaTime * animationSmoothingSpeed
+        );
+
         isGrounded = Physics.Raycast(
             transform.position + groundRayOffset,
             -transform.up,
@@ -69,7 +79,7 @@ public class MovementManager : MonoBehaviour
         {
             runButtonPressedTime += Time.deltaTime;
 
-            bool isMoving = new Vector2(input.Vertical, input.Horizontal).magnitude > 0.1f;
+            bool isMoving = input.movementVector.magnitude > 0.1f;
             if (!runButtonPressed && !isMoving)
             {
                 noInputTimer += Time.deltaTime;
@@ -116,31 +126,23 @@ public class MovementManager : MonoBehaviour
 
     public void ActualMovement()
     {
-        Vector3 direction = new(input.Horizontal, 0, input.Vertical);
+        Vector3 inputDirection = new(input.movementVector.x, 0, input.movementVector.y);
 
         Quaternion rotation = Quaternion.Euler(0, aimingVector.value.y, 0);
-        Vector3 joystickWorldMovement = rotation * direction;
+        Vector3 worldMovement = rotation * inputDirection;
 
-        float inputMagnitude = direction.magnitude;
+        float inputMagnitude = inputDirection.magnitude;
         isMoving = inputMagnitude > 0.1f;
         if (isMoving)
         {
-            // Input can be only 0 (idle), 0.5 (slow walk), 1 (normal walk), 2 (running)
-            if (inputMagnitude > 0.66f)
-                inputMagnitude = 1;
-            else
-                inputMagnitude = 0.6f;
-
-            if (isRunning && !combat.isAimingOrShooting)
+            // Input can be only 0 (idle), 0-1 (walk), 2 (running)
+            if ((isRunning || inputMagnitude > 1.5f) && !combat.isAimingOrShooting)
                 inputMagnitude = 2;
 
             // Move character
             if (currentSpeed < 10)
                 rb.AddForce(
-                    inputMagnitude
-                        * defaultSpeed
-                        * GetSpeedModifier()
-                        * joystickWorldMovement.normalized,
+                    inputMagnitude * defaultSpeed * GetSpeedModifier() * worldMovement.normalized,
                     ForceMode.VelocityChange
                 );
         }
@@ -160,8 +162,8 @@ public class MovementManager : MonoBehaviour
 
             if (animator != null)
             {
-                animator.SetFloat("VelZ", input.SmoothedVertical);
-                animator.SetFloat("VelX", input.SmoothedHorizontal);
+                animator.SetFloat("VelZ", smoothedVector.y);
+                animator.SetFloat("VelX", smoothedVector.x);
             }
         }
         // Default state
@@ -170,7 +172,7 @@ public class MovementManager : MonoBehaviour
             // Rotate character in movement direction
             if (inputMagnitude > 0)
             {
-                Quaternion targetRotation = Quaternion.LookRotation(joystickWorldMovement);
+                Quaternion targetRotation = Quaternion.LookRotation(worldMovement);
                 transform.rotation = Quaternion.Slerp(
                     transform.rotation,
                     targetRotation,
@@ -180,7 +182,7 @@ public class MovementManager : MonoBehaviour
 
             if (animator != null)
             {
-                animator.SetFloat("VelZ", inputMagnitude); // Not smooth change cuz you'll have to handle walking state
+                animator.SetFloat("VelZ", inputMagnitude);
                 animator.SetFloat("VelX", 0);
             }
         }

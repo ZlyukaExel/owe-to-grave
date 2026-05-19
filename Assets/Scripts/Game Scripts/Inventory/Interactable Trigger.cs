@@ -11,8 +11,7 @@ public class InteractableTrigger : Trigger<InteractiveObject>
     public float triggerLengthWithOffset = 8;
     public InteractiveObject closestInteractable { private set; get; }
 
-    private GameObject takeButtonObj,
-        attackButton;
+    private GameObject takeButtonObj;
 
     [SerializeField]
     private bool checkTrigger = true;
@@ -60,7 +59,6 @@ public class InteractableTrigger : Trigger<InteractiveObject>
             if (!IsHolding())
             {
                 takeButtonObj.SetActive(false);
-                attackButton.SetActive(true);
             }
         }
     }
@@ -114,7 +112,6 @@ public class InteractableTrigger : Trigger<InteractiveObject>
         }
 
         takeButtonObj.SetActive(closestInteractable);
-        attackButton.SetActive(!closestInteractable);
     }
 
     [Header("Get Closest")]
@@ -197,8 +194,12 @@ public class InteractableTrigger : Trigger<InteractiveObject>
         base.OnDisable();
         if (PlayerInput.Instance != null)
         {
-            PlayerInput.Instance.GetAction(interactAction.action).onDown.RemoveListener(OnTakeButtonDown);
-            PlayerInput.Instance.GetAction(interactAction.action).onUp.RemoveListener(OnTakeButtonUp);
+            PlayerInput
+                .Instance.GetAction(interactAction.action)
+                .onDown.RemoveListener(OnTakeButtonDown);
+            PlayerInput
+                .Instance.GetAction(interactAction.action)
+                .onUp.RemoveListener(OnTakeButtonUp);
         }
 
         StopDraging();
@@ -216,7 +217,6 @@ public class InteractableTrigger : Trigger<InteractiveObject>
     {
         this.pLinks = pLinks;
         takeButtonObj = pLinks.ui.Find("Mobile Ui/Ground Ui/Interact Button").gameObject;
-        attackButton = pLinks.ui.Find("Mobile Ui/Ground Ui/Attack Button").gameObject;
         pLinks.cameraController.OnDistChanged += SetTriggerLength;
     }
 

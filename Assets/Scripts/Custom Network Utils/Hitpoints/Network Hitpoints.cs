@@ -48,7 +48,9 @@ public class NetworkHitpoints : NetworkBehaviour
         if (!isVulnerable || currentHp <= 0)
             return;
 
-        currentHp = Mathf.Max(0, currentHp - damageInfo.damage);
+        currentHp -= damageInfo.damage;
+        currentHp = Mathf.Max(0, currentHp);
+        currentHp = Mathf.Min(currentHp, maxHp);
 
         if (currentHp <= 0)
         {
@@ -61,15 +63,6 @@ public class NetworkHitpoints : NetworkBehaviour
             else
                 TargetDie();
         }
-    }
-
-    [Server]
-    public void Heal(float amount)
-    {
-        if (!isVulnerable || currentHp <= 0)
-            return;
-
-        currentHp = Mathf.Min(maxHp, currentHp + amount);
     }
 
     public void ChangeHitPoints(HitPointsSet hitPoints)
@@ -137,5 +130,5 @@ public enum DamageType
     Bullet,
     Item,
     Fall,
-    Insult,
+    GodPower,
 }

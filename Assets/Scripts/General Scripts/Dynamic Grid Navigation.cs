@@ -17,10 +17,13 @@ public class DynamicGridNavigation : MonoBehaviour
     private InputActionReference navigationAction;
 
     private bool isGridFocused = false;
+    private ActionByNavigation actionByNavigation;
 
     void Awake()
     {
+        actionByNavigation = GetComponent<ActionByNavigation>();
         items = GetComponentsInChildren<Selectable>();
+
         for (int i = 0; i < items.Length; i++)
         {
             if (items[i].gameObject == gameObject)
@@ -32,7 +35,11 @@ public class DynamicGridNavigation : MonoBehaviour
 
             selectable.onSelect.AddListener(() =>
             {
-                isGridFocused = true;
+                if (!isGridFocused)
+                {
+                    isGridFocused = true;
+                    actionByNavigation?.ResetElapsedTime();
+                }
                 currentIndex = indexForThisButton;
             });
 
@@ -42,7 +49,7 @@ public class DynamicGridNavigation : MonoBehaviour
             });
         }
 
-        GetComponent<ActionByNavigation>().onNavigate.AddListener(OnNavigate);
+        actionByNavigation.onNavigate.AddListener(OnNavigate);
     }
 
     void OnEnable()

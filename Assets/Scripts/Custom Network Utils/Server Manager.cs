@@ -29,14 +29,21 @@ public class ServerManager : NetworkBehaviour
         // Greeting player
         networkIdentity
             .GetComponent<ChatManager>()
-            .AddMessage("Welcome to the server, " + networkIdentity.connectionToClient.nickname);
+            .AddLocalMessage(
+                new ChatEntry(
+                    "",
+                    "Welcome to the server, " + networkIdentity.connectionToClient.nickname
+                )
+            );
 
         // Informing other players
         foreach (var player in players)
         {
             player
                 .GetComponent<ChatManager>()
-                .AddMessage(networkIdentity.connectionToClient.nickname + " has joined");
+                .AddLocalMessage(
+                    new ChatEntry("", networkIdentity.connectionToClient.nickname + " has joined")
+                );
         }
 
         // Add player

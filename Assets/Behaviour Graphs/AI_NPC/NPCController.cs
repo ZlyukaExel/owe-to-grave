@@ -1,12 +1,20 @@
-using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 
+[RequireComponent(typeof(EnemyDetector))]
 public class NPCController : MonoBehaviour
 {
     [SerializeField]
-    private float detectionRadius = 5f,
-        maxDetectionRadius = 20f,
-        detectionStep = 5f;
+    private float detectionRadius = 20f,
+        maxDetectionRadius = 100f,
+        detectionStep = 20f;
+
+    private EnemyDetector enemyDetector;
+
+    void Awake()
+    {
+        enemyDetector = GetComponent<EnemyDetector>();
+    }
 
     // private Marker currentMarker,
     //     targetMarker;
@@ -67,7 +75,7 @@ public class NPCController : MonoBehaviour
             {
                 if (hit.TryGetComponent(out Marker marker))
                 {
-                    Debug.LogWarning("NpcGoToMarker: " + marker);
+                    // Debug.LogWarning("NpcGoToMarker: " + marker);
                     return marker;
                 }
             }
@@ -77,14 +85,20 @@ public class NPCController : MonoBehaviour
         return null;
     }
 
-    public Marker ChooseRandomTarget(Marker currentMarker)
+    public Marker ChooseRandomNeighbor(Marker currentMarker)
     {
-        if (currentMarker == null || currentMarker.neighbors.Length == 0)
+        if (
+            currentMarker == null
+            || currentMarker.neighbors == null
+            || currentMarker.neighbors.Length == 0
+        )
             return null;
 
-        Marker curMarker = currentMarker.neighbors[Random.Range(0, currentMarker.neighbors.Length)];
-        Debug.LogWarning("NpcGoToMarker: " + curMarker);
-        return curMarker;
+        Marker nextMarker = currentMarker.neighbors[
+            Random.Range(0, currentMarker.neighbors.Length)
+        ];
+
+        return nextMarker;
     }
 
     // void FleeFormThreat()
@@ -98,30 +112,50 @@ public class NPCController : MonoBehaviour
     // }
 
     public Marker FindEscapeMarker(
-        Vector3 direction,
+        NetworkIdentity threat,
         float detectionRadius,
         float maxDetectionRadius,
         float detectionStep,
         Marker currentMarker
     )
     {
-        float radius = detectionRadius;
-        while (radius <= maxDetectionRadius)
+        Vector3 direction = (transform.position - threat.transform.position).normalized;
+        // float radius = detectionRadius;
+        // while (radius <= maxDetectionRadius)
+        // {
+        //     Collider[] hits = Physics.OverlapSphere(transform.position, radius);
+        //     foreach (var hit in hits)
+        //     {
+        //         if (hit.TryGetComponent(out Marker marker))
+        //         {
+        //             Vector3 toMarker = (marker.transform.position - transform.position).normalized;
+        //             if (Vector3.Dot(toMarker, direction) > 0.5f)
+        //                 return marker;
+        //         }
+        //     }
+        //     radius += detectionStep;
+        // }
+        // return null;
+
+        if (
+            currentMarker == null
+            || currentMarker.neighbors == null
+            || currentMarker.neighbors.Length == 0
+            || threat == null
+        ) return null;
+
+        foreach (var neighbor in currentMarker.neighbors)
         {
-            Collider[] hits = Physics.OverlapSphere(transform.position, radius);
-            foreach (var hit in hits)
-            {
-                if (hit.TryGetComponent(out Marker marker) && marker != currentMarker)
-                {
-                    Vector3 toMarker = (marker.transform.position - transform.position).normalized;
-                    if (Vector3.Dot(toMarker, direction) > 0.5f)
-                        return marker;
-                }
-            }
-            radius += detectionStep;
+            Vector3 toMarker = (neighbor.transform.position - transform.position).normalized;
+            if (Vector3.Dot(toMarker, direction) > 0.5f)
+                return neighbor;
         }
         return null;
     }
 
-    public void OnBulletNear() { }
+    public void OnBulletNear(DamageInfo damageInfo)
+    {
+        NetworkIdentity source = damageInfo.source;
+        enemyDetector.AddEnemy(source);
+    }
 }

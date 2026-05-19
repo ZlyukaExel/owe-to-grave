@@ -1274,8 +1274,18 @@ PrefabInstance:
         Assembly-CSharp]]'
       objectReference: {fileID: 0}
     - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+      propertyPath: 'managedReferences[4151108504610407006]'
+      value: 'Unity.Behavior Unity.Behavior.BlackboardVariable`1[[System.Single,
+        mscorlib]]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
       propertyPath: 'managedReferences[7920556813652590856]'
       value: 'Unity.Behavior Unity.Behavior.BlackboardVariable`1[[NPCController,
+        Assembly-CSharp]]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+      propertyPath: 'managedReferences[8705241800303706941]'
+      value: 'Unity.Behavior Unity.Behavior.BlackboardVariable`1[[EnemyDetector,
         Assembly-CSharp]]'
       objectReference: {fileID: 0}
     - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
@@ -1287,12 +1297,20 @@ PrefabInstance:
       value: NPC Controller
       objectReference: {fileID: 0}
     - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+      propertyPath: managedReferences[4151108504610407006].Name
+      value: Waiting Seconds
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
       propertyPath: managedReferences[7920556813652590856].Name
       value: Controller
       objectReference: {fileID: 0}
     - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+      propertyPath: managedReferences[8705241800303706941].Name
+      value: Enemy Detector
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
       propertyPath: m_BlackboardVariableOverridesList.Array.size
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
       propertyPath: managedReferences[368166279296582266].m_Value
@@ -1303,12 +1321,28 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1077689187}
     - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+      propertyPath: managedReferences[4151108504610407006].m_Value
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
       propertyPath: managedReferences[7920556813652590856].m_Value
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+      propertyPath: managedReferences[8705241800303706941].m_Value
+      value: 
+      objectReference: {fileID: 326086646}
+    - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
       propertyPath: 'm_BlackboardVariableOverridesList.Array.data[3]'
       value: 4151108504610406847
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+      propertyPath: 'm_BlackboardVariableOverridesList.Array.data[4]'
+      value: 4151108504610407006
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+      propertyPath: 'm_BlackboardVariableOverridesList.Array.data[5]'
+      value: 8705241800303706941
       objectReference: {fileID: 0}
     - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
       propertyPath: managedReferences[368166279296582266].GUID.m_Value0
@@ -1327,12 +1361,28 @@ PrefabInstance:
       value: 7285940538449071478
       objectReference: {fileID: 0}
     - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+      propertyPath: managedReferences[4151108504610407006].GUID.m_Value0
+      value: 10522454347927989936
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+      propertyPath: managedReferences[4151108504610407006].GUID.m_Value1
+      value: 4805204087058103665
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
       propertyPath: managedReferences[7920556813652590856].GUID.m_Value0
       value: 16411042755410114217
       objectReference: {fileID: 0}
     - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
       propertyPath: managedReferences[7920556813652590856].GUID.m_Value1
       value: 10679229190682508756
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+      propertyPath: managedReferences[8705241800303706941].GUID.m_Value0
+      value: 16548286320828918699
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+      propertyPath: managedReferences[8705241800303706941].GUID.m_Value1
+      value: 16415463621683206634
       objectReference: {fileID: 0}
     - target: {fileID: 4776691794294590372, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1383,6 +1433,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+--- !u!114 &326086646 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8159872408946350322, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+  m_PrefabInstance: {fileID: 326086645}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3e3a8826ed5734498ef2c1f7d78a7c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ListEnemyDetector
 --- !u!1 &363643145
 GameObject:
   m_ObjectHideFlags: 0

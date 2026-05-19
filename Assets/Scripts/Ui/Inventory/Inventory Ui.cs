@@ -10,9 +10,6 @@ public class InventoryUi : MonoBehaviour
     private Inventory inventory;
 
     [SerializeField]
-    private GameObject cellPrefab;
-
-    [SerializeField]
     private Transform cellContainer;
     private RectTransform popup;
 
@@ -43,37 +40,16 @@ public class InventoryUi : MonoBehaviour
 
         this.inventory = inventory;
 
-        // Clear whole inventory cells in container
-        // Except first slot (since it holds links)
-        for (int i = cellContainer.childCount - 1; i > 0; i--)
-        {
-            var cellToDelete = cellContainer.GetChild(i);
-            cellToDelete.SetParent(null);
-            Destroy(cellToDelete.gameObject);
-        }
-
-        // Setup equipment and first slots
-        InventorySlot[] fixedSlots = GetComponentsInChildren<InventorySlot>();
-        if (fixedSlots.Length != inventory.equipmentSlots + 1)
-            throw new System.Exception("Ui equipment slots don't match with Inventory");
-        for (int i = 0; i < fixedSlots.Length; i++)
-        {
-            SetupSlot(fixedSlots[i].transform, i);
-        }
-
-        // Creating new inventory slots
-        for (
-            int i = inventory.equipmentSlots + 1;
-            i < inventory.inventorySize + inventory.equipmentSlots;
-            i++
-        )
-        {
-            GameObject cellObj = Instantiate(cellPrefab, cellContainer);
-            SetupSlot(cellObj.transform, i);
-        }
+        // Setup inventory
         inventoryCells = GetComponentsInChildren<InventoryCell>(true);
         if (inventoryCells.Length != inventory.equipmentSlots + inventory.inventorySize)
-            throw new System.Exception("Inventory size not matches with Ui");
+            throw new System.Exception(
+                $"Inventory size not matches with Ui: {inventoryCells.Length}, {inventory.equipmentSlots + inventory.inventorySize}"
+            );
+        for (int i = 0; i < inventoryCells.Length; i++)
+        {
+            SetupSlot(inventoryCells[i].transform.parent, i);
+        }
 
         inventory.onItemChanged.AddListener(UpdateItem);
 

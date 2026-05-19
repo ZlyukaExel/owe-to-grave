@@ -11,7 +11,7 @@ public static class DeathMessages
             DamageType.Bullet => $"Player {player.entityName} shot down by {killerName}",
             DamageType.Item => $"Player {player.entityName} was beat up by {killerName}",
             DamageType.Fall => $"Player {player.entityName} fell to his death",
-            DamageType.Insult => $"Player {player.entityName} suffered a stroke",
+            DamageType.GodPower => $"Player {player.entityName} was terminated",
             _ => $"Player {player.entityName} died",
         };
     }

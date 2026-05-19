@@ -8,7 +8,7 @@ public class CombatState : State
 {
     [HideInInspector]
     public bool inCombat,
-        isAiming,
+        isCurrentlyAiming,
         isShooting,
         isAimingOrShooting;
     public int currentSet;
@@ -20,8 +20,6 @@ public class CombatState : State
     public float aimingWeight = 0,
         aimingWeightSpeedModifier = 3;
     private float zAxisSaver;
-    private GameObject aimFiller,
-        aimFiller2;
     private Animator crosshairAnimator;
     private float notInCombatTime = 0;
     private Vector2Reference aimingVector;
@@ -37,14 +35,16 @@ public class CombatState : State
 
     [SerializeField]
     private InputActionReference attackAction,
-        aimAction;
+        swapWeaponsAction;
     private InputManager input;
+    public bool isMelee;
 
     public override void Awake()
     {
         base.Awake();
         GetComponent<DefaultState>().onStateEnter.AddListener(() => SetListeners(true));
         GetComponent<DefaultState>().onStateExit.AddListener(() => SetListeners(false));
+
         aimingVector = GetComponent<Vector2Reference>();
     }
 
@@ -55,10 +55,12 @@ public class CombatState : State
         if (pLinks)
         {
             Transform combatUi = pLinks.ui.Find("Mobile Ui/Ground Ui");
-            aimFiller = combatUi.Find("Aim Button/Filler").gameObject;
-            aimFiller2 = combatUi.Find("Aim Button 2/Filler").gameObject;
             crosshairAnimator = pLinks.ui.Find("Crosshair").GetComponent<Animator>();
+
+            l.input.GetAction(swapWeaponsAction.action).onUp.AddListener(l.inventory.SwapWeapons);
         }
+
+        l.netConfig.OnConfigChanged.AddListener(OnConfigChanged);
 
         // canStandTrigger = l
         //     .transform.Find("Armature/Point Of Scaling/Can Stand Trigger")
@@ -76,20 +78,17 @@ public class CombatState : State
         if (pLinks)
         {
             if (!pLinks.cameraController.isFirstPerson)
-                pLinks.cameraController.positionOffset.x = 0.7f;
+                pLinks.cameraController.positionOffset.x = 0.3f;
         }
 
         SetListeners(true);
         input.GetAction(attackAction.action)?.onUp.AddListener(OnShootButtonUp);
-        input.GetAction(aimAction.action)?.onUp.AddListener(OnAimButtonUp);
 
         l.animator.SetBool("inCombat", true);
 
         CharacterConfig config = l.netConfig.syncConfig;
         config.inCombat = true;
         l.netConfig.RequestConfigChange(config);
-
-        l.primaryWeapon?.onShot.AddListener(SpawnBullet);
 
         currentSet = 1;
 
@@ -101,42 +100,58 @@ public class CombatState : State
         l.movement.MovementUpdate();
         l.carTrigger.CarTriggerUpdate();
 
-        float target = isAiming ? 1f : 0f;
+        // Aiming ray checks there's no obstacle in the way
+        Quaternion yRotation = Quaternion.Euler(0, aimingVector.value.y, 0);
+        Vector3 origin = transform.position + (yRotation * new Vector3(0.2f, 1.5f, 0));
+
+        Vector2 angles = new(aimingVector.value.x, aimingVector.value.y);
+        Vector3 direction = Quaternion.Euler(angles.x, angles.y, 0) * Vector3.forward * 0.75f;
+
+        Debug.DrawRay(origin, direction, Color.red);
+        bool wallInFrontOf = Physics.Raycast(
+            origin,
+            direction,
+            out RaycastHit _,
+            0.75f,
+            combatLayers
+        );
+        bool aimOrAttackPressed = shootButtonPressed || aimButtonClicked || aimButtonPressed;
+        bool canAttackMelee = shootButtonPressed && isMelee;
+        bool canShoot = aimOrAttackPressed && !wallInFrontOf;
+        isAimingOrShooting = canAttackMelee || canShoot;
+
+        float target = isAimingOrShooting ? 1f : 0f;
         aimingWeight = Mathf.MoveTowards(
             aimingWeight,
             target,
             aimingWeightSpeedModifier * Time.deltaTime
         );
 
-        // Aiming ray checks there's no obstacle in the way
-        Vector3 origin = l.transform.position + new Vector3(-0.2f, 1.25f, 0);
-        Vector2 angles = new(aimingVector.value.x, aimingVector.value.y);
-        Vector3 direction = Quaternion.Euler(angles.x, angles.y, 0) * Vector3.forward * 0.75f;
-
-        Debug.DrawRay(origin, direction, Color.red);
-        isAimingOrShooting =
-            (shootButtonPressed || aimButtonClicked || aimButtonPressed)
-            && !Physics.Raycast(origin, direction, out RaycastHit _, 0.75f, combatLayers);
-
         if (aimButtonPressed)
             aimButtonPressedTime += Time.deltaTime;
 
-        if (isAimingOrShooting)
+        if (aimOrAttackPressed)
         {
-            AimingAndShotingUpdate();
             notInCombatTime = 0;
         }
         else
         {
-            StopAim();
-            StopShooting();
-
             // Exit combat after 5 seconds
             notInCombatTime += Time.deltaTime;
             if (notInCombatTime > outOfCombatTime)
             {
                 l.stateManager.SetState(EnumState.Default);
             }
+        }
+
+        if (isAimingOrShooting)
+        {
+            AimingAndShotingUpdate();
+        }
+        else
+        {
+            StopAim();
+            StopShooting();
         }
     }
 
@@ -167,7 +182,6 @@ public class CombatState : State
 
         SetListeners(false);
         input.GetAction(attackAction.action)?.onUp.RemoveListener(OnShootButtonUp);
-        input.GetAction(aimAction.action)?.onUp.RemoveListener(OnAimButtonUp);
 
         inCombat = false;
 
@@ -179,12 +193,10 @@ public class CombatState : State
         if (set)
         {
             input.GetAction(attackAction.action)?.onDown.AddListener(OnShootButtonDown);
-            input.GetAction(aimAction.action)?.onDown.AddListener(OnAimButtonDown);
         }
         else
         {
             input.GetAction(attackAction.action)?.onDown.RemoveListener(OnShootButtonDown);
-            input.GetAction(aimAction.action)?.onDown.RemoveListener(OnAimButtonDown);
         }
     }
 
@@ -192,21 +204,40 @@ public class CombatState : State
     {
         l.animator.SetFloat("RotX", Mathf.DeltaAngle(0, aimingVector.value.x));
 
-        // Start aiming
-        if (!isAiming)
+        if (!isCurrentlyAiming && !isMelee)
         {
             StartAim();
         }
 
-        l.primaryWeapon?.SetShooting(aimingWeight >= 0.9f && shootButtonPressed);
-        l.animator.SetBool("isAttacking", aimingWeight >= 0.9f && shootButtonPressed);
+        bool canAttack;
+        if (isMelee)
+            canAttack = shootButtonPressed;
+        else
+            canAttack = aimingWeight >= 0.9f && shootButtonPressed;
 
-        // Slow down when shooting
+        l.primaryWeapon?.SetShooting(canAttack);
+        l.animator.SetBool("isAttacking", canAttack);
+
         if (shootButtonPressed && !isShooting)
         {
             l.buffs.AddBuff(shootingSlowdown);
             isShooting = true;
         }
+    }
+
+    public void OnConfigChanged(CharacterConfig oldConfig, CharacterConfig newConfig)
+    {
+        l.netConfig.configManager.weapons[oldConfig.primaryWeaponId]
+            ?.onShot.RemoveListener(SpawnBullet);
+
+        isMelee = l.primaryWeapon ? l.primaryWeapon.properties.isMelee : true;
+        if (isMelee)
+        {
+            aimButtonClicked = aimButtonPressed = false;
+            StopAim();
+        }
+
+        l.primaryWeapon?.onShot.AddListener(SpawnBullet);
     }
 
     public void SpawnBullet(Vector3 spawnerPosition)
@@ -266,6 +297,7 @@ public class CombatState : State
         if (!inCombat)
         {
             l.stateManager.SetState(EnumState.Combat);
+            l.animator.Update(0); // Force update to enter combat state immediate
         }
 
         shootButtonPressed = true;
@@ -292,10 +324,8 @@ public class CombatState : State
 
         if (aimButtonClicked) // Stop aim
         {
-            if (isAiming)
-                StopAim();
-
             aimButtonClicked = false;
+            StopAim();
         }
         else // Start aim
         {
@@ -304,11 +334,6 @@ public class CombatState : State
             if (pLinks)
             {
                 zAxisSaver = pLinks.cameraController.positionOffset.z;
-
-                //#if UNITY_ANDROID
-                aimFiller?.SetActive(true);
-                aimFiller2?.SetActive(true);
-                //#endif
             }
         }
     }
@@ -317,17 +342,14 @@ public class CombatState : State
     {
         if (aimButtonPressed)
         {
+            aimButtonPressed = false;
+            aimButtonPressedTime = 0;
+
             if (aimButtonPressedTime > 0.15f) // Stop aim
-            {
-                if (isAiming)
-                    StopAim();
-            }
+                StopAim();
             else
                 aimButtonClicked = true;
         }
-
-        aimButtonPressed = false;
-        aimButtonPressedTime = 0;
     }
 
     private void StartAim()
@@ -356,12 +378,12 @@ public class CombatState : State
             pLinks.interactableTrigger.SetCheckTrigger(false);
         }
 
-        isAiming = true;
+        isCurrentlyAiming = true;
     }
 
     private void StopAim()
     {
-        if (!isAiming)
+        if (!isCurrentlyAiming)
             return;
 
         l.buffs.RemoveBuff(aimingSlowdown);
@@ -386,14 +408,11 @@ public class CombatState : State
                 crosshairAnimator.Play("AimAppears");
             }
 
-            aimFiller.SetActive(false);
-            aimFiller2.SetActive(false);
-
             pLinks.interactableTrigger.SetCheckTrigger(true);
             //#endif
         }
 
-        isAiming = isAimingOrShooting = false;
+        isCurrentlyAiming = isAimingOrShooting = false;
         l.movement.ActualMovement();
     }
 

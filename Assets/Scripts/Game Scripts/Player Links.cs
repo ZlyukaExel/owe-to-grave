@@ -36,10 +36,13 @@ public class PlayerLinks : Links
         input = PlayerInput.Instance;
 
         Inventory inventory = GetComponent<Inventory>();
+        inventory.SetTarget(cameraPivot);
+        ui.parent.Find("Inventory/Horizontal/Inventory")
+            .GetComponent<InventoryUi>()
+            .SetInventory(inventory);
         ui.parent.Find("Inventory/Horizontal/Player Inventory")
             .GetComponent<InventoryUi>()
             .SetInventory(inventory);
-        inventory.SetTarget(cameraPivot);
 
         base.Start();
 

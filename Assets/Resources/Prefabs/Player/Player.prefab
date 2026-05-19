@@ -78,7 +78,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4048935957731440095, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       propertyPath: properties.bulletSpeed
-      value: 15
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 4131505230461416472, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       propertyPath: m_Mesh
@@ -789,7 +789,8 @@ MonoBehaviour:
     m_Bits: 1097
   bulletPrefab: {fileID: 7945427853545958378, guid: 96d0daf231887f84baa571ec5ea2cd06, type: 3}
   attackAction: {fileID: 8995299064858073144, guid: cdba55201852797459211659e79fcd0d, type: 3}
-  aimAction: {fileID: -1952729956975435768, guid: cdba55201852797459211659e79fcd0d, type: 3}
+  swapWeaponsAction: {fileID: -9099626225023012491, guid: cdba55201852797459211659e79fcd0d, type: 3}
+  isMelee: 0
 --- !u!114 &389755085867742700
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -980,7 +981,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  inventorySize: 39
+  inventorySize: 36
   slotDefinitions:
   - maxQuantity: 1
     allowedCategory: 2

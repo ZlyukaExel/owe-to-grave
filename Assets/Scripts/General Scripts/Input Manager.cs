@@ -6,15 +6,8 @@ using UnityEngine.InputSystem;
 
 public class InputManager : MonoBehaviour
 {
-    public float Vertical { get; protected set; }
-    public float Horizontal { get; protected set; }
-    public float MouseHorizontal { get; protected set; }
-    public float MouseVertical { get; protected set; }
-
-    [SerializeField]
-    private float smoothingSpeed = 3;
-    public float SmoothedVertical { get; protected set; }
-    public float SmoothedHorizontal { get; protected set; }
+    public Vector2 movementVector = Vector2.zero,
+        mouseVector = Vector2.zero;
 
     protected List<InputManagerAction> inputMabagerActions = new();
 
@@ -29,21 +22,6 @@ public class InputManager : MonoBehaviour
             if (action.type == InputActionType.Button)
                 inputMabagerActions.Add(new InputManagerAction(action, pressed));
         }
-    }
-
-    public virtual void Update()
-    {
-        // Smoothly changing input
-        SmoothedVertical = Mathf.MoveTowards(
-            SmoothedVertical,
-            Vertical,
-            Time.deltaTime * smoothingSpeed
-        );
-        SmoothedHorizontal = Mathf.MoveTowards(
-            SmoothedHorizontal,
-            Horizontal,
-            Time.deltaTime * smoothingSpeed
-        );
     }
 
     public InputManagerAction GetAction(InputAction inputAction)
@@ -68,14 +46,12 @@ public class InputManager : MonoBehaviour
 
     public void SetMovementVector(Vector2 movement)
     {
-        Horizontal = movement.x;
-        Vertical = movement.y;
+        movementVector = movement;
     }
 
     public void SetMouseVector(Vector2 mouse)
     {
-        MouseHorizontal = mouse.x;
-        MouseVertical = mouse.y;
+        mouseVector = mouse;
     }
 }
 

@@ -88,4 +88,9 @@ public class ActionByNavigation : MonoBehaviour, ISelectHandler, IDeselectHandle
     {
         isSelected = true;
     }
+
+    public void ResetElapsedTime()
+    {
+        timeElapsed = 0;
+    }
 }

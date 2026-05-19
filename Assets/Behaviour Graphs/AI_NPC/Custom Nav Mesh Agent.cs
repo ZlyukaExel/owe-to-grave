@@ -4,7 +4,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class CustomNavMeshAgent : MonoBehaviour
 {
-    private NavMeshAgent agent;
+    public NavMeshAgent agent { private set; get; }
 
     void Awake() => agent = GetComponent<NavMeshAgent>();
 
@@ -14,13 +14,30 @@ public class CustomNavMeshAgent : MonoBehaviour
         agent.updateRotation = false;
     }
 
-    public Vector3 GetDirection(Vector3 targetPosition)
+    public void SetTarget(Vector3 targetPosition)
     {
         agent.SetDestination(targetPosition);
+    }
+
+    public bool ReachedDestination =>
+        !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance;
+
+    public Vector3 GetDirection()
+    {
         agent.nextPosition = transform.position;
-        Vector3 direction = agent.steeringTarget - transform.position;
-        if (agent.remainingDistance < agent.stoppingDistance)
+
+        // While pending path, return straight forward direction
+        if (agent.pathPending)
+        {
+            return (agent.destination - transform.position).normalized;
+        }
+
+        if (agent.remainingDistance <= agent.stoppingDistance)
+        {
+            // print(agent.gameObject.name + " got to the target");
             return Vector3.zero;
-        return direction.normalized;
+        }
+
+        return agent.desiredVelocity;
     }
 }
