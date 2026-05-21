@@ -14,13 +14,32 @@ public class Entity : NetworkBehaviour
     protected NetworkHitpoints hp;
 
     [SyncVar]
-    public NetworkIdentity currentIdentity; // TODO: change by seat, on start
+    public NetworkIdentity currentNetworkIdentity;
 
     private void Awake()
     {
         hp = GetComponent<NetworkHitpoints>();
         hp.onDeath.AddListener(OnDeath);
         OnNicknameChanged("", entityName);
+    }
+
+    private void Start()
+    {
+        if (!(netIdentity.connectionToClient == null && isServer || isOwned))
+            return;
+
+        ResetCurrentNetworkIdentity();
+    }
+
+    [Command(requiresAuthority = false)]
+    public void SetCurrentNetworkIdentity(NetworkIdentity newIdentity)
+    {
+        currentNetworkIdentity = newIdentity;
+    }
+
+    public void ResetCurrentNetworkIdentity()
+    {
+        SetCurrentNetworkIdentity(netIdentity);
     }
 
     private void OnNicknameChanged(string oldName, string newName)

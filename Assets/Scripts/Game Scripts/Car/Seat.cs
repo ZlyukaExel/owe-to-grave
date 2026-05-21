@@ -68,6 +68,7 @@ public class Seat : InteractiveObject
         dummyCfg.inCombat = false;
         dummyNetworkConfig.RequestConfigChange(dummyCfg);
         characterNetworkConfig.OnConfigChanged.AddListener(OnCharacterConfigChanged);
+        character.GetComponent<Entity>().SetCurrentNetworkIdentity(netIdentity);
 
         Links l = character.GetComponent<Links>();
         PlayerLinks pLinks = l as PlayerLinks;
@@ -125,12 +126,16 @@ public class Seat : InteractiveObject
             Color newColor = crosshair.color;
             newColor.a = 0;
             crosshair.color = newColor;
+
             pLinks.cameraController.ChangeTarget(
                 dummy.transform,
                 pLinks,
                 firstPersonCameraPivot,
                 thirdPersonCameraPivot
             );
+
+            pLinks.interactableTrigger.StopDraging();
+            pLinks.interactableTrigger.SetCheckTrigger(false);
         }
 
         input.GetAction(carAction.action).onUp.AddListener(Stand);
@@ -150,6 +155,7 @@ public class Seat : InteractiveObject
         NetworkCharacterConfig dummyNetworkConfig = dummy.GetComponent<NetworkCharacterConfig>();
         characterNetworkConfig.OnConfigChanged.RemoveListener(OnCharacterConfigChanged);
         characterNetworkConfig.CmdSetActive(true);
+        currentCharacter.GetComponent<Entity>().ResetCurrentNetworkIdentity();
 
         Links l = currentCharacter.GetComponent<Links>();
         PlayerLinks pLinks = l as PlayerLinks;
@@ -222,6 +228,9 @@ public class Seat : InteractiveObject
                 currentCharacter.transform.Find("Third Person Camera Pivot"),
                 currentCharacter.transform.Find("First Person Camera Pivot")
             );
+
+            pLinks.interactableTrigger.ResetTrigger();
+            pLinks.interactableTrigger.SetCheckTrigger(true);
         }
 
         l.hitpoints.ChangeHitPoints(currentCharacter.GetComponent<HitPointsSet>());

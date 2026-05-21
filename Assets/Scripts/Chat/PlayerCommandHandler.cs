@@ -256,9 +256,7 @@ public class PlayerCommandHandler : NetworkBehaviour
 
         if (int.TryParse(args[2], out int amount))
         {
-            var statsManager = GetComponent<NetworkCharacteristics>();
-
-            if (statsManager != null)
+            if (TryGetComponent<NetworkCharacteristics>(out var statsManager))
             {
                 statsManager.CmdAddSkillExperience(args[1], amount);
                 Debug.Log(
@@ -267,7 +265,9 @@ public class PlayerCommandHandler : NetworkBehaviour
             }
             else
             {
-                Debug.Log("<color=red>NetworkPlayerManager component not found on player!</color>");
+                Debug.Log(
+                    "<color=red>NetworkCharacteriscics component not found on player!</color>"
+                );
             }
         }
         else

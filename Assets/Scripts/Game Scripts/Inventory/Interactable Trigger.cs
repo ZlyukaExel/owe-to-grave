@@ -210,6 +210,7 @@ public class InteractableTrigger : Trigger<InteractiveObject>
         if (closestInteractable is NetworkItem item)
         {
             item.StopHolding();
+            closestInteractable = null;
         }
     }
 

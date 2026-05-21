@@ -12,7 +12,7 @@ public class CameraSettings : BaseSettingsPanel
         vertAdjSlider;
 
     [SerializeField]
-    private UiList autoRotationList;
+    private Toggle autoRotationList;
 
     [Header("References")]
     [SerializeField]
@@ -37,7 +37,7 @@ public class CameraSettings : BaseSettingsPanel
         vertAdjSlider.onValueChanged.AddListener(value => OnSettingChanged());
 
         if (autoRotationList != null)
-            autoRotationList.onValueChanged.AddListener(OnSettingChanged);
+            autoRotationList.onValueChanged.AddListener(isOn => OnSettingChanged());
     }
 
     private void Start()
@@ -63,7 +63,7 @@ public class CameraSettings : BaseSettingsPanel
         if (autoRotationList != null)
         {
             int autoRot = PlayerPrefs.GetInt("AutoRotationEnabled", 1);
-            autoRotationList.SetValue(autoRot);
+            autoRotationList.isOn = autoRot == 1;
         }
 
         if (saveButton != null)
@@ -83,8 +83,8 @@ public class CameraSettings : BaseSettingsPanel
 
         if (autoRotationList != null)
         {
-            string val = autoRotationList.GetValue();
-            PlayerPrefs.SetInt("AutoRotationEnabled", val == "Включена" ? 1 : 0);
+            bool val = autoRotationList.isOn;
+            PlayerPrefs.SetInt("AutoRotationEnabled", val ? 1 : 0);
         }
 
         CameraController camController = FindFirstObjectByType<CameraController>();

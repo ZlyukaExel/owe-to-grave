@@ -19,6 +19,6 @@ public partial class IfNoEnemiesCondition : Condition
 
     public override bool IsTrue()
     {
-        return Enemy_Detector.Value.GetClosestEnemy() != Must_Have_No_Enemies.Value;
+        return Enemy_Detector.Value.GetEnemies().Count == 0 == Must_Have_No_Enemies.Value;
     }
 }

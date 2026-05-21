@@ -54,7 +54,10 @@ public partial class FleeAction : Action
         if (CustomNavMeshAgent.Value.ReachedDestination || timeElapsed > 0.3f)
         {
             timeElapsed = 0;
-            NetworkIdentity threat = EnemyDetector.Value.GetClosestEnemy();
+            NetworkIdentity threat = EnemyDetector
+                .Value.GetClosestEnemy()
+                .entity.currentNetworkIdentity;
+
             if (threat == null)
                 return Status.Success;
             else

@@ -777,6 +777,7 @@ MonoBehaviour:
   - {fileID: 4546414353998530309}
   - {fileID: 4402073845533899290}
   - {fileID: 8407583282041037836}
+  - {fileID: 4220832011797503087}
 --- !u!114 &176556713951728422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -795,6 +796,7 @@ MonoBehaviour:
   syncInterval: 0
   entityName: NPC
   textTag: {fileID: 1124472782415900678}
+  currentNetworkIdentity: {fileID: 0}
 --- !u!114 &2344521096632744380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1026,7 +1028,6 @@ MonoBehaviour:
   isCurrentlyAiming: 0
   isShooting: 0
   isAimingOrShooting: 0
-  currentSet: 0
   outOfCombatTime: 3
   aimingWeight: 0
   aimingWeightSpeedModifier: 3
@@ -1162,7 +1163,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5260740160240455966}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
   m_Name: 

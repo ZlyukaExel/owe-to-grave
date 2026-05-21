@@ -9664,8 +9664,8 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 38575857}
   - {fileID: 64713727}
+  - {fileID: 38575857}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -9685,13 +9685,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd376b284a189b54e957b7aed27b1acc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  saveButton: {fileID: 0}
+  saveButton: {fileID: 1406686166}
   cancelButton: {fileID: 890765289}
   graphicsQualityText: {fileID: 962974707}
   shadowsQualityText: {fileID: 164273700}
   fpsLockText: {fileID: 578436328}
-  resolutionDropdown: {fileID: 0}
-  windowModeDropdown: {fileID: 0}
+  resolutionDropdown: {fileID: 193906187}
+  windowModeDropdown: {fileID: 1942644309}
   saveOrGoScreen: {fileID: 2062710792}
   settingsMenu: {fileID: 84516436}
   onExit:
@@ -12432,8 +12432,8 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2123002895}
   - {fileID: 1690881836}
+  - {fileID: 2123002895}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -12516,13 +12516,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2469be10866ccb449ba36b61b00e518, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  saveButton: {fileID: 0}
+  saveButton: {fileID: 1747149451}
   cancelButton: {fileID: 622124929}
   horSensSlider: {fileID: 1818916594}
   vertSensSlider: {fileID: 1379387986}
   horAdjSlider: {fileID: 975131626}
   vertAdjSlider: {fileID: 661257721}
-  autoRotationList: {fileID: 0}
+  autoRotationList: {fileID: 661318282}
   saveOrGoScreen: {fileID: 2062710792}
   settingsMenu: {fileID: 84516436}
   onExit:
@@ -21548,8 +21548,8 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 976517997}
   - {fileID: 885071139}
+  - {fileID: 976517997}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -21569,7 +21569,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 014077d72ca42f542a544fd6dba4d1a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  saveButton: {fileID: 0}
+  saveButton: {fileID: 1675838629}
   cancelButton: {fileID: 1050724774}
   masterVolumeSlider: {fileID: 952068180}
   musicVolumeSlider: {fileID: 230839583}

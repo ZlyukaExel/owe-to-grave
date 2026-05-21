@@ -4,37 +4,57 @@ using UnityEngine;
 
 public class ListEnemyDetector : EnemyDetector
 {
-    public readonly List<NetworkIdentity> enemies = new();
+    public readonly List<NetworkIdentityEntity> enemies = new();
 
     public override bool IsEnemy(NetworkIdentity character) => true;
 
     public override void AddEnemy(NetworkIdentity character)
     {
-        if (!IsEnemy(character))
+        if (character == null || !IsEnemy(character))
             return;
 
-        enemies.Add(character);
+        if (enemies.Exists(e => e.networkIdentity == character))
+            return;
+
+        enemies.Add(new NetworkIdentityEntity(character, character.GetComponent<Entity>()));
     }
 
     public override void RemoveEnemy(NetworkIdentity character)
     {
-        enemies.Remove(character);
+        if (character == null)
+            return;
+
+        enemies.RemoveAll(enemy => character.Equals(enemy.networkIdentity));
     }
 
-    public override NetworkIdentity GetClosestEnemy()
+    public override NetworkIdentityEntity GetClosestEnemy()
     {
-        NetworkIdentity closestEnemy = null;
-        float closestDistance = Mathf.Infinity;
-        foreach (var enemy in enemies)
+        NetworkIdentityEntity closestEnemyEntity = default;
+        float closestDistanceSqr = Mathf.Infinity;
+        Vector3 currentPosition = transform.position;
+
+        for (int i = enemies.Count - 1; i >= 0; i--)
         {
-            var currentDistance = Vector3.Distance(transform.position, enemy.transform.position);
-            if (currentDistance < closestDistance)
+            var enemyIdentity = enemies[i].networkIdentity;
+            if (enemyIdentity == null)
             {
-                closestDistance = currentDistance;
-                closestEnemy = enemy;
+                enemies.RemoveAt(i);
+                continue;
+            }
+
+            float currentDistanceSqr = (
+                currentPosition - enemyIdentity.transform.position
+            ).sqrMagnitude;
+
+            if (currentDistanceSqr < closestDistanceSqr)
+            {
+                closestDistanceSqr = currentDistanceSqr;
+                closestEnemyEntity = enemies[i];
             }
         }
 
-        return closestEnemy;
+        return closestEnemyEntity;
     }
+
+    public override List<NetworkIdentityEntity> GetEnemies() => enemies;
 }

@@ -21,7 +21,7 @@ public class NetworkItem : InteractiveObject
     [SerializeField]
     private float holdButtonTime = 0.15f,
         takeButtonPressedTime;
-    private InteractableTrigger interactableTrigger;
+    private PlayerLinks pLinks;
     private AnyDirectionSlider rotateField;
     private Image takeButtonFiller;
     private bool isHeld = false,
@@ -43,9 +43,9 @@ public class NetworkItem : InteractiveObject
         if (isHeld)
         {
             Vector3 dragDirection =
-                interactableTrigger.transform.position
-                + interactableTrigger.transform.forward
-                    * interactableTrigger.triggerLengthWithOffset
+                pLinks.interactableTrigger.transform.position
+                + pLinks.interactableTrigger.transform.forward
+                    * pLinks.interactableTrigger.triggerLengthWithOffset
                 - rb.worldCenterOfMass;
 
             // Drag the item
@@ -54,8 +54,8 @@ public class NetworkItem : InteractiveObject
             // Rotate the item
             SetRotation(
                 new(
-                    interactableTrigger.transform.eulerAngles.x + rotateField.y,
-                    interactableTrigger.transform.eulerAngles.y + rotateField.x,
+                    pLinks.interactableTrigger.transform.eulerAngles.x + rotateField.y,
+                    pLinks.interactableTrigger.transform.eulerAngles.y + rotateField.x,
                     0
                 )
             );
@@ -140,8 +140,8 @@ public class NetworkItem : InteractiveObject
         PlayerLinks pLinks = character.GetComponent<PlayerLinks>();
         if (!pLinks.cameraController.isFirstPerson)
             pLinks.cameraController.positionOffset.x = 0.7f;
-        interactableTrigger = pLinks.interactableTrigger;
-        interactableTrigger.SetCheckTrigger(false);
+        this.pLinks = pLinks;
+        pLinks.interactableTrigger.SetCheckTrigger(false);
         rotateField = pLinks
             .ui.Find("Mobile Ui/Ground Ui/Rotate Field")
             .GetComponent<AnyDirectionSlider>();
@@ -159,16 +159,13 @@ public class NetworkItem : InteractiveObject
 
         if (isHeld)
         {
-            PlayerLinks pLinks = character.GetComponent<PlayerLinks>();
-
             // If is holding
             if (isHeldCont)
             {
-                if (!pLinks.stateManager.combatState.isAimingOrShooting)
-                    pLinks.cameraController.positionOffset.x = 0;
-
                 SetVelocity(
-                    takeButtonPressedTime * throwingForce * interactableTrigger.transform.forward
+                    takeButtonPressedTime
+                        * throwingForce
+                        * pLinks.interactableTrigger.transform.forward
                 );
                 StopHolding();
             }
@@ -178,11 +175,7 @@ public class NetworkItem : InteractiveObject
                 // Take in
                 if (takeButtonPressedTime < holdButtonTime)
                 {
-                    if (!pLinks.stateManager.combatState.isAimingOrShooting)
-                        pLinks.cameraController.positionOffset.x = 0;
-
                     SetInteractable(true);
-
                     StopHolding();
                     character.GetComponent<Inventory>().TakeIn(netIdentity);
                 }
@@ -197,12 +190,14 @@ public class NetworkItem : InteractiveObject
 
     public void StopHolding()
     {
-        if (!interactableTrigger)
+        if (!pLinks)
             return;
 
+        if (!pLinks.stateManager.combatState.isAimingOrShooting)
+            pLinks.cameraController.positionOffset.x = 0;
         takeButtonFiller.fillAmount = 0;
-        interactableTrigger.SetCheckTrigger(true);
-        interactableTrigger = null;
+        pLinks.interactableTrigger.SetCheckTrigger(true);
+        pLinks = null;
         rotateField.gameObject.SetActive(false);
         rotateField = null;
         takeButtonFiller = null;
@@ -219,5 +214,6 @@ public class NetworkItem : InteractiveObject
         this.isInteractable = isInteractable;
     }
 
-    public bool IsHeldBy(InteractableTrigger trigger) => interactableTrigger == trigger;
+    public bool IsHeldBy(InteractableTrigger trigger) =>
+        pLinks && pLinks.interactableTrigger == trigger;
 }
