@@ -606,17 +606,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogueEditor.NPCConversation
   CurrentIDCounter: 16
-  json: '{"Options":[{"Connections":[{"__type":"EditableSpeechConnection:#DialogueEditor","Conditions":[],"NodeUID":11}],"EditorInfo":{"isRoot":false,"xPos":352.68573,"yPos":151.799988},"ID":9,"ParamActions":[{"__type":"EditableSetBoolParamAction:#DialogueEditor","ParameterName":"IsAngry","Value":true}],"TMPFontGUID":null,"Text":"No,
-    you, bastard","parentUIDs":[0],"SpeechUID":-1},{"Connections":[{"__type":"EditableSpeechConnection:#DialogueEditor","Conditions":[],"NodeUID":15}],"EditorInfo":{"isRoot":false,"xPos":-28.1142578,"yPos":154.200012},"ID":10,"ParamActions":[],"TMPFontGUID":null,"Text":"Y-yes,
-    Great Cube","parentUIDs":[0],"SpeechUID":-1},{"Connections":[],"EditorInfo":{"isRoot":false,"xPos":165.485779,"yPos":402.2002},"ID":12,"ParamActions":[{"__type":"EditableSetBoolParamAction:#DialogueEditor","ParameterName":"IsAngry","Value":false}],"TMPFontGUID":null,"Text":"F-forgive
-    me Great Cube I was follish","parentUIDs":[0,11],"SpeechUID":-1},{"Connections":[{"__type":"EditableSpeechConnection:#DialogueEditor","Conditions":[],"NodeUID":14}],"EditorInfo":{"isRoot":false,"xPos":492.6856,"yPos":434.800171},"ID":13,"ParamActions":[],"TMPFontGUID":null,"Text":"AHAHAHAHHAHAH
-    IDIOT","parentUIDs":[11],"SpeechUID":-1}],"Parameters":[{"__type":"EditableBoolParameter:#DialogueEditor","ParameterName":"IsAngry","BoolValue":false}],"SpeechNodes":[{"Connections":[{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[],"NodeUID":9},{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[],"NodeUID":10},{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[{"__type":"EditableBoolCondition:#DialogueEditor","ParameterName":"IsAngry","CheckType":0,"RequiredValue":true}],"NodeUID":12}],"EditorInfo":{"isRoot":true,"xPos":172.7857,"yPos":22},"ID":0,"ParamActions":[],"TMPFontGUID":null,"Text":"YOU
+  json: '{"Options":[{"Connections":[{"__type":"EditableSpeechConnection:#DialogueEditor","Conditions":[],"NodeUID":11}],"EditorInfo":{"isRoot":false,"xPos":394.68573,"yPos":150.999969},"ID":9,"ParamActions":[{"__type":"EditableSetBoolParamAction:#DialogueEditor","ParameterName":"IsAngry","Value":true}],"TMPFontGUID":null,"Text":"No,
+    you, bastard","parentUIDs":[0],"SpeechUID":-1},{"Connections":[{"__type":"EditableSpeechConnection:#DialogueEditor","Conditions":[],"NodeUID":15}],"EditorInfo":{"isRoot":false,"xPos":13.8857422,"yPos":154.2},"ID":10,"ParamActions":[],"TMPFontGUID":null,"Text":"Y-yes,
+    Great Cube","parentUIDs":[0],"SpeechUID":-1},{"Connections":[],"EditorInfo":{"isRoot":false,"xPos":207.485779,"yPos":402.1999},"ID":12,"ParamActions":[{"__type":"EditableSetBoolParamAction:#DialogueEditor","ParameterName":"IsAngry","Value":false}],"TMPFontGUID":null,"Text":"F-forgive
+    me Great Cube I was follish","parentUIDs":[0,11],"SpeechUID":-1},{"Connections":[{"__type":"EditableSpeechConnection:#DialogueEditor","Conditions":[],"NodeUID":14}],"EditorInfo":{"isRoot":false,"xPos":534.685669,"yPos":434.7998},"ID":13,"ParamActions":[],"TMPFontGUID":null,"Text":"AHAHAHAHHAHAH
+    IDIOT","parentUIDs":[11],"SpeechUID":-1}],"Parameters":[{"__type":"EditableBoolParameter:#DialogueEditor","ParameterName":"IsAngry","BoolValue":false},{"__type":"EditableIntParameter:#DialogueEditor","ParameterName":"EloquenceLevel","IntValue":0}],"SpeechNodes":[{"Connections":[{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[{"__type":"EditableIntCondition:#DialogueEditor","ParameterName":"EloquenceLevel","CheckType":2,"RequiredValue":2}],"NodeUID":9},{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[],"NodeUID":10},{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[{"__type":"EditableBoolCondition:#DialogueEditor","ParameterName":"IsAngry","CheckType":0,"RequiredValue":true}],"NodeUID":12}],"EditorInfo":{"isRoot":true,"xPos":207.357147,"yPos":22},"ID":0,"ParamActions":[],"TMPFontGUID":null,"Text":"YOU
     CAN SPEAK , MORTAL SOUL","parentUIDs":[],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"KUB
-    zMIRA","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0},{"Connections":[{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[],"NodeUID":12},{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[],"NodeUID":13}],"EditorInfo":{"isRoot":false,"xPos":422.285339,"yPos":264},"ID":11,"ParamActions":[],"TMPFontGUID":null,"Text":"H-HOW
+    zMIRA","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0},{"Connections":[{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[],"NodeUID":12},{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[],"NodeUID":13}],"EditorInfo":{"isRoot":false,"xPos":464.285339,"yPos":264.7998},"ID":11,"ParamActions":[],"TMPFontGUID":null,"Text":"H-HOW
     DARE ARE YOU!","parentUIDs":[9],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"KUB
-    zMIRA","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0},{"Connections":[],"EditorInfo":{"isRoot":false,"xPos":555.886,"yPos":553.600159},"ID":14,"ParamActions":[],"TMPFontGUID":null,"Text":"YOU
+    zMIRA","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0},{"Connections":[],"EditorInfo":{"isRoot":false,"xPos":597.886,"yPos":553.599731},"ID":14,"ParamActions":[],"TMPFontGUID":null,"Text":"YOU
     WILL REGRET ABOUT THAT!","parentUIDs":[13],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"KUB
-    zMIRA","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0},{"Connections":[],"EditorInfo":{"isRoot":false,"xPos":-199.514221,"yPos":297.800049},"ID":15,"ParamActions":[],"TMPFontGUID":null,"Text":"YOU
+    zMIRA","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0},{"Connections":[],"EditorInfo":{"isRoot":false,"xPos":-157.514221,"yPos":297.799866},"ID":15,"ParamActions":[],"TMPFontGUID":null,"Text":"YOU
     FOOL.\nIt''s a long debug text\nYou can move on","parentUIDs":[10],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"KUB
     zMIRA","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0}]}'
   saveVersion: 110
@@ -1284,6 +1284,11 @@ PrefabInstance:
         Assembly-CSharp]]'
       objectReference: {fileID: 0}
     - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+      propertyPath: 'managedReferences[8705241800303706941]'
+      value: 'Unity.Behavior Unity.Behavior.BlackboardVariable`1[[EnemyDetector,
+        Assembly-CSharp]]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
       propertyPath: managedReferences[368166279296582266].Name
       value: Target
       objectReference: {fileID: 0}
@@ -1300,8 +1305,12 @@ PrefabInstance:
       value: Controller
       objectReference: {fileID: 0}
     - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+      propertyPath: managedReferences[8705241800303706941].Name
+      value: Enemy Detector
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
       propertyPath: m_BlackboardVariableOverridesList.Array.size
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
       propertyPath: managedReferences[368166279296582266].m_Value
@@ -1320,12 +1329,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+      propertyPath: managedReferences[8705241800303706941].m_Value
+      value: 
+      objectReference: {fileID: 326086646}
+    - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
       propertyPath: 'm_BlackboardVariableOverridesList.Array.data[3]'
       value: 4151108504610406847
       objectReference: {fileID: 0}
     - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
       propertyPath: 'm_BlackboardVariableOverridesList.Array.data[4]'
       value: 4151108504610407006
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+      propertyPath: 'm_BlackboardVariableOverridesList.Array.data[5]'
+      value: 8705241800303706941
       objectReference: {fileID: 0}
     - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
       propertyPath: managedReferences[368166279296582266].GUID.m_Value0
@@ -1359,9 +1376,17 @@ PrefabInstance:
       propertyPath: managedReferences[7920556813652590856].GUID.m_Value1
       value: 10679229190682508756
       objectReference: {fileID: 0}
+    - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+      propertyPath: managedReferences[8705241800303706941].GUID.m_Value0
+      value: 16548286320828918699
+      objectReference: {fileID: 0}
+    - target: {fileID: 4220832011797503087, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+      propertyPath: managedReferences[8705241800303706941].GUID.m_Value1
+      value: 16415463621683206634
+      objectReference: {fileID: 0}
     - target: {fileID: 4776691794294590372, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2
+      value: -7.4
       objectReference: {fileID: 0}
     - target: {fileID: 4776691794294590372, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1369,7 +1394,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4776691794294590372, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 12.1
       objectReference: {fileID: 0}
     - target: {fileID: 4776691794294590372, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1408,6 +1433,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+--- !u!114 &326086646 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8159872408946350322, guid: 85760dd42a2a51e46afb84cc418e7fab, type: 3}
+  m_PrefabInstance: {fileID: 326086645}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3e3a8826ed5734498ef2c1f7d78a7c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ListEnemyDetector
 --- !u!1 &363643145
 GameObject:
   m_ObjectHideFlags: 0
@@ -2155,7 +2191,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueEditor.NodeEventHolder
   Event:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   NodeID: 9
   TMPFont: {fileID: 11400000, guid: d9728f14c5e8455498b4f3c4240ff1ce, type: 2}
   Icon: {fileID: 0}
@@ -6577,17 +6625,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogueEditor.NPCConversation
   CurrentIDCounter: 16
-  json: '{"Options":[{"Connections":[{"__type":"EditableSpeechConnection:#DialogueEditor","Conditions":[],"NodeUID":11}],"EditorInfo":{"isRoot":false,"xPos":352.68573,"yPos":151.799988},"ID":9,"ParamActions":[{"__type":"EditableSetBoolParamAction:#DialogueEditor","ParameterName":"IsAngry","Value":true}],"TMPFontGUID":null,"Text":"No,
-    you, bastard","parentUIDs":[0],"SpeechUID":-1},{"Connections":[{"__type":"EditableSpeechConnection:#DialogueEditor","Conditions":[],"NodeUID":15}],"EditorInfo":{"isRoot":false,"xPos":-28.1142578,"yPos":154.200012},"ID":10,"ParamActions":[],"TMPFontGUID":null,"Text":"Y-yes,
-    Great Cube","parentUIDs":[0],"SpeechUID":-1},{"Connections":[],"EditorInfo":{"isRoot":false,"xPos":165.485779,"yPos":402.2002},"ID":12,"ParamActions":[{"__type":"EditableSetBoolParamAction:#DialogueEditor","ParameterName":"IsAngry","Value":false}],"TMPFontGUID":null,"Text":"F-forgive
-    me Great Cube I was follish","parentUIDs":[0,11],"SpeechUID":-1},{"Connections":[{"__type":"EditableSpeechConnection:#DialogueEditor","Conditions":[],"NodeUID":14}],"EditorInfo":{"isRoot":false,"xPos":492.6856,"yPos":434.800171},"ID":13,"ParamActions":[],"TMPFontGUID":null,"Text":"AHAHAHAHHAHAH
-    IDIOT","parentUIDs":[11],"SpeechUID":-1}],"Parameters":[{"__type":"EditableBoolParameter:#DialogueEditor","ParameterName":"IsAngry","BoolValue":false}],"SpeechNodes":[{"Connections":[{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[],"NodeUID":9},{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[],"NodeUID":10},{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[{"__type":"EditableBoolCondition:#DialogueEditor","ParameterName":"IsAngry","CheckType":0,"RequiredValue":true}],"NodeUID":12}],"EditorInfo":{"isRoot":true,"xPos":172.7857,"yPos":22},"ID":0,"ParamActions":[],"TMPFontGUID":null,"Text":"YOU
+  json: '{"Options":[{"Connections":[{"__type":"EditableSpeechConnection:#DialogueEditor","Conditions":[],"NodeUID":11}],"EditorInfo":{"isRoot":false,"xPos":387.257172,"yPos":151.800034},"ID":9,"ParamActions":[{"__type":"EditableSetBoolParamAction:#DialogueEditor","ParameterName":"IsAngry","Value":true}],"TMPFontGUID":null,"Text":"No,
+    you, bastard","parentUIDs":[0],"SpeechUID":-1},{"Connections":[{"__type":"EditableSpeechConnection:#DialogueEditor","Conditions":[],"NodeUID":15}],"EditorInfo":{"isRoot":false,"xPos":6.457184,"yPos":154.200012},"ID":10,"ParamActions":[],"TMPFontGUID":null,"Text":"Y-yes,
+    Great Cube","parentUIDs":[0],"SpeechUID":-1},{"Connections":[],"EditorInfo":{"isRoot":false,"xPos":200.05722,"yPos":402.200256},"ID":12,"ParamActions":[{"__type":"EditableSetBoolParamAction:#DialogueEditor","ParameterName":"IsAngry","Value":false}],"TMPFontGUID":null,"Text":"F-forgive
+    me Great Cube I was follish","parentUIDs":[0,11],"SpeechUID":-1},{"Connections":[{"__type":"EditableSpeechConnection:#DialogueEditor","Conditions":[],"NodeUID":14}],"EditorInfo":{"isRoot":false,"xPos":527.2571,"yPos":434.800232},"ID":13,"ParamActions":[],"TMPFontGUID":null,"Text":"AHAHAHAHHAHAH
+    IDIOT","parentUIDs":[11],"SpeechUID":-1}],"Parameters":[{"__type":"EditableBoolParameter:#DialogueEditor","ParameterName":"IsAngry","BoolValue":false},{"__type":"EditableIntParameter:#DialogueEditor","ParameterName":"EloquenceLevel","IntValue":0}],"SpeechNodes":[{"Connections":[{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[{"__type":"EditableIntCondition:#DialogueEditor","ParameterName":"EloquenceLevel","CheckType":2,"RequiredValue":2}],"NodeUID":9},{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[],"NodeUID":10},{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[{"__type":"EditableBoolCondition:#DialogueEditor","ParameterName":"IsAngry","CheckType":0,"RequiredValue":true}],"NodeUID":12}],"EditorInfo":{"isRoot":true,"xPos":207.357147,"yPos":22},"ID":0,"ParamActions":[],"TMPFontGUID":null,"Text":"YOU
     CAN SPEAK , MORTAL SOUL","parentUIDs":[],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"KUB
-    zMIRA","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0},{"Connections":[{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[],"NodeUID":12},{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[],"NodeUID":13}],"EditorInfo":{"isRoot":false,"xPos":422.285339,"yPos":264},"ID":11,"ParamActions":[],"TMPFontGUID":null,"Text":"H-HOW
+    zMIRA","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0},{"Connections":[{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[],"NodeUID":12},{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[],"NodeUID":13}],"EditorInfo":{"isRoot":false,"xPos":456.8568,"yPos":264.000061},"ID":11,"ParamActions":[],"TMPFontGUID":null,"Text":"H-HOW
     DARE ARE YOU!","parentUIDs":[9],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"KUB
-    zMIRA","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0},{"Connections":[],"EditorInfo":{"isRoot":false,"xPos":555.886,"yPos":553.600159},"ID":14,"ParamActions":[],"TMPFontGUID":null,"Text":"YOU
+    zMIRA","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0},{"Connections":[],"EditorInfo":{"isRoot":false,"xPos":590.4574,"yPos":553.600159},"ID":14,"ParamActions":[],"TMPFontGUID":null,"Text":"YOU
     WILL REGRET ABOUT THAT!","parentUIDs":[13],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"KUB
-    zMIRA","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0},{"Connections":[],"EditorInfo":{"isRoot":false,"xPos":-199.514221,"yPos":297.800049},"ID":15,"ParamActions":[],"TMPFontGUID":null,"Text":"YOU
+    zMIRA","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0},{"Connections":[],"EditorInfo":{"isRoot":false,"xPos":-164.94278,"yPos":297.8001},"ID":15,"ParamActions":[],"TMPFontGUID":null,"Text":"YOU
     FOOL.\nIt''s a long debug text\nYou can move on","parentUIDs":[10],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"KUB
     zMIRA","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0}]}'
   saveVersion: 110

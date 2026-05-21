@@ -20,7 +20,7 @@ public partial class MoveToTargetAction : Action
     public BlackboardVariable<Transform> Target;
 
     [SerializeReference]
-    public BlackboardVariable<float> Speed = new(0.2f);
+    public BlackboardVariable<float> Speed = new(0.5f);
 
     [SerializeReference]
     public BlackboardVariable<CustomNavMeshAgent> CustomNavMeshAgent;

@@ -1,6 +1,7 @@
 using System;
 using Mirror;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Events;
 
 public class CharacterConfigManager : MonoBehaviour
@@ -11,29 +12,21 @@ public class CharacterConfigManager : MonoBehaviour
     [SerializeField]
     private GameObject head;
 
-    [SerializeField]
-    private Weapon[] weapons = new Weapon[0];
+    public Weapon[] weapons = new Weapon[0];
 
-    [SerializeField]
-    private Clothing[] pants = new Clothing[0];
+    public Clothing[] pants = new Clothing[0];
 
-    [SerializeField]
-    private Clothing[] tops = new Clothing[0];
+    public Clothing[] tops = new Clothing[0];
 
-    [SerializeField]
-    private Clothing[] shoes = new Clothing[0];
+    public Clothing[] shoes = new Clothing[0];
 
-    [SerializeField]
-    private Clothing[] gloves = new Clothing[0];
+    public Clothing[] gloves = new Clothing[0];
 
-    [SerializeField]
-    private Clothing[] hats = new Clothing[0];
+    public Clothing[] hats = new Clothing[0];
 
-    [SerializeField]
-    private Clothing[] hair = new Clothing[0];
+    public Clothing[] hair = new Clothing[0];
 
-    [SerializeField]
-    private Clothing[] masks = new Clothing[0];
+    public Clothing[] masks = new Clothing[0];
 
     public UnityEvent<CharacterConfig> OnConfigChanged = new();
 
@@ -46,8 +39,8 @@ public class CharacterConfigManager : MonoBehaviour
 
     public void SetConfig(CharacterConfig newConfig)
     {
-        Weapon oldPrimary = GetPrimary(),
-            oldSecondary = GetSecondary();
+        if (newConfig.Equals(currentConfig))
+            return;
 
         if (isActive)
             SetObjectsActive(false);
@@ -57,11 +50,7 @@ public class CharacterConfigManager : MonoBehaviour
         if (isActive)
             SetObjectsActive(true);
 
-        if (GetPrimary() && oldPrimary)
-            GetPrimary().onShot = oldPrimary.onShot;
-
-        if (GetSecondary() && oldSecondary)
-            GetSecondary().onShot = oldSecondary.onShot;
+        OnConfigChanged.Invoke(newConfig);
     }
 
     public CharacterConfig GetConfig() => currentConfig;
@@ -153,7 +142,6 @@ public class CharacterConfigManager : MonoBehaviour
         }
 
         SetConfig(newConfig); // To save changes locally
-        OnConfigChanged.Invoke(newConfig);
     }
 
     public void EquipWeapon(InventoryItem item, bool primary)
@@ -176,13 +164,18 @@ public class CharacterConfigManager : MonoBehaviour
             newConfig.secondaryWeaponId = weaponId;
 
         SetConfig(newConfig); // To save changes locally
-        OnConfigChanged.Invoke(newConfig);
     }
 
     public bool isActive = true;
 
     public void SetActive(bool active)
     {
+        if (TryGetComponent(out NavMeshObstacle obstacle))
+            obstacle.enabled = active;
+
+        if (TryGetComponent(out NavMeshAgent agent))
+            agent.enabled = active;
+
         isActive = active;
         foreach (var collider in GetComponentsInChildren<Collider>())
         {

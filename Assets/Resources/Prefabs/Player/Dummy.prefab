@@ -1707,11 +1707,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0986cc14728606e46af441b270548f94, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0986cc14728606e46af441b270548f94, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0986cc14728606e46af441b270548f94, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1914,11 +1914,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 541a3a59a4646bf43a1bc1e12f696d30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  properties:
-    damage: 20
-    bulletSpeed: 10
-    spread: 1
-    piercing: 0
   bulletSpawnTransform: {fileID: 898586651171470693}
   animator: {fileID: 7317669893117399763}
   particle: {fileID: 4382234942151373564}

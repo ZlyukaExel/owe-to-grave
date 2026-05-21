@@ -366,6 +366,15 @@ public class Inventory : NetworkBehaviour
         return movedTo;
     }
 
+    [Command(requiresAuthority = false)]
+    public void SwapWeapons()
+    {
+        if (items.Count <= 1)
+            return;
+
+        (items[1], items[0]) = (items[0], items[1]);
+    }
+
     public int GetItemQuantity(uint itemId)
     {
         int total = 0;

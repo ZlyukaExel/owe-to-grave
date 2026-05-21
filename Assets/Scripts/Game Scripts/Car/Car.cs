@@ -34,6 +34,10 @@ public class Car : NetworkBehaviour
     private InputManager input;
 
     [SerializeField]
+    private float inputSmoothing = 3;
+    private Vector2 smoothedVector = Vector2.zero;
+
+    [SerializeField]
     private InputActionReference handBrakeAction;
 
     private void Start()
@@ -70,11 +74,24 @@ public class Car : NetworkBehaviour
 
     private void LateUpdate()
     {
-        if (isOwned)
+        if (netIdentity.connectionToClient == null && isServer || isOwned)
             CmdSetSpeed(Vector3.Dot(transform.forward, rb.linearVelocity));
 
         if (driver == null)
             return;
+
+        if (input)
+            smoothedVector = Vector2.MoveTowards(
+                smoothedVector,
+                input.movementVector,
+                Time.deltaTime * inputSmoothing
+            );
+        else
+            smoothedVector = Vector2.MoveTowards(
+                smoothedVector,
+                Vector2.zero,
+                Time.deltaTime * inputSmoothing
+            );
 
         if (Time.frameCount % 3 == 0)
             speedometer.text = Mathf.Abs(Mathf.Round(speed * 4)).ToString();
@@ -84,6 +101,7 @@ public class Car : NetworkBehaviour
     {
         if (rb.isKinematic)
             return;
+
         if (!driver)
         {
             foreach (var wheel in wheels)
@@ -112,19 +130,20 @@ public class Car : NetworkBehaviour
         float currentSteerRange = Mathf.Lerp(maxSteerAngle, maxSteerAngleAtMaxSpeed, speedFactor);
 
         bool isAccelerating =
-            (input.Vertical > 0 && speed >= -0.5f) || (input.Vertical < 0 && speed <= 0.5);
+            (input.movementVector.y > 0 && speed >= -0.5f)
+            || (input.movementVector.y < 0 && speed <= 0.5);
 
         foreach (var wheel in wheels)
         {
             WheelCollider col = wheel.wheelCollider;
 
             if (wheel.steerable)
-                col.steerAngle = input.SmoothedHorizontal * currentSteerRange;
+                col.steerAngle = smoothedVector.x * currentSteerRange;
 
             if (isAccelerating)
             {
                 if (wheel.motorized)
-                    col.motorTorque = input.SmoothedVertical * currentTorque;
+                    col.motorTorque = smoothedVector.y * currentTorque;
                 col.brakeTorque = 0;
             }
             else
@@ -138,13 +157,13 @@ public class Car : NetworkBehaviour
         }
 
         steeringWheel.localEulerAngles =
-            -currentSteerRange * 2 * input.SmoothedHorizontal * Vector3.forward;
+            -currentSteerRange * 2 * smoothedVector.x * Vector3.forward;
 
         if (wheelsGrounded == 0)
         {
             float rotateForce = 30;
 
-            rb.angularVelocity += rotateForce * input.SmoothedVertical * transform.right / rb.mass;
+            rb.angularVelocity += rotateForce * smoothedVector.y * transform.right / rb.mass;
 
             if (rb.linearVelocity.magnitude < 5 && rb.angularVelocity.magnitude < 1)
             {
@@ -156,17 +175,15 @@ public class Car : NetworkBehaviour
                 timeStuck = 0;
 
             if (input.IsPressed(handBrakeAction.action))
-                rb.angularVelocity +=
-                    input.SmoothedHorizontal * rotateForce * transform.up / rb.mass;
+                rb.angularVelocity += smoothedVector.x * rotateForce * transform.up / rb.mass;
             else
-                rb.angularVelocity -=
-                    input.SmoothedHorizontal * rotateForce * transform.forward / rb.mass;
+                rb.angularVelocity -= smoothedVector.x * rotateForce * transform.forward / rb.mass;
         }
         else
             timeStuck = 0;
     }
 
-    [Command]
+    [Command(requiresAuthority = false)]
     private void CmdSetSpeed(float speed)
     {
         this.speed = speed;

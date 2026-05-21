@@ -31,6 +31,7 @@ public class PlayerCommandHandler : NetworkBehaviour
         commands.Add("/find", CommandFind);
         commands.Add("/damage", CommandDamage);
         commands.Add("/help", CommandHelp);
+        commands.Add("/addxp", CommandAddXp);
     }
 
     public bool ProcessCommands(string input)
@@ -64,6 +65,9 @@ public class PlayerCommandHandler : NetworkBehaviour
             return true;
         }
 
+        chatManager.AddLocalMessage(
+            new ChatEntry("Server", $"Command {commandName} not found", "red")
+        );
         return false;
     }
 
@@ -75,8 +79,8 @@ public class PlayerCommandHandler : NetworkBehaviour
             return;
         }
         string message = rawInput.Substring(args[0].Length).Trim();
-        chatManager.SendToEveryone(
-            $"<color=green>[{GetComponent<Player>().entityName}]: </color>" + message,
+        chatManager.CmdSendToEveryone(
+            new ChatEntry(GetComponent<Player>().entityName, message, "green"),
             true
         );
     }
@@ -89,35 +93,34 @@ public class PlayerCommandHandler : NetworkBehaviour
             return;
         }
         string message = rawInput.Substring(args[0].Length).Trim();
-        chatManager.SendToEveryone(
-            $"<color=green>[{GetComponent<Player>().entityName}]: </color>" + message,
+        chatManager.CmdSendToEveryone(
+            new ChatEntry(GetComponent<Player>().entityName, message, "green"),
             false
         );
     }
 
-    private void CommandIgnore(string[] args, string rawInput) =>
-        Debug.Log("<color=yellow>Command /ignore executed</color>");
+    private void CommandIgnore(string[] args, string rawInput) { }
 
     private void CommandHelp(string[] args, string rawInput) =>
         Debug.Log(
-            "<color=yellow>Commands: /a, /aoe, /ignore, /tp [x y z], /kill [name], /damage [name] [amount], /kick [name], /find [name]</color>"
+            "<color=yellow>Commands: /a, /aoe, /ignore, /tp [x y z], /kill [name], /damage [name] [amount], /kick [name], /find [name]</color>, /addxp [stat] [amount]"
         );
 
     private void CommandFind(string[] args, string rawInput)
     {
         if (args.Length < 2)
         {
-            Debug.Log("Usage: /find [object name]");
+            Debug.Log("Usage: /find [entity name]");
             return;
         }
 
         GameObject target = GameObject.Find(args[1]);
         if (target != null)
             Debug.Log(
-                $"<color=green>Object '{target.name}' foumd on: {target.transform.position}</color>"
+                $"<color=green>Entity '{target.name}' found in: {target.transform.position}</color>"
             );
         else
-            Debug.Log($"<color=red>Объект '{args[1]}' no one.</color>");
+            Debug.Log($"<color=red>Entity '{args[1]}' not found</color>");
     }
 
     private void CommandTeleport(string[] args, string rawInput)
@@ -139,7 +142,7 @@ public class PlayerCommandHandler : NetworkBehaviour
     {
         if (args.Length < 2)
         {
-            Debug.Log("Usage: /kill [object name]");
+            Debug.Log("Usage: /kill [entity name]");
             return;
         }
         CmdKill(args[1]);
@@ -149,7 +152,7 @@ public class PlayerCommandHandler : NetworkBehaviour
     {
         if (args.Length < 3)
         {
-            Debug.Log("Usage: /damage [name] [amount]. Negative = heal.");
+            Debug.Log("Usage: /damage [name] [amount]");
             return;
         }
         if (int.TryParse(args[2], out int amount))
@@ -221,27 +224,16 @@ public class PlayerCommandHandler : NetworkBehaviour
         {
             if (identity.gameObject.name.Equals(targetName, StringComparison.OrdinalIgnoreCase))
             {
-                NetworkHitpoints health = identity.GetComponent<NetworkHitpoints>();
-
-                if (health == null)
+                if (!identity.TryGetComponent<NetworkHitpoints>(out var health))
                 {
-                    HitPointsSet hpSet = identity.GetComponent<HitPointsSet>();
-                    if (hpSet != null)
+                    if (identity.TryGetComponent<HitPointsSet>(out var hpSet))
                         health = hpSet.GetHp();
                 }
 
                 if (health != null)
                 {
-                    if (amount > 0)
-                    {
-                        DamageInfo info = new DamageInfo(amount, DamageType.Insult, netIdentity);
-                        health.Damage(info);
-                    }
-                    else if (amount < 0)
-                    {
-                        health.Heal(Mathf.Abs(amount));
-                    }
-
+                    DamageInfo info = new(amount, DamageType.GodPower, netIdentity);
+                    health.Damage(info);
                     Debug.Log($"Successfully applied {amount} damage to {targetName}");
                 }
                 else
@@ -252,5 +244,35 @@ public class PlayerCommandHandler : NetworkBehaviour
             }
         }
         Debug.LogWarning($"Network entity '{targetName}' not found on server");
+    }
+
+    private void CommandAddXp(string[] args, string rawInput)
+    {
+        if (args.Length < 3)
+        {
+            Debug.Log("Usage: /addxp [stat_name] [amount]");
+            return;
+        }
+
+        if (int.TryParse(args[2], out int amount))
+        {
+            var statsManager = GetComponent<NetworkCharacteristics>();
+
+            if (statsManager != null)
+            {
+                statsManager.CmdAddSkillExperience(args[1], amount);
+                Debug.Log(
+                    $"<color=green>Requesting server to add {amount} XP to {args[1]}...</color>"
+                );
+            }
+            else
+            {
+                Debug.Log("<color=red>NetworkPlayerManager component not found on player!</color>");
+            }
+        }
+        else
+        {
+            Debug.Log("<color=red>XP amount must be a number!</color>");
+        }
     }
 }

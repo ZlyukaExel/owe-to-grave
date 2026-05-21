@@ -100,8 +100,8 @@ public class CameraController : MonoBehaviour
             SetMaterialsAlpha(camDistFactor);
         }
 
-        angleX -= PlayerInput.Instance.MouseVertical * verticalSens;
-        angleY += PlayerInput.Instance.MouseHorizontal * horizontalSens;
+        angleX -= PlayerInput.Instance.mouseVector.y * verticalSens;
+        angleY += PlayerInput.Instance.mouseVector.x * horizontalSens;
 
         // Camera angle borders
         angleX = Mathf.Clamp(angleX, minPitch, maxPitch);
@@ -206,7 +206,7 @@ public class CameraController : MonoBehaviour
                 if (isFirstPerson)
                     angleY = Mathf.LerpAngle(
                         angleY,
-                        PlayerInput.Instance.Horizontal * 20,
+                        PlayerInput.Instance.movementVector.x * 20,
                         Time.unscaledDeltaTime * 2
                     );
                 else if (carScript.isMoving)
@@ -237,7 +237,7 @@ public class CameraController : MonoBehaviour
     }
 
     bool mouseMoved =>
-        (PlayerInput.Instance.MouseHorizontal != 0) && (PlayerInput.Instance.MouseVertical != 0);
+        (PlayerInput.Instance.mouseVector.x != 0) && (PlayerInput.Instance.mouseVector.y != 0);
 
     private void MoveCamera()
     {

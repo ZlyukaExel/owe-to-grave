@@ -23,7 +23,6 @@ public class NetworkItem : InteractiveObject
         takeButtonPressedTime;
     private InteractableTrigger interactableTrigger;
     private AnyDirectionSlider rotateField;
-    private GameObject aimButton;
     private Image takeButtonFiller;
     private bool isHeld = false,
         isHeldCont = false;
@@ -147,8 +146,6 @@ public class NetworkItem : InteractiveObject
             .ui.Find("Mobile Ui/Ground Ui/Rotate Field")
             .GetComponent<AnyDirectionSlider>();
         rotateField.gameObject.SetActive(true);
-        aimButton = pLinks.ui.Find("Mobile Ui/Ground Ui/Aim Button").gameObject;
-        aimButton.SetActive(false);
         takeButtonFiller = pLinks
             .ui.Find("Mobile Ui/Ground Ui/Interact Button/Filler")
             .GetComponent<Image>();
@@ -208,8 +205,6 @@ public class NetworkItem : InteractiveObject
         interactableTrigger = null;
         rotateField.gameObject.SetActive(false);
         rotateField = null;
-        aimButton.SetActive(true);
-        aimButton = null;
         takeButtonFiller = null;
 
         takeButtonPressed = isHeld = isHeldCont = false;

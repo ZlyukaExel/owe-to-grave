@@ -18,6 +18,7 @@ public class Links : NetworkBehaviour
     public Animator animator { get; private set; }
     public NetworkHitpoints hitpoints { get; private set; }
     public InputManager input { get; protected set; }
+    public Inventory inventory { get; protected set; }
     public Buffs buffs { get; private set; }
     public Weapon primaryWeapon => netConfig.configManager.GetPrimary();
     public Weapon secondaryWeapon => netConfig.configManager.GetSecondary();
@@ -28,7 +29,8 @@ public class Links : NetworkBehaviour
 
     public virtual void Awake()
     {
-        input = GetComponent<InputManager>();
+        input = GetComponent<InputManager>(); // Required only for Ai
+        inventory = GetComponent<Inventory>();
         buffs = GetComponent<Buffs>();
         movement = GetComponent<MovementManager>();
         stateManager = GetComponent<StateManager>();

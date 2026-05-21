@@ -1,6 +1,7 @@
 using Mirror;
 using UnityEngine;
 
+[RequireComponent(typeof(EnemyDetector))]
 public class NPCController : MonoBehaviour
 {
     [SerializeField]
@@ -8,54 +9,12 @@ public class NPCController : MonoBehaviour
         maxDetectionRadius = 100f,
         detectionStep = 20f;
 
-    // private Marker currentMarker,
-    //     targetMarker;
-    // private bool isFleeing = false;
-    // private Vector3 fleeDirection;
+    private EnemyDetector enemyDetector;
 
-    // void Start()
-    // {
-    //     // FindInitialMarker();
-    //     // ChooseRandomTarget();
-    // }
-
-    // void Update()
-    // {
-    //     // if (targetMarker == null)
-    //     // {
-    //     //     ChooseRandomTarget();
-    //     //     return;
-    //     // }
-
-    //     // transform.position = Vector3.MoveTowards(
-    //     //     transform.position,
-    //     //     targetMarker.transform.position,
-    //     //     moveSpeed * Time.deltaTime
-    //     // );
-
-    //     // if (Vector3.Distance(transform.position, targetMarker.transform.position) < 0.1f)
-    //     // {
-    //     //     currentMarker = targetMarker;
-    //     //     ChooseRandomTarget();
-    //     // }
-
-    //     // Collider[] threats = Physics.OverlapSphere(transform.position, detectionRadius);
-    //     // foreach (var threat in threats)
-    //     // {
-    //     //     if (threat.CompareTag("Bullet"))
-    //     //     {
-    //     //         isFleeing = true;
-    //     //         fleeDirection = (transform.position - threat.transform.position).normalized;
-    //     //         FleeFormThreat();
-    //     //         break;
-    //     //     }
-    //     // }
-
-    //     // if (isFleeing)
-    //     // {
-    //     //     FleeFormThreat();
-    //     // }
-    // }
+    void Awake()
+    {
+        enemyDetector = GetComponent<EnemyDetector>();
+    }
 
     public Marker FindInitialMarker()
     {
@@ -77,7 +36,7 @@ public class NPCController : MonoBehaviour
         return null;
     }
 
-    public Marker ChooseRandomTarget(Marker currentMarker)
+    public Marker ChooseRandomNeighbor(Marker currentMarker)
     {
         if (
             currentMarker == null
@@ -93,46 +52,56 @@ public class NPCController : MonoBehaviour
         return nextMarker;
     }
 
-    // void FleeFormThreat()
-    // {
-    //     Marker escapeMarker = FindEscapeMarker(fleeDirection);
-    //     if (escapeMarker != null)
-    //     {
-    //         targetMarker = escapeMarker;
-    //         // isFleeing = false;
-    //     }
-    // }
-
-    public Marker FindEscapeMarker(
-        Vector3 direction,
-        float detectionRadius,
-        float maxDetectionRadius,
-        float detectionStep,
-        Marker currentMarker
-    )
+    public Marker FindEscapeMarker(NetworkIdentity threat, Marker currentMarker)
     {
-        float radius = detectionRadius;
-        while (radius <= maxDetectionRadius)
+        if (
+            currentMarker == null
+            || currentMarker.neighbors == null
+            || currentMarker.neighbors.Length == 0
+            || threat == null
+        )
+            return null;
+
+        Marker bestMarker = null;
+        float maxDistanceToThreat = -1f;
+        Vector3 direction = (transform.position - threat.transform.position).normalized;
+
+        Vector3 toCurrent = (currentMarker.transform.position - transform.position).normalized;
+        if (Vector3.Dot(toCurrent, direction) > 0.5f)
         {
-            Collider[] hits = Physics.OverlapSphere(transform.position, radius);
-            foreach (var hit in hits)
-            {
-                if (hit.TryGetComponent(out Marker marker) && marker != currentMarker)
-                {
-                    Vector3 toMarker = (marker.transform.position - transform.position).normalized;
-                    if (Vector3.Dot(toMarker, direction) > 0.5f)
-                        return marker;
-                }
-            }
-            radius += detectionStep;
+            maxDistanceToThreat = Vector3.Distance(
+                threat.transform.position,
+                currentMarker.transform.position
+            );
+            bestMarker = currentMarker;
         }
-        return null;
+
+        foreach (var neighbor in currentMarker.neighbors)
+        {
+            if (neighbor == null)
+                continue;
+
+            Vector3 toMarker = (neighbor.transform.position - transform.position).normalized;
+            if (Vector3.Dot(toMarker, direction) <= 0.5f)
+                continue;
+
+            float currentMarkerDistance = Vector3.Distance(
+                threat.transform.position,
+                neighbor.transform.position
+            );
+            if (currentMarkerDistance > maxDistanceToThreat)
+            {
+                maxDistanceToThreat = currentMarkerDistance;
+                bestMarker = neighbor;
+            }
+        }
+
+        return bestMarker;
     }
 
     public void OnBulletNear(DamageInfo damageInfo)
     {
         NetworkIdentity source = damageInfo.source;
-        Vector3 sourcePosition = source.transform.position;
-        // Debug.Log("Bullet came from: " + sourcePosition);
+        enemyDetector.AddEnemy(source);
     }
 }

@@ -5,11 +5,13 @@ using UnityEngine.InputSystem;
 
 public class PlayerInput : InputManager
 {
-    private float ignoreInputCount;
     private TouchField touchField;
     public event Action<float> OnZoom;
     public Joystick joystick { get; private set; }
     public static PlayerInput Instance { get; private set; }
+
+    [SerializeField]
+    private float joystickWeight = 2;
 
     [HideInInspector]
     public UnityEvent onMovement,
@@ -43,35 +45,23 @@ public class PlayerInput : InputManager
         GetButtons();
     }
 
-    public override void Update()
+    public void Update()
     {
         MouseUpdate();
-
-        if (ignoreInputCount != 0)
-            return;
-
         MovementUpdate();
-
-        base.Update();
     }
 
     private void MouseUpdate()
     {
-        Vector2 lookVector = lookAction.action.ReadValue<Vector2>();
-        MouseHorizontal = lookVector.x;
-        MouseVertical = lookVector.y;
+        mouseVector = lookAction.action.ReadValue<Vector2>();
 
         float zoomDistance = touchField.ZoomDelta;
 
         // Rotate camera only if not zooming
         if (zoomDistance == 0)
-        {
-            MouseHorizontal += touchField.TouchDist.x;
-            MouseVertical += touchField.TouchDist.y;
-        }
+            mouseVector += touchField.TouchDist;
 
-        MouseHorizontal *= Time.unscaledDeltaTime;
-        MouseVertical *= Time.unscaledDeltaTime;
+        mouseVector *= Time.unscaledDeltaTime;
 
         float scrollValue = Mouse.current.scroll.y.ReadValue();
         float mouseScroll = Mathf.Clamp(scrollValue, -0.3f, 0.3f);
@@ -80,26 +70,19 @@ public class PlayerInput : InputManager
 
     private void MovementUpdate()
     {
-        Vector2 moveVector = moveAction.action.ReadValue<Vector2>();
-        Vertical = Mathf.Clamp(joystick.Vertical + moveVector.y, -1, 1);
-        Horizontal = Mathf.Clamp(joystick.Horizontal + moveVector.x, -1, 1);
+        movementVector =
+            Vector2.ClampMagnitude(moveAction.action.ReadValue<Vector2>(), 1)
+            + joystick.input * joystickWeight;
 
-        if (Vertical == 0 && Horizontal == 0 && !IsPressed(jumpAction.action))
+        if (movementVector.magnitude <= 0.1f && !IsPressed(jumpAction.action))
             onNoMovement.Invoke();
         else
             onMovement.Invoke();
     }
 
-    public void StartInput()
-    {
-        ignoreInputCount = Math.Max(ignoreInputCount - 1, 0);
-    }
-
     public void StopInput()
     {
-        Vertical = SmoothedVertical = 0;
-        Horizontal = SmoothedHorizontal = 0;
-        ignoreInputCount++;
+        mouseVector = movementVector = Vector3.zero;
     }
 
     private void GetButtons()

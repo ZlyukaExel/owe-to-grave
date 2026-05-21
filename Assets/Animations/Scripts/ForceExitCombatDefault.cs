@@ -10,6 +10,7 @@ public class ForceExitCombatDefault : StateMachineBehaviour
     {
         if (
             animator.GetBool("isAttacking")
+            || animator.GetBool("isAiming")
             || animator.GetBool("inCombat")
             || animator.GetBool("isJumping")
         )

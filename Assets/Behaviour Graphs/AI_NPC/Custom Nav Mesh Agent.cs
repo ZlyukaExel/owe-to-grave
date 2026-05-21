@@ -16,14 +16,20 @@ public class CustomNavMeshAgent : MonoBehaviour
 
     public void SetTarget(Vector3 targetPosition)
     {
+        if (!agent.enabled)
+            return;
+
         agent.SetDestination(targetPosition);
     }
 
     public bool ReachedDestination =>
-        !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance;
+        agent.enabled && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance;
 
     public Vector3 GetDirection()
     {
+        if (!agent.enabled)
+            return Vector3.zero;
+
         agent.nextPosition = transform.position;
 
         // While pending path, return straight forward direction

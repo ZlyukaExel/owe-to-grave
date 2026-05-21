@@ -13,6 +13,9 @@ public class Entity : NetworkBehaviour
 
     protected NetworkHitpoints hp;
 
+    [SyncVar]
+    public NetworkIdentity currentIdentity; // TODO: change by seat, on start
+
     private void Awake()
     {
         hp = GetComponent<NetworkHitpoints>();

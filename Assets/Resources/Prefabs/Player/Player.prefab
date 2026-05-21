@@ -261,6 +261,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2537593664155579721}
+    - targetCorrespondingSourceObject: {fileID: 3530699230367912090, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8366472212893357088}
     - targetCorrespondingSourceObject: {fileID: 6745089949999026420, guid: dbe1828e08b32754489dc7d494784b47, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3089581203925291118}
@@ -777,7 +780,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   inCombat: 0
-  isAiming: 0
+  isCurrentlyAiming: 0
   isShooting: 0
   isAimingOrShooting: 0
   currentSet: 0
@@ -789,7 +792,8 @@ MonoBehaviour:
     m_Bits: 1097
   bulletPrefab: {fileID: 7945427853545958378, guid: 96d0daf231887f84baa571ec5ea2cd06, type: 3}
   attackAction: {fileID: 8995299064858073144, guid: cdba55201852797459211659e79fcd0d, type: 3}
-  aimAction: {fileID: -1952729956975435768, guid: cdba55201852797459211659e79fcd0d, type: 3}
+  swapWeaponsAction: {fileID: -9099626225023012491, guid: cdba55201852797459211659e79fcd0d, type: 3}
+  isMelee: 0
 --- !u!114 &389755085867742700
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -873,6 +877,7 @@ MonoBehaviour:
   groundTriggerLayers:
     serializedVersion: 2
     m_Bits: 1
+  animationSmoothingSpeed: 3
   jumpAction: {fileID: -7621014995424912536, guid: cdba55201852797459211659e79fcd0d, type: 3}
   sprintAction: {fileID: -5904503039781319435, guid: cdba55201852797459211659e79fcd0d, type: 3}
 --- !u!114 &1195854260706180058
@@ -980,7 +985,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  inventorySize: 39
+  inventorySize: 36
   slotDefinitions:
   - maxQuantity: 1
     allowedCategory: 2
@@ -1036,6 +1041,39 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+--- !u!114 &8366472212893357088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7322269828611173434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d076b25291ef23a40a5bb02170d7da92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkCharacteristics
+  syncMethod: 0
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  syncStats:
+    eloquence:
+      level: 1
+      currentXP: 0
+      totalModifier: 0
+    strength:
+      level: 1
+      currentXP: 0
+      totalModifier: 0
+    agility:
+      level: 1
+      currentXP: 0
+      totalModifier: 0
+    marksmanship:
+      level: 1
+      currentXP: 0
+      totalModifier: 0
 --- !u!4 &7986638272692336256 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4302134543082801696, guid: dbe1828e08b32754489dc7d494784b47, type: 3}

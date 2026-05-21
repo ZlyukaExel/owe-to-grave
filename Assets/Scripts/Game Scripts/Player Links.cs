@@ -36,10 +36,13 @@ public class PlayerLinks : Links
         input = PlayerInput.Instance;
 
         Inventory inventory = GetComponent<Inventory>();
+        inventory.SetTarget(cameraPivot);
+        ui.parent.Find("Inventory/Horizontal/Inventory")
+            .GetComponent<InventoryUi>()
+            .SetInventory(inventory);
         ui.parent.Find("Inventory/Horizontal/Player Inventory")
             .GetComponent<InventoryUi>()
             .SetInventory(inventory);
-        inventory.SetTarget(cameraPivot);
 
         base.Start();
 
@@ -52,6 +55,13 @@ public class PlayerLinks : Links
             firstPersonCameraPivot,
             thirdPersonCameraPivot
         );
+
+        ui.Find("Pause Ui")
+            .GetComponent<MenuOpener>()
+            .openAction.AddListener(() => interactableTrigger.SetCheckTrigger(false));
+        ui.Find("Pause Ui")
+            .GetComponent<MenuOpener>()
+            .closeAction.AddListener(() => interactableTrigger.SetCheckTrigger(true));
 
         hitpoints.SetUi(ui.Find("Hitpoints").GetComponent<Slider>());
         minimap.PlayerMarker = ui.Find("Minimap/Player marker");

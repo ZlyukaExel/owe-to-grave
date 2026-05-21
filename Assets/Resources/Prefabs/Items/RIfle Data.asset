@@ -20,6 +20,7 @@ MonoBehaviour:
   prefab: {fileID: 1008226685848504892, guid: f5a273532f8551f4699679a9231d536f, type: 3}
   properties:
     damage: 10
-    bulletSpeed: 30
+    bulletSpeed: 50
     spread: 1
     piercing: 0
+    isMelee: 0
